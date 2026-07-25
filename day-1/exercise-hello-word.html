@@ -1,0 +1,742 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Hello World Ladder — Prompt Engineering Exercise</title>
+<style>
+  :root { --bg:#fff; --fg:#1b1b1f; --muted:#5a5a66; --code-bg:#f4f4f7;
+           --border:#e2e2e8; --accent:#b4471f; --accent-fg:#fff;
+           --gate:#bc4c00; --gate-bg:#fff1e5; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg);
+          font:16px/1.65 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; }
+  main { max-width:820px; margin:0 auto; padding:2.5rem 1.25rem 5rem; }
+  h1,h2,h3 { line-height:1.25; }
+  h1 { font-size:1.9rem; }
+  h2 { margin-top:2.6rem; padding-top:1.2rem; border-top:1px solid var(--border); }
+  h3 { margin-top:1.8rem; }
+  a { color:var(--accent); }
+  hr { display:none; }
+  blockquote { margin:1rem 0; padding:.6rem 1rem; border-left:4px solid var(--accent);
+                background:#faf3f0; color:var(--fg); border-radius:0 6px 6px 0; }
+  blockquote p { margin:.4rem 0; }
+  code { background:var(--code-bg); padding:.12em .35em; border-radius:4px;
+          font:.88em ui-monospace,SFMono-Regular,Consolas,monospace; }
+  table { border-collapse:collapse; width:100%; margin:1.2rem 0; font-size:.93rem; }
+  th,td { border:1px solid var(--border); padding:.45rem .6rem; text-align:left;
+           vertical-align:top; }
+  th { background:var(--code-bg); }
+  .codewrap { position:relative; margin:1rem 0; }
+  .codewrap pre { margin:0; background:var(--code-bg); border:1px solid var(--border);
+                   border-radius:8px; padding:1rem 1rem; overflow:auto; }
+  .codewrap pre code { background:none; padding:0; font-size:.86rem; line-height:1.5;
+                        display:block; white-space:pre; }
+  pre.prompt code { white-space:pre-wrap; }
+  .copy-btn { position:absolute; top:.5rem; right:.5rem; padding:.3rem .7rem;
+               font:.78rem/1 inherit; cursor:pointer; border:1px solid var(--border);
+               border-radius:6px; background:#fff; color:var(--muted); }
+  .copy-btn:hover { border-color:var(--accent); color:var(--accent); }
+  .copy-btn.ok { background:var(--accent); color:var(--accent-fg); border-color:var(--accent); }
+  @media (max-width:520px) { .copy-btn { position:static; display:inline-block;
+               margin:.4rem 0 0; } .codewrap { display:flex; flex-direction:column; } }
+
+  /* Optional expandable "learn more" boxes */
+  details.learn-more { margin:1.1rem 0; padding:.55rem 1rem; border-left:4px solid #1f6fb4;
+                       background:#eef5fb; border-radius:0 6px 6px 0; font-size:.92rem; }
+  details.learn-more summary { cursor:pointer; color:#1f6fb4; font-weight:600; }
+  details.learn-more summary:hover { text-decoration:underline; }
+  details.learn-more[open] summary { margin-bottom:.4rem; }
+  details.learn-more p { margin:.45rem 0; }
+  details.learn-more ul, details.learn-more ol { padding-left:1.2rem; margin:.45rem 0; }
+  /* Checkpoints */
+  details.checkpoint { margin:1.1rem 0; padding:.55rem 1rem; border-left:4px solid #188a4c;
+                        background:#e9f5ee; border-radius:0 6px 6px 0; font-size:.92rem; }
+  details.checkpoint summary { cursor:pointer; color:#188a4c; font-weight:600; }
+  details.checkpoint summary:hover { text-decoration:underline; }
+  details.checkpoint[open] summary { margin-bottom:.4rem; }
+  details.checkpoint p { margin:.45rem 0; }
+
+  @media (min-width: 1440px) {
+    details.learn-more, details.checkpoint {
+      float:right; clear:right; margin:0 0 1rem 0;
+      box-shadow:0 1px 4px rgba(0,0,0,.10); font-size:.88rem; }
+    details.checkpoint { width:290px; margin-right:-308px; }
+    details.learn-more {
+      width:clamp(290px, calc(85vw - 880px), 560px);
+      margin-right:calc(-1 * clamp(290px, calc(85vw - 880px), 560px) - 18px); }
+  }
+
+  /* "Food for thought" blocks */
+  div.food-for-thought { margin:1.1rem 0; padding:.55rem 1rem; border-left:4px solid #c9a227;
+                     background:#fbf6e7; border-radius:0 6px 6px 0; }
+  div.food-for-thought p { margin:.45rem 0; }
+  div.food-for-thought ul { margin:.45rem 0; padding-left:1.2rem; }
+
+  /* Left-aligned text: fixed 15% left margin, right margin grows */
+  main { margin-left:15%; margin-right:auto; }
+
+  /* Fixed side navigation in the left column */
+  .section-nav { position:fixed; top:2rem; left:1.25rem; width:calc(15% - 2.5rem);
+                 max-height:calc(100vh - 4rem); overflow-y:auto; font-size:.82rem;
+                 line-height:1.25; padding-right:.3rem; }
+  .section-nav-title { font-weight:700; text-transform:uppercase; letter-spacing:.04em;
+                 font-size:.7rem; color:var(--muted); margin:0 0 .5rem .5rem; }
+  .section-nav a { display:block; padding:.22rem .5rem; color:var(--muted);
+                 text-decoration:none; border-left:2px solid transparent;
+                 border-radius:0 4px 4px 0; white-space:nowrap; overflow:hidden;
+                 text-overflow:ellipsis; }
+  .section-nav a:hover { color:#1f6fb4; background:#eef5fb; }
+  .section-nav a.active { color:#1f6fb4; border-left-color:#1f6fb4; background:#eef5fb;
+                 font-weight:600; }
+  @media (max-width:1439px) { .section-nav { display:none; } }
+
+  /* Title and subtitle */
+  h1 { margin-bottom:.25rem; }
+  p.subtitle { margin:0 0 1.6rem; font-size:1.2rem; color:var(--muted); font-weight:500; }
+
+  /* Heading anchor icon (GitHub style) */
+  a.headerlink { float:left; margin-left:-26px; padding-right:6px; line-height:1;
+                  color:var(--muted); opacity:0; text-decoration:none; }
+  a.headerlink svg { vertical-align:middle; }
+  h2:hover a.headerlink, a.headerlink:focus { opacity:1; }
+
+  /* Interactive annotated prompt (Step 5) */
+  .hint { color:var(--muted); font-size:.9rem; }
+  .hint mark { padding:0 .2em; }
+  mark { background:transparent; color:inherit; border-bottom:2px dotted var(--accent);
+         cursor:pointer; border-radius:3px; padding:0 1px; }
+  mark:hover, mark:focus-visible { background:#faf3f0; outline:none;
+         border-bottom-style:solid; }
+  dialog { background:var(--bg); color:var(--fg); border:1px solid var(--border);
+           border-radius:10px; max-width:34rem; width:calc(100vw - 3rem);
+           padding:1.25rem 1.5rem 1.5rem; box-shadow:0 12px 32px rgba(0,0,0,.25); }
+  dialog::backdrop { background:rgba(0,0,0,.45); }
+  .tip-head { display:flex; align-items:center; gap:.5rem; margin-bottom:.75rem; }
+  .badge { display:inline-block; background:#faf3f0; color:var(--accent);
+           border-radius:2em; padding:.1em .7em; font-size:.8rem; font-weight:600;
+           white-space:nowrap; }
+  #tip-close { margin-left:auto; background:none; border:none; color:var(--muted);
+               font-size:1.3rem; line-height:1; cursor:pointer; padding:.2rem .4rem;
+               border-radius:6px; }
+  #tip-close:hover { color:var(--fg); background:var(--code-bg); }
+  #tip-title { margin:0 0 .5rem; font-size:1.1rem; }
+  #tip-body { margin:0 0 .75rem; }
+  #tip-src { margin:0; font-size:.85rem; color:var(--muted); }
+
+  /* Task graph (Step 5) */
+  .svg-wrap { overflow-x:auto; border:1px solid var(--border); border-radius:8px;
+              background:var(--code-bg); padding:.75rem; }
+  .svg-wrap svg { display:block; min-width:900px; width:100%; height:auto; color:var(--fg); }
+  .node { fill:var(--bg); stroke:var(--border); rx:8; }
+  .node-gate { fill:var(--gate-bg); stroke:var(--gate); rx:8; }
+  .edge { stroke:var(--muted); fill:none; stroke-width:1.5; }
+  .edge-loop { stroke:var(--gate); fill:none; stroke-width:1.5; stroke-dasharray:5 4; }
+  .lbl { font:12.5px ui-monospace,Menlo,Consolas,monospace; fill:currentColor; }
+  .lbl-loop { font:11.5px -apple-system,sans-serif; fill:var(--gate); }
+</style>
+</head>
+<body>
+<main>
+<h1>The Hello World Ladder</h1>
+<p class="subtitle">One task, five prompts — Participant guide</p>
+
+<p>In this exercise you will build the <strong>same thing five times</strong>: a "hello
+world" page in HTML. What changes at each step is not the task but <strong>how you
+ask for it</strong> — from the laziest possible one-liner to a prompt engineered with
+evidence-backed best practices. Because the task is constant, every difference
+you see in the output is caused by the prompt. That's the whole lesson.</p>
+<p><strong>What you will do:</strong></p>
+<ol>
+<li>Fire a <strong>naive one-shot prompt</strong> and inspect what the agent decides on
+   your behalf.</li>
+<li>Run the <strong>same prompt in Plan mode</strong> and see what a planning step alone
+   buys you.</li>
+<li>Use a <strong>structured prompt written by a human</strong>, with rules for the plan.</li>
+<li>Ask the agent to <strong>rewrite that prompt itself</strong> (meta-prompting), then run
+   the improved version.</li>
+<li>Optimize the prompt with a <strong>machine-readable spec of best practices</strong>
+   and compare the result against every previous step.</li>
+</ol>
+<p><strong>Table of contents:</strong></p>
+<ol>
+<li><a href="#how-to-use">How to use this guide</a></li>
+<li><a href="#step-1">Step 1 — Naive lazy one-shot</a></li>
+<li><a href="#step-2">Step 2 — Same prompt, Plan mode</a></li>
+<li><a href="#step-3">Step 3 — Human structured plan-based prompt</a></li>
+<li><a href="#step-4">Step 4 — Meta-prompted</a></li>
+<li><a href="#step-5">Step 5 — Meta-prompted with rules</a></li>
+<li><a href="#closing">Closing — Compare the five results</a></li>
+<li><a href="#troubleshooting">If something breaks</a></li>
+</ol>
+
+<p><a id="how-to-use"></a></p>
+<h2>How to use this guide</h2>
+<ul>
+<li><strong>Code blocks</strong> (gray background, fixed-width font) are <strong>prompts to
+  copy</strong> into the Copilot chat. Copy them as-is with the Copy button.</li>
+<li>Work in a <strong>fresh, empty folder per step</strong> (e.g. <code>step1/</code>, <code>step2/</code>…)
+  so the results don't contaminate each other and you can diff them at the end.</li>
+<li>Start a <strong>new chat session per step</strong> — otherwise the agent remembers the
+  previous step and the comparison is no longer fair.</li>
+<li>The <strong>blue collapsible boxes</strong> are <strong>optional</strong> extras explaining the
+  technique behind each step. The exercise works without opening them; if
+  you're curious, click and they expand (on wide screens, in the right
+  margin).</li>
+<li>The <strong>yellow boxes</strong> are questions to discuss — there is no single right
+  answer.</li>
+<li>After each step, fill in your row of the <a href="#closing">comparison table</a>
+  while the result is fresh.</li>
+</ul>
+
+<p><a id="step-1"></a></p>
+<h2>Step 1 — Naive lazy one-shot</h2>
+<p>This is the prompt most people write on day one. Paste it in <strong>agent mode</strong>
+(not Plan mode), press enter, and touch nothing until it finishes:</p>
+<pre class="prompt"><code>write a great hello world app in html</code></pre>
+<p>When it's done, <strong>check the result</strong>: open the HTML file in a browser and
+look at what you got. Then look at what you didn't get:</p>
+<ul>
+<li>Did the agent ask you a single question before building?</li>
+<li>What did "great" turn out to mean? Who decided that — you or the model?</li>
+<li>Does the file pull external resources (CDNs, fonts)? Would it work offline?</li>
+<li>Did anything verify that the page actually works?</li>
+</ul>
+<details class="learn-more">
+<summary>Why one-shot output is mediocre by design</summary>
+<p>Your prompt specified almost nothing, so the model filled every gap with
+the <em>statistically average</em> choice. Research identifies
+<strong>underspecification</strong> as a primary driver of output variance: the less you
+pin down, the more you get the average of the internet. "Great" is not a
+specification — it's an invitation for the model to pick the most common
+interpretation of great, which is, by definition, unremarkable.</p>
+</details>
+<div class="food-for-thought">
+<p><strong>Food for thought:</strong></p>
+<ul>
+<li>Count the decisions the agent made for you (colors, layout, interactivity,
+  file structure…). If this were production work, how many of those would you
+  have wanted to make yourself?</li>
+</ul>
+</div>
+
+<p><a id="step-2"></a></p>
+<h2>Step 2 — Same prompt, Plan mode</h2>
+<p>New folder, new chat. Switch the agent to <strong>Plan mode</strong> and paste the
+<strong>exact same prompt</strong>:</p>
+<pre class="prompt"><code>write a great hello world app in html</code></pre>
+<p>This time the agent must show you a plan before writing code. Your job:</p>
+<ol>
+<li><strong>Read the plan.</strong> All of it — this is the step most people skip.</li>
+<li><strong>Fix errors.</strong> Point out anything wrong, missing, or assumed. Reply in
+   chat with your corrections and watch the plan change.</li>
+<li><strong>Approve</strong> only when the plan says what you actually want, and let it
+   execute.</li>
+</ol>
+<p>The prompt is still lazy — but now there is a checkpoint between the request
+and the code, and you saw the agent's assumptions <em>before</em> they became files.</p>
+<details class="learn-more">
+<summary>What Plan mode actually changes</summary>
+<p>Plan mode splits one bundled job into two: <em>decide what to build</em>, then
+<em>build it</em>. This is the <strong>pipeline principle</strong> — one cognitive task per
+step. When a model plans and executes in a single pass, it commits to its
+first idea and rationalizes it while building. The split lets you inspect
+(and correct) the thinking before it hardens into code — the cheapest moment
+to fix anything.</p>
+</details>
+<div class="food-for-thought">
+<p><strong>Food for thought:</strong></p>
+<ul>
+<li>Compare the Step 1 and Step 2 results. Same prompt, same model — where did
+  the improvement come from?</li>
+<li>What assumptions survived into the plan that you only caught because you
+  read it?</li>
+</ul>
+</div>
+
+<p><a id="step-3"></a></p>
+<h2>Step 3 — Human structured plan-based prompt</h2>
+<p>New folder, new chat, <strong>Plan mode</strong>. Now use a prompt written by a human who
+has been burned before: it raises the bar ("epic", "memorable"), constrains the
+output (self-contained), and gives the plan itself rules — diagrams, tasks with
+dependencies, a verification gate, step-by-step commits, and mandatory
+questions:</p>
+<pre class="prompt"><code>create an epic "hello world" in html. It must be memorable, interactive, but formal and professional. Rich-content, self-contained.
+
+Follow these rules:
+
+- add the user's prompt to the plan, using markdown quote syntax &gt;. If there're plan corrections, and them as well
+- add diagrams to the plan: add mermaid diagrams to explain the architecture, user flow (sequence diagram), or any other information that is not obvious. DO NOT add mermaid diagrams to the final html.
+- add tasks with dependencies to the plan. Use your task/todo tracking tool
+- add verification gate to the plan: you must write validation tasks to confirm live if the result is correct. Use a heaful browser, I want to watch how you run these tests
+- commit the resulting files step by step in a brand-new local repo
+
+During the planning session, ask me anything you need to do a GREAT JOB. You can add follow-up questions if my answer is not clear or is inconsistent. Don't assume anything.</code></pre>
+<p>Then follow the same routine as Step 2: <strong>answer its questions, read the
+plan, fix errors, approve</strong> — and this time, watch the verification tasks run
+in the visible browser.</p>
+<details class="learn-more">
+<summary>What this prompt already does well — and where it's weak</summary>
+<p><strong>Well:</strong> it forces questions ("ask me anything… don't assume"), demands a
+verification step with observable evidence (headful browser), makes work
+traceable (quoted prompt, tasks with dependencies, atomic commits), and keeps
+diagrams where they belong (the plan, not the product).</p>
+<p><strong>Weak:</strong> "epic yet formal and professional" is a tension with no arbiter —
+who decides what qualifies? And most instructions are <strong>rules</strong>, not
+<strong>gates</strong>: "you must verify" has an opt-out path a model can rationalize
+("it clearly works, no need"). A gate would block progress until objective
+evidence exists. Keep this critique in mind — Steps 4 and 5 attack exactly
+these weaknesses.</p>
+</details>
+<div class="food-for-thought">
+<p><strong>Food for thought:</strong></p>
+<ul>
+<li>Which of the six rules changed the output most? Which changed it least?</li>
+<li>The prompt says "Don't assume anything." Did the agent still assume things?
+  How would you make that instruction impossible to ignore?</li>
+</ul>
+</div>
+
+<p><a id="step-4"></a></p>
+<h2>Step 4 — Meta-prompted</h2>
+<p>If prompts drive quality, why write them by hand? In this step the agent
+optimizes its <strong>own</strong> prompt. New chat (normal agent mode is fine for the
+rewrite). Paste this meta-prompt, which contains the Step 3 prompt inside:</p>
+<pre class="prompt"><code>You are an expert prompt engineer. Rewrite the prompt below to get the best possible result from an AI coding agent working in Plan mode. You may restructure it completely, but keep every requirement it contains. Return ONLY the rewritten prompt, ready to paste.
+
+--- PROMPT TO REWRITE ---
+create an epic "hello world" in html. It must be memorable, interactive, but formal and professional. Rich-content, self-contained.
+
+Follow these rules:
+
+- add the user's prompt to the plan, using markdown quote syntax &gt;. If there're plan corrections, and them as well
+- add diagrams to the plan: add mermaid diagrams to explain the architecture, user flow (sequence diagram), or any other information that is not obvious. DO NOT add mermaid diagrams to the final html.
+- add tasks with dependencies to the plan. Use your task/todo tracking tool
+- add verification gate to the plan: you must write validation tasks to confirm live if the result is correct. Use a heaful browser, I want to watch how you run these tests
+- commit the resulting files step by step in a brand-new local repo
+
+During the planning session, ask me anything you need to do a GREAT JOB. You can add follow-up questions if my answer is not clear or is inconsistent. Don't assume anything.</code></pre>
+<p>Read the rewritten prompt the agent gives you. Then: new folder, new chat,
+<strong>Plan mode</strong>, paste the <strong>agent-optimized prompt</strong>, and follow the usual
+routine — questions, read, fix, approve.</p>
+<details class="learn-more">
+<summary>What meta-prompting can and cannot do</summary>
+<p>The model has read millions of prompts and knows the folk wisdom: structure,
+explicit constraints, roles, numbered phases. Expect the rewrite to be tidier
+and more complete than the human version.</p>
+<p>But it optimizes from <em>intuition</em>, not <em>evidence</em>. It typically won't know
+that commitment-first raises compliance measurably, that exactly one emotional
+stimulus helps but stacked ones don't, that chain-of-thought <em>hurts</em> certain
+task types, or that a rule only becomes reliable when converted into a gate
+with artifact evidence. Intuition gets you a better prompt; evidence gets you
+a different <em>class</em> of prompt. That gap is Step 5.</p>
+</details>
+<div class="food-for-thought">
+<p><strong>Food for thought:</strong></p>
+<ul>
+<li>Diff the agent's rewrite against the Step 3 original. What did it add on
+  its own? Did it drop or weaken any of your six rules?</li>
+<li>Would you have accepted this prompt from a colleague? What's still missing?</li>
+</ul>
+</div>
+
+<p><a id="step-5"></a></p>
+<h2>Step 5 — Meta-prompted with rules</h2>
+<p>Same idea as Step 4, with one decisive change: instead of letting the agent
+improvise from intuition, you hand it a <strong>machine-readable optimization spec</strong>
+— <a href="prompt-optimization-context.md"><code>prompt-optimization-context.md</code></a> — where every practice is a numbered
+section (S1–S9) backed by a verified reference [Rn]. The agent must follow the
+spec's process: apply the sections in order, respect the caveats, and pass the
+final emission checklist before it is allowed to output anything.</p>
+<p>New chat. Attach <a href="prompt-optimization-context.md"><code>prompt-optimization-context.md</code></a> to the context and paste:</p>
+<pre class="prompt"><code>Optimize the prompt below by following the process encoded in @file:prompt-optimization-context.md — apply sections S1 through S9 IN ORDER, respect every CAVEAT, and emit only after every box in the §S9 emission gate is checked. Return ONLY the optimized prompt, ready to paste into a coding agent in Plan mode.
+
+--- PROMPT TO OPTIMIZE ---
+create an epic "hello world" in html. It must be memorable, interactive, but formal and professional. Rich-content, self-contained.
+
+Follow these rules:
+
+- add the user's prompt to the plan, using markdown quote syntax &gt;. If there're plan corrections, and them as well
+- add diagrams to the plan: add mermaid diagrams to explain the architecture, user flow (sequence diagram), or any other information that is not obvious. DO NOT add mermaid diagrams to the final html.
+- add tasks with dependencies to the plan. Use your task/todo tracking tool
+- add verification gate to the plan: you must write validation tasks to confirm live if the result is correct. Use a heaful browser, I want to watch how you run these tests
+- commit the resulting files step by step in a brand-new local repo
+
+During the planning session, ask me anything you need to do a GREAT JOB. You can add follow-up questions if my answer is not clear or is inconsistent. Don't assume anything.</code></pre>
+<p>Then, as always: new folder, new chat, <strong>Plan mode</strong>, paste the optimized
+prompt, answer its questions, read the plan, fix, approve — and watch the
+verification gate run.</p>
+<h3>What a spec-optimized prompt looks like</h3>
+<p>Below is the prompt this process produced when we ran it. Compare it with
+what your run generates — the wording will differ, the structure shouldn't.</p>
+<p class="hint">💡 Every <mark tabindex="-1">dotted-underlined passage</mark> is clickable — it opens a popup naming the practice, the mechanism, and the measured evidence behind it.</p>
+<pre class="prompt"><code id="prompt-src">ROLE: <mark data-t="role" tabindex="0" role="button">You are a senior creative technologist and front-end engineer known for award-winning single-page experiences.</mark> <mark data-t="emotion" tabindex="0" role="button">This page opens a live corporate training session, so a memorable first load is critical.</mark>
+
+<mark data-t="position" tabindex="0" role="button">REFERENCE — original request:
+&gt; create an epic "hello world" in html. It must be memorable, interactive,
+&gt; but formal and professional. Rich-content, self-contained.</mark>
+
+CONSTRAINTS:
+- One self-contained .html file: inline CSS/JS, zero external dependencies. Must render identically offline.
+- Formal, professional aesthetic: restrained palette, strong typographic hierarchy. Memorable through craft and motion, not gimmicks.
+- <mark data-t="domain" tabindex="0" role="button">Semantic HTML5, WCAG 2.1 AA contrast, prefers-reduced-motion respected, responsive 360px→4K</mark>, zero console errors or warnings.
+
+<mark data-t="pipeline" tabindex="0" role="button">PROCESS — execute phases in order; do not skip ahead:</mark>
+Phase 1 · CRITERIA: <mark data-t="commitment" tabindex="0" role="button">State the criteria an excellent result must meet across memorability, interactivity, professionalism, technical quality. Every later phase is judged against these.</mark>
+Phase 2 · CONCEPTS: <mark data-t="tot" tabindex="0" role="button">Generate 3 distinct design concepts. Evaluate each against the Phase 1 criteria. Select the strongest; justify the choice.</mark>
+Phase 3 · ANTI-VERSION: <mark data-t="worst" tabindex="0" role="button">List the flaws of the worst plausible "hello world" (clichés, gimmicks, accessibility failures). The final page must avoid every listed flaw.</mark>
+Phase 4 · BUILD: Implement the selected concept <mark data-t="charged" tabindex="0" role="button">thoroughly and in great detail</mark>.
+Phase 5 · VERIFY (gate): <mark data-t="gates" tabindex="0" role="button">Open the page in a headful browser → exercise every interactive element → capture screenshot + console output → gate clears only when the screenshot shows the rendered page AND the console shows zero errors/warnings. Not cleared → fix and re-run; do not proceed.</mark>
+Phase 6 · REVIEW: <mark data-t="adversarial" tabindex="0" role="button">Review the page with fresh eyes, as a reviewer who did not build it.</mark> <mark data-t="evidence" tabindex="0" role="button">List concrete weaknesses vs Phase 1 criteria — a weakness without a specific element reference doesn't count.</mark> Fix each; re-run Phase 5.
+
+<mark data-t="slowdown" tabindex="0" role="button">You have unlimited time and resources; optimize for craft and completeness, not speed.</mark></code></pre>
+<h3>Task graph — dependencies and the gate loop</h3>
+<p>This is the shape of the plan that prompt produces. <mark data-t="deps" tabindex="0" role="button">Each task is one cognitive job with explicit blockers</mark>; the orange node is the
+<mark data-t="gates" tabindex="0" role="button">verification gate</mark> — dashed orange edges are the fail-and-fix loop
+(<mark data-t="selfrefine" tabindex="0" role="button">draft → critique → revise, repeated until the gate clears</mark>).</p>
+<div class="svg-wrap">
+  <svg viewBox="0 0 1290 260" role="img" aria-label="Task dependency graph: T1 init leads to T2 design and T4 playwright; T2 to T3 build; T3 and T4 to T5 tests; T5 to gate T6; T6 to T7 review; T7 to T8 evidence. Dashed loop from gate back to fixes.">
+    <defs>
+      <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="currentColor" opacity=".65"/>
+      </marker>
+    </defs>
+    <rect class="node" x="10"  y="100" width="120" height="44"/>
+    <text class="lbl" x="70"  y="126" text-anchor="middle">#1 init repo</text>
+    <rect class="node" x="185" y="30"  width="165" height="44"/>
+    <text class="lbl" x="267" y="50" text-anchor="middle">#2 criteria · concepts</text>
+    <text class="lbl" x="267" y="66" text-anchor="middle">· anti-version</text>
+    <rect class="node" x="185" y="170" width="165" height="44"/>
+    <text class="lbl" x="267" y="196" text-anchor="middle">#4 playwright setup</text>
+    <rect class="node" x="405" y="30"  width="140" height="44"/>
+    <text class="lbl" x="475" y="56" text-anchor="middle">#3 build page</text>
+    <rect class="node" x="600" y="100" width="150" height="44"/>
+    <text class="lbl" x="675" y="126" text-anchor="middle">#5 verif. tests</text>
+    <rect class="node-gate" x="805" y="100" width="140" height="44"/>
+    <text class="lbl" x="875" y="120" text-anchor="middle">#6 GATE</text>
+    <text class="lbl" x="875" y="136" text-anchor="middle">headed run</text>
+    <rect class="node" x="1000" y="100" width="130" height="44"/>
+    <text class="lbl" x="1065" y="120" text-anchor="middle">#7 fresh-eyes</text>
+    <text class="lbl" x="1065" y="136" text-anchor="middle">review</text>
+    <rect class="node" x="1175" y="100" width="105" height="44"/>
+    <text class="lbl" x="1227" y="120" text-anchor="middle">#8 evidence</text>
+    <text class="lbl" x="1227" y="136" text-anchor="middle">commit</text>
+    <path class="edge" d="M130,112 C160,100 160,70 185,58" marker-end="url(#arr)"/>
+    <path class="edge" d="M130,132 C160,145 160,175 185,186" marker-end="url(#arr)"/>
+    <path class="edge" d="M350,52 L405,52" marker-end="url(#arr)"/>
+    <path class="edge" d="M545,52 C575,60 575,100 600,110" marker-end="url(#arr)"/>
+    <path class="edge" d="M350,192 C480,192 540,150 600,132" marker-end="url(#arr)"/>
+    <path class="edge" d="M750,122 L805,122" marker-end="url(#arr)"/>
+    <path class="edge" d="M945,122 L1000,122" marker-end="url(#arr)"/>
+    <path class="edge" d="M1130,122 L1175,122" marker-end="url(#arr)"/>
+    <path class="edge-loop" d="M860,144 C830,200 720,200 685,148" marker-end="url(#arr)"/>
+    <text class="lbl-loop" x="775" y="215" text-anchor="middle">not cleared → fix → re-run</text>
+    <path class="edge-loop" d="M1050,100 C1020,55 930,60 890,96" marker-end="url(#arr)"/>
+    <text class="lbl-loop" x="968" y="62" text-anchor="middle">weaknesses fixed → re-gate</text>
+  </svg>
+</div>
+<details class="learn-more">
+<summary>Why a spec beats intuition</summary>
+<p>The spec encodes what the research actually measured, including the
+counter-intuitive parts a meta-prompt won't guess: stating criteria <em>before</em>
+producing (commitment, the strongest compliance lever measured), exactly one
+emotional-stakes sentence (stacking adds nothing), no chain-of-thought on
+aesthetic judgment (it measurably hurts), reference material at the top and
+instructions at the end (mid-context content gets lost), and every rule
+converted into a gate that demands an artifact — a screenshot, a console log,
+a count — never a self-assessment.</p>
+<p>It also encodes <strong>anti-patterns</strong>: things a well-meaning optimizer would add
+that make prompts worse. Constraints are as valuable as techniques.</p>
+</details>
+<div class="food-for-thought">
+<p><strong>Food for thought:</strong></p>
+<ul>
+<li>Diff your Step 5 prompt against your Step 4 prompt. Which differences came
+  from evidence the model couldn't have intuited?</li>
+<li>The spec forbids some things (CoT on intuitive tasks, stacked emotional
+  stimuli, decorative personas). Did your Step 4 rewrite commit any of these
+  anti-patterns?</li>
+</ul>
+</div>
+
+<p><a id="closing"></a></p>
+<h2>Closing — Compare the five results</h2>
+<p>Open the five HTML files side by side, then fill in the table honestly:</p>
+<table>
+<thead>
+<tr>
+<th>Criterion</th>
+<th>Step 1</th>
+<th>Step 2</th>
+<th>Step 3</th>
+<th>Step 4</th>
+<th>Step 5</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>Did the agent ask questions before building?</td><td>☐</td><td>☐</td><td>☐</td><td>☐</td><td>☐</td></tr>
+<tr><td>Interactive elements present — and do they actually work?</td><td>☐</td><td>☐</td><td>☐</td><td>☐</td><td>☐</td></tr>
+<tr><td>Zero console errors/warnings in the browser?</td><td>☐</td><td>☐</td><td>☐</td><td>☐</td><td>☐</td></tr>
+<tr><td>Explicit quality criteria or anti-goals stated before building?</td><td>☐</td><td>☐</td><td>☐</td><td>☐</td><td>☐</td></tr>
+<tr><td>Truly self-contained (works offline, zero external requests)?</td><td>☐</td><td>☐</td><td>☐</td><td>☐</td><td>☐</td></tr>
+<tr><td>Was the result verified with observable evidence?</td><td>☐</td><td>☐</td><td>☐</td><td>☐</td><td>☐</td></tr>
+<tr><td>Auditable history (plan, tasks, atomic commits)?</td><td>☐</td><td>☐</td><td>☐</td><td>☐</td><td>☐</td></tr>
+<tr><td>How many corrections did the plan need from you?</td><td>—</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+</tbody>
+</table>
+<div class="food-for-thought">
+<p><strong>Food for thought:</strong></p>
+<ul>
+<li>Which single step produced the biggest quality jump for the effort it cost?</li>
+<li>Steps 4 and 5 took longer than Step 1. For what kind of real work is that
+  investment obviously worth it — and when is Step 1 actually the right call?</li>
+<li>The prompt improved five times, but <em>your</em> role changed too: from consumer
+  of output to reviewer of plans. Which change mattered more?</li>
+</ul>
+</div>
+
+<p><a id="troubleshooting"></a></p>
+<h2>If something breaks</h2>
+<ul>
+<li><strong>No Plan mode in your Copilot</strong> → update the extension; if it's still
+  missing, prepend "First present a detailed plan and WAIT for my explicit
+  approval before writing any file" to the prompt — a manual plan gate.</li>
+<li><strong>The agent skips its questions and starts planning</strong> → interrupt and
+  reply: "You skipped the questions. Ask them first." It complies.</li>
+<li><strong>The headful browser never appears</strong> (Step 3 onward) → the agent probably
+  lacks a browser tool (e.g. the Playwright MCP server). Ask it: "What tool
+  will you use to open a visible browser? If none, say so in the plan."</li>
+<li><strong>Step 5: the agent ignores the spec file</strong> → verify the file is really
+  attached to the chat context (the <code>@file:</code> reference must resolve); if in
+  doubt, paste the spec's content directly into the chat before the prompt.</li>
+<li><strong>Results look suspiciously similar between steps</strong> → you probably reused
+  a chat session or folder. Fresh chat, fresh folder, re-run.</li>
+<li>Golden rule: change <strong>one thing at a time</strong> — that's the whole point of
+  the ladder.</li>
+</ul>
+</main>
+
+<dialog id="tip">
+  <div class="tip-head">
+    <span class="badge" id="tip-badge"></span>
+    <button id="tip-close" aria-label="Close">✕</button>
+  </div>
+  <h4 id="tip-title"></h4>
+  <p id="tip-body"></p>
+  <p id="tip-src"></p>
+</dialog>
+
+<script>
+document.querySelectorAll('main pre').forEach(pre => {
+  const wrap = document.createElement('div');
+  wrap.className = 'codewrap';
+  pre.parentNode.insertBefore(wrap, pre);
+  wrap.appendChild(pre);
+  const btn = document.createElement('button');
+  btn.className = 'copy-btn';
+  btn.type = 'button';
+  btn.textContent = 'Copy';
+  wrap.appendChild(btn);
+  btn.addEventListener('click', async () => {
+    const text = (pre.querySelector('code') || pre).textContent;
+    try { await navigator.clipboard.writeText(text); }
+    catch {
+      const r = document.createRange(); r.selectNodeContents(pre);
+      const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+      document.execCommand('copy'); s.removeAllRanges();
+    }
+    btn.textContent = 'Copied!'; btn.classList.add('ok');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('ok'); }, 1500);
+  });
+});
+</script>
+<script>
+document.querySelectorAll("main h2").forEach(function (h) {
+  var prev = h.previousElementSibling, a = null;
+  if (prev) {
+    if (prev.tagName === "A" && prev.id) { a = prev; }
+    else if (prev.querySelector) { a = prev.querySelector("a[id]"); }
+  }
+  if (!a || !a.id) { return; }
+  var link = document.createElement("a");
+  link.className = "headerlink";
+  link.href = "#" + a.id;
+  link.setAttribute("aria-label", "Direct link to this section");
+  link.innerHTML = '<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>';
+  h.insertBefore(link, h.firstChild);
+});
+
+// Side navigation: fixed TOC generated from the page's h2 elements
+(function () {
+  var items = [];
+  document.querySelectorAll("main h2").forEach(function (h) {
+    var prev = h.previousElementSibling, a = null;
+    if (prev) {
+      if (prev.tagName === "A" && prev.id) { a = prev; }
+      else if (prev.querySelector) { a = prev.querySelector("a[id]"); }
+    }
+    if (!a || !a.id) { return; }
+    items.push({
+      heading: h,
+      id: a.id,
+      label: h.textContent.split(String.fromCharCode(0x2014))[0].trim()
+    });
+  });
+  if (!items.length) { return; }
+
+  var nav = document.createElement("nav");
+  nav.className = "section-nav";
+  nav.setAttribute("aria-label", "Guide sections");
+  var title = document.createElement("div");
+  title.className = "section-nav-title";
+  title.textContent = "Sections";
+  nav.appendChild(title);
+
+  var links = items.map(function (it) {
+    var link = document.createElement("a");
+    link.href = "#" + it.id;
+    link.textContent = it.label;
+    link.title = it.label;
+    nav.appendChild(link);
+    return link;
+  });
+  document.body.appendChild(nav);
+
+  function topOf(el) { return el.getBoundingClientRect().top + window.scrollY; }
+
+  function currentIndex() {
+    var y = window.scrollY + 120;
+    var idx = 0;
+    for (var i = 0; i < items.length; i++) {
+      if (topOf(items[i].heading) <= y) { idx = i; }
+    }
+    return idx;
+  }
+
+  function highlight() {
+    var i = currentIndex();
+    links.forEach(function (link, idx) { link.classList.toggle("active", idx === i); });
+  }
+  window.addEventListener("scroll", highlight, { passive: true });
+  window.addEventListener("resize", highlight, { passive: true });
+  highlight();
+})();
+</script>
+<script>
+  const TECH = {
+    role: {
+      badge: 'S4.1 · Info-bearing role',
+      title: 'A role that carries task information — nothing more',
+      body: 'Research shows generic personas ("you are a helpful assistant") do NOT improve objective-task accuracy and can degrade reasoning [R8]. This role survives the caveat because every word is task signal: "creative technologist" + "award-winning single-page experiences" anchors the quality bar and the artifact type. Decorative padding was deleted.',
+      src: { label: 'Zheng et al. — personas don’t help (arXiv 2311.10054)', url: 'https://arxiv.org/abs/2311.10054' }
+    },
+    emotion: {
+      badge: 'S4.5 · EmotionPrompt',
+      title: 'Exactly one stakes sentence',
+      body: 'Appending emotional stakes improved results +8% on Instruction Induction and up to +115% on BIG-Bench, with +19% truthfulness [R10]. The spec’s rule: exactly ONE stimulus — the study found stacking adds little or nothing. Here it is tied to a real consequence (a live training session), not invented drama.',
+      src: { label: 'Li et al. — EmotionPrompt (arXiv 2307.11760)', url: 'https://arxiv.org/abs/2307.11760' }
+    },
+    position: {
+      badge: 'S3.1 · Position (lost in the middle)',
+      title: 'Reference material at the top, instructions at the end',
+      body: 'Models retrieve best from the beginning and end of context, with a U-shaped loss in the middle [R4, TACL 2023]. The original request sits at the top as reference; the actionable process and final instruction close the prompt. Nothing critical is buried mid-context.',
+      src: { label: 'Liu et al. — Lost in the Middle (arXiv 2307.03172)', url: 'https://arxiv.org/abs/2307.03172' }
+    },
+    domain: {
+      badge: 'S8.2 · Canonical domain terms',
+      title: 'One acronym replaces a fuzzy paragraph',
+      body: 'WCAG 2.1 AA, prefers-reduced-motion, semantic HTML5 — each canonical term activates expert-dense training regions and is unambiguous. "Professional" as an adjective is unfalsifiable; "WCAG 2.1 AA contrast" is testable — which is what lets the verification gate assert it later.',
+      src: null
+    },
+    pipeline: {
+      badge: 'S1.2 · Pipeline',
+      title: 'One cognitive task per phase, no skipping',
+      body: 'When one pass must both generate and validate, it invents whatever makes validation pass. Separating phases removed hallucination pressure in the GiveWell pipeline: 15–30% → 84% useful output, zero fabricated citations [R1]. Here: concept, anti-version, build, verify, and review are sealed phases — the builder never grades its own homework in the same breath.',
+      src: { label: 'GiveWell red-team pipeline', url: 'https://tsondo.com/blog/give-well-red-team/' }
+    },
+    commitment: {
+      badge: 'S4.2 · Commitment (Cialdini)',
+      title: 'Criteria stated before any production',
+      body: 'Commitment was the strongest lever in the Wharton study: initial agreement took compliance from 19% to 100% (+81pts; overall 33% → 72% across 28,000 conversations) [R24]. Phase 1 extracts the standard BEFORE work begins; Phases 2–6 all judge against it. It also gives "epic yet formal" its missing arbiter: explicit written criteria.',
+      src: { label: 'Meincke et al. — Call Me A Jerk (SSRN)', url: 'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5357179' }
+    },
+    tot: {
+      badge: 'S6 · Tree of Thoughts',
+      title: 'Explore three paths, keep the strongest',
+      body: 'For wide solution spaces, generating multiple candidates, evaluating, and continuing from the best beats a single left-to-right pass (NeurIPS 2023) [R21]. Design is exactly such a space — the first idea is rarely the best. Three concepts scored against Phase-1 criteria replaces "whatever came to mind first".',
+      src: { label: 'Yao et al. — Tree of Thoughts (arXiv 2305.10601)', url: 'https://arxiv.org/abs/2305.10601' }
+    },
+    worst: {
+      badge: 'S4.4 · First worst, then best',
+      title: 'Name the failure before building the success',
+      body: 'Listing the worst plausible version converts implicit taste into explicit, named anti-goals (alert() popups, rainbow gradients, accessibility failures). The final page is then checked against concrete flaws instead of vaguely "being good" — error analysis done before generation, when it is cheapest.',
+      src: null
+    },
+    charged: {
+      badge: 'S8.1 · Charged tokens',
+      title: 'High-semantic-charge words steer attention',
+      body: 'Attention weights are computed over every token; strongly charged words ("thoroughly", "in great detail") receive higher weights and pull generation harder than neutral phrasing. Cheap to add, applied at the final wording pass — never as a substitute for structure.',
+      src: null
+    },
+    gates: {
+      badge: 'S2.2 · Gates, not rules',
+      title: 'Trigger → action → artifact → only then proceed',
+      body: 'A rule ("make sure it works") has an opt-out path the model rationalizes away; a gate blocks progress until an objective condition holds [R3]. The gate here demands artifacts a model cannot self-justify: a screenshot that exists, a console log showing zero errors, a request count of zero. "Did I verify?" is self-deception; "is the screenshot saved?" is a fact.',
+      src: { label: 'fsck.com — Rules and Gates', url: 'https://blog.fsck.com/2026/04/07/rules-and-gates/' }
+    },
+    adversarial: {
+      badge: 'S7.3 · Adversarial review',
+      title: 'Fresh eyes: the reviewer is not the author',
+      body: 'Self-review fails because finishing and fault-finding are conflicting goals — the model wants to be done. "Review as someone who did not build it" detaches the reviewer identity from the author identity and reliably surfaces real weaknesses [R28]. Written into the plan as a dedicated task, after the gate, before the final commit.',
+      src: { label: 'fsck.com — Adversarial Review', url: 'https://blog.fsck.com/2026/05/01/adversarial-review/' }
+    },
+    evidence: {
+      badge: 'S7.6 · Artifact evidence',
+      title: 'No artifact, no claim',
+      body: 'Every claim must attach an artifact: a review finding needs a specific element reference, verification needs screenshots and logs, delivery needs git log. This is the gate principle applied at claim granularity — it converts "trust me" into "check this", and makes the whole pipeline auditable after the fact.',
+      src: { label: 'fsck.com — Rules and Gates', url: 'https://blog.fsck.com/2026/04/07/rules-and-gates/' }
+    },
+    slowdown: {
+      badge: 'S4.3 · Effort frame',
+      title: 'Remove the learned time pressure',
+      body: 'LLMs trend toward acceptable-but-fast output — plausibly learned from hurried humans. Explicitly granting unlimited time and demanding completeness over speed counteracts it; the effect is strongest in planning and craft work, exactly this task’s shape.',
+      src: null
+    },
+    deps: {
+      badge: 'S2.1 · Single-task architecture',
+      title: 'Dependencies encode the pipeline',
+      body: 'Explicit blockers (#3 waits for #2; #5 waits for #3 AND #4) make phase order mechanical instead of aspirational — the tracker physically prevents building before design or testing before both artifacts exist. Parallelism appears only where genuinely independent (#2 design and #4 tooling both depend solely on #1).',
+      src: { label: 'GiveWell red-team pipeline', url: 'https://tsondo.com/blog/give-well-red-team/' }
+    },
+    selfrefine: {
+      badge: 'S7.2 · Self-Refine loop',
+      title: 'Draft → critique → revise, until the gate clears',
+      body: 'Iterating generate → self-feedback → refine improved outputs ~20% absolute on average across 7 tasks [R27]. The dashed loops in the graph ARE this recipe, with one upgrade: the loop’s exit condition is not the model’s satisfaction but the gate’s objective artifacts — refinement with a hard floor.',
+      src: { label: 'Madaan et al. — Self-Refine (arXiv 2303.17651)', url: 'https://arxiv.org/abs/2303.17651' }
+    }
+  };
+
+  const dlg = document.getElementById('tip');
+  const openTip = (key) => {
+    const t = TECH[key];
+    if (!t) return;
+    document.getElementById('tip-badge').textContent = t.badge;
+    document.getElementById('tip-title').textContent = t.title;
+    document.getElementById('tip-body').textContent = t.body;
+    const src = document.getElementById('tip-src');
+    src.innerHTML = t.src ? 'Source: <a href="' + t.src.url + '" target="_blank" rel="noopener">' + t.src.label + '</a>'
+                          : 'Source: prompt-optimization-context.md (attention-mechanism / process rationale)';
+    dlg.showModal();
+  };
+
+  document.querySelectorAll('mark[data-t]').forEach(m => {
+    m.addEventListener('click', () => openTip(m.dataset.t));
+    m.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openTip(m.dataset.t); }
+    });
+  });
+  document.getElementById('tip-close').addEventListener('click', () => dlg.close());
+  dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
+</script>
+</body>
+</html>
