@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Meet the agent — Diagram and ADR guide</title>
+<style>
+  :root { --bg:#fff; --fg:#1b1b1f; --muted:#5a5a66; --code-bg:#f4f4f7;
+           --border:#e2e2e8; --accent:#b4471f; --accent-fg:#fff; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg);
+          font:16px/1.65 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; }
+  main { max-width:820px; margin:0 auto; padding:2.5rem 1.25rem 5rem; }
+  h1,h2,h3 { line-height:1.25; }
+  h1 { font-size:1.9rem; }
+  h2 { margin-top:2.6rem; padding-top:1.2rem; border-top:1px solid var(--border); }
+  h3 { margin-top:1.8rem; }
+  a { color:var(--accent); }
+  hr { display:none; }
+  blockquote { margin:1rem 0; padding:.6rem 1rem; border-left:4px solid var(--accent);
+                background:#faf3f0; color:var(--fg); border-radius:0 6px 6px 0; }
+  blockquote p { margin:.4rem 0; }
+  code { background:var(--code-bg); padding:.12em .35em; border-radius:4px;
+          font:.88em ui-monospace,SFMono-Regular,Consolas,monospace; }
+  table { border-collapse:collapse; width:100%; margin:1.2rem 0; font-size:.93rem; }
+  th,td { border:1px solid var(--border); padding:.45rem .6rem; text-align:left;
+           vertical-align:top; }
+  th { background:var(--code-bg); }
+  .codewrap { position:relative; margin:1rem 0; }
+  .codewrap pre { margin:0; background:var(--code-bg); border:1px solid var(--border);
+                   border-radius:8px; padding:1rem 1rem; overflow:auto; }
+  .codewrap pre code { background:none; padding:0; font-size:.86rem; line-height:1.5;
+                        display:block; white-space:pre; }
+  .copy-btn { position:absolute; top:.5rem; right:.5rem; padding:.3rem .7rem;
+               font:.78rem/1 inherit; cursor:pointer; border:1px solid var(--border);
+               border-radius:6px; background:#fff; color:var(--muted); }
+  .copy-btn:hover { border-color:var(--accent); color:var(--accent); }
+  .copy-btn.ok { background:var(--accent); color:var(--accent-fg); border-color:var(--accent); }
+  @media (max-width:520px) { .copy-btn { position:static; display:inline-block;
+               margin:.4rem 0 0; } .codewrap { display:flex; flex-direction:column; } }
+
+  details.learn-more { margin:1.1rem 0; padding:.55rem 1rem; border-left:4px solid #1f6fb4;
+                       background:#eef5fb; border-radius:0 6px 6px 0; font-size:.92rem; }
+  details.learn-more summary { cursor:pointer; color:#1f6fb4; font-weight:600; }
+  details.learn-more summary:hover { text-decoration:underline; }
+  details.learn-more[open] summary { margin-bottom:.4rem; }
+  details.learn-more p { margin:.45rem 0; }
+  details.learn-more ul, details.learn-more ol { padding-left:1.2rem; margin:.45rem 0; }
+
+  @media (min-width: 1440px) {
+    details.learn-more {
+      float:right; clear:right; margin:0 0 1rem 0;
+      box-shadow:0 1px 4px rgba(0,0,0,.10); font-size:.88rem; }
+    details.learn-more {
+      width:clamp(290px, calc(85vw - 880px), 560px);
+      margin-right:calc(-1 * clamp(290px, calc(85vw - 880px), 560px) - 18px); }
+  }
+
+  div.food-for-thought { margin:1.1rem 0; padding:.55rem 1rem; border-left:4px solid #c9a227;
+                     background:#fbf6e7; border-radius:0 6px 6px 0; }
+  div.food-for-thought p { margin:.45rem 0; }
+  div.food-for-thought ul { margin:.45rem 0; padding-left:1.2rem; }
+
+  .artifact-list li { margin:.35rem 0; }
+  .deliverables li { margin:.3rem 0; }
+
+  main { margin-left:15%; margin-right:auto; }
+
+  .section-nav { position:fixed; top:2rem; left:1.25rem; width:calc(15% - 2.5rem);
+                 max-height:calc(100vh - 4rem); overflow-y:auto; font-size:.82rem;
+                 line-height:1.25; padding-right:.3rem; }
+  .section-nav-title { font-weight:700; text-transform:uppercase; letter-spacing:.04em;
+                 font-size:.7rem; color:var(--muted); margin:0 0 .5rem .5rem; }
+  .section-nav a { display:block; padding:.22rem .5rem; color:var(--muted);
+                 text-decoration:none; border-left:2px solid transparent;
+                 border-radius:0 4px 4px 0; white-space:nowrap; overflow:hidden;
+                 text-overflow:ellipsis; }
+  .section-nav a:hover { color:#1f6fb4; background:#eef5fb; }
+  .section-nav a.active { color:#1f6fb4; border-left-color:#1f6fb4; background:#eef5fb;
+                 font-weight:600; }
+  @media (max-width:1439px) { .section-nav { display:none; } }
+
+  h1 { margin-bottom:.25rem; }
+  p.subtitle { margin:0 0 1.6rem; font-size:1.2rem; color:var(--muted); font-weight:500; }
+
+  a.headerlink { float:left; margin-left:-26px; padding-right:6px; line-height:1;
+                  color:var(--muted); opacity:0; text-decoration:none; }
+  a.headerlink svg { vertical-align:middle; }
+  h2:hover a.headerlink, a.headerlink:focus { opacity:1; }
+</style>
+</head>
+<body>
+<main>
+<h1>Meet the agent: from a messy note to a diagram and an ADR</h1>
+<p class="subtitle">Participant guide — one folder, one note, two diagrams, one draft ADR</p>
+
+<p>This page converts the exercise brief and its sibling source files into a single self-contained guide. You will work from a messy meeting note about customer-data sync at NorthGrove Foods, use the ADR template in the same folder, and direct the agent to produce reviewed outputs without hand-writing diagram syntax or ADR structure yourself.</p>
+
+<p><strong>What you will produce:</strong></p>
+<ul class="deliverables">
+<li><code>summary.md</code> with facts and open questions separated cleanly</li>
+<li><code>diagrams.md</code> with a current-state context diagram and nightly-sync sequence diagram</li>
+<li><code>adr-001-customer-data-sync.md</code> drafted from the note and verified against the source</li>
+</ul>
+
+<p><strong>Table of contents:</strong></p>
+<ol>
+<li><a href="#setup">Setup</a></li>
+<li><a href="#materials">Source materials in this folder</a></li>
+<li><a href="#step-1">Step 1 — Summarize and question</a></li>
+<li><a href="#step-2">Step 2 — Create the diagrams</a></li>
+<li><a href="#step-3">Step 3 — Draft the ADR</a></li>
+<li><a href="#step-4">Step 4 — Verify before you trust</a></li>
+<li><a href="#done">Done criteria</a></li>
+<li><a href="#appendix">Appendix — Embedded source files</a></li>
+</ol>
+
+<p><a id="setup"></a></p>
+<h2>Setup</h2>
+<p>Open the folder in VS Code and switch Copilot Chat from <strong>Ask</strong> to <strong>Agent</strong>. This exercise assumes the working folder is the one containing <code>instructions.md</code>, <code>meeting-note.md</code>, and <code>adr-template.md</code>.</p>
+<div class="codewrap">
+<pre><code>Folder: day-1/exercise-meeting-notes
+Chat mode: Agent</code></pre>
+</div>
+
+<p><a id="materials"></a></p>
+<h2>Source materials in this folder</h2>
+<p>The exercise revolves around two inputs and one instruction file. Read them like an architect, not a stenographer: separate facts from opinions, tensions from decisions, and missing data from actual constraints.</p>
+<ul class="artifact-list">
+<li><strong><code>meeting-note.md</code></strong> — unreviewed notes from a discussion on synchronizing customer master data between CustomerHub, ERP EU, and ERP Americas</li>
+<li><strong><code>adr-template.md</code></strong> — the structure the draft ADR must follow, including status, context, decision, consequences, alternatives, and open questions</li>
+<li><strong><code>instructions.md</code></strong> — the original markdown brief now represented by this HTML page</li>
+</ul>
+
+<blockquote>
+<p><strong>What the note clearly contains:</strong> two ERP instances, a nightly CSV-over-SFTP sync, a recurring failure on the Americas load script, disagreement over required latency, three architecture options, a privacy concern, and two explicit follow-ups that were not completed.</p>
+</blockquote>
+
+<details class="learn-more">
+<summary>Why this is a good agent exercise</summary>
+<p>The note is messy on purpose. It contains contradictions, missing numbers, implied bias, and unfinished follow-ups. That forces you to direct the agent to distinguish supported claims from assumptions instead of treating generated text as ground truth.</p>
+</details>
+
+<p><a id="step-1"></a></p>
+<h2>Step 1 — Summarize and question</h2>
+<p>The first task is extraction, not interpretation. The summary must split the note into two buckets: facts that the note actually states, and unresolved items that somebody could act on.</p>
+
+<div class="codewrap">
+<pre><code>Read @file:meeting-note.md. Create summary.md with two sections:
+1. "What we know" — the facts stated in the note, as bullets.
+2. "Open questions" — everything unresolved, ambiguous, or promised
+   but not delivered, each as a question someone could act on.
+Do not invent information that is not in the note.</code></pre>
+</div>
+
+<div class="food-for-thought">
+<p><strong>Check yourself after the agent responds:</strong></p>
+<ul>
+<li>Did it capture the disagreement between Tomás and Rachel as unresolved, rather than choosing a winner?</li>
+<li>Did it keep the missing record counts as unknown instead of estimating them?</li>
+<li>Did it avoid turning "leaning iPaaS" into a final decision?</li>
+</ul>
+</div>
+
+<p><a id="step-2"></a></p>
+<h2>Step 2 — Create the diagrams</h2>
+<p>Now move from bullet facts to visual structure. The diagrams should show only systems that the meeting note actually names. The first is a current-state context view; the second traces the nightly sync and its failure point.</p>
+
+<div class="codewrap">
+<pre><code>From @file:meeting-note.md, create diagrams.md containing two Mermaid diagrams:
+1. A context diagram of the CURRENT state: systems involved and how
+   customer data flows between them today (include the failing parts).
+2. A sequence diagram of today's nightly sync, from CustomerHub to
+   both ERP systems, including the failure point on the Americas side.
+Only include systems actually named in the note. Add a one-line caption
+under each diagram.</code></pre>
+</div>
+
+<details class="learn-more">
+<summary>If Mermaid preview shows an error</summary>
+<p>Open <code>diagrams.md</code> in preview. If Mermaid fails to render, paste the exact error text back into the chat and ask the agent to fix only the diagram syntax. That keeps the repair narrow and fast.</p>
+</details>
+
+<div class="food-for-thought">
+<p><strong>What a good context diagram should reveal:</strong></p>
+<ul>
+<li>The current design is batch-oriented, not event-driven.</li>
+<li>ERP Americas has an unreliable downstream script and unclear ownership.</li>
+<li>The pain is not only technical failure but also stale data and reconciliation effort.</li>
+</ul>
+</div>
+
+<p><a id="step-3"></a></p>
+<h2>Step 3 — Draft the ADR</h2>
+<p>Use the note plus the provided template to draft the middleware decision record. The critical test here is status discipline: the note suggests a direction, but it does not show board approval or a final decision.</p>
+
+<div class="codewrap">
+<pre><code>Using @file:meeting-note.md and the structure in @file:adr-template.md, draft
+adr-001-customer-data-sync.md for the middleware decision (iPaaS vs
+point-to-point APIs vs event broker). Choose the Status honestly based
+on what the note actually says. Put anything unresolved into Open
+questions with an owner where the note names one.</code></pre>
+</div>
+
+<blockquote>
+<p><strong>Status sanity check:</strong> the note says the room is leaning toward iPaaS and that Devon should draft the decision properly for the architecture board. That supports <strong>Proposed</strong>, not <strong>Accepted</strong>, unless the agent can point to a stronger statement in the note.</p>
+</blockquote>
+
+<details class="learn-more">
+<summary>What belongs in the ADR and what does not</summary>
+<ul>
+<li>Include the conflicting latency expectations because they shape the decision.</li>
+<li>Include privacy follow-up as an open question because Legal raised it without specifics.</li>
+<li>Do not add implementation details that the note never mentions, such as exact products, queues, schemas, or SLAs.</li>
+</ul>
+</details>
+
+<p><a id="step-4"></a></p>
+<h2>Step 4 — Verify before you trust</h2>
+<p>This is the most important step in the exercise. Ask the agent to review its own output against the original note, identify unsupported claims, and then repair the files so every assertion is either sourced or explicitly marked as an assumption.</p>
+
+<div class="codewrap">
+<pre><code>Review @file:adr-001-customer-data-sync.md and @file:diagrams.md against
+@file:meeting-note.md. List every claim that is NOT directly supported by
+the note — invented details, opinions promoted to facts, or missing
+caveats. Then fix the files so every claim is either supported or
+clearly marked as an assumption.</code></pre>
+</div>
+
+<div class="food-for-thought">
+<p><strong>Typical hallucinations to look for:</strong></p>
+<ul>
+<li>Invented data volumes or change rates</li>
+<li>Assumed legal constraints beyond the note's brief warning</li>
+<li>An asserted decision in favor of iPaaS</li>
+<li>Named systems or teams not mentioned in the note</li>
+</ul>
+</div>
+
+<p><a id="done"></a></p>
+<h2>Done criteria</h2>
+<p>You are done when the generated files exist, the diagrams render, and the ADR plus diagrams survive a source-grounded review.</p>
+<table>
+<thead>
+<tr>
+<th>✔</th>
+<th>Item</th>
+<th>What to verify</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>☐</td>
+<td><code>summary.md</code></td>
+<td>Facts and open questions are separated cleanly</td>
+</tr>
+<tr>
+<td>☐</td>
+<td><code>diagrams.md</code></td>
+<td>Two Mermaid diagrams render and only use named systems</td>
+</tr>
+<tr>
+<td>☐</td>
+<td><code>adr-001-customer-data-sync.md</code></td>
+<td>Status is honest and unresolved items remain unresolved</td>
+</tr>
+<tr>
+<td>☐</td>
+<td>Verification pass</td>
+<td>Unsupported claims were listed and corrected</td>
+</tr>
+</tbody>
+</table>
+
+<details class="learn-more">
+<summary>Optional extension if you finish early</summary>
+<p>Ask the agent for a diagram of the proposed iPaaS option, clearly labeled as a proposal, or generate user stories grouped by persona from the note.</p>
+<div class="codewrap">
+<pre><code>Create a third Mermaid diagram in @file:diagrams.md that shows the PROPOSED
+iPaaS option as a future-state view. Label it clearly as proposal, not
+current state, and only include behaviors justified by @file:meeting-note.md.</code></pre>
+</div>
+</details>
+
+<p><a id="appendix"></a></p>
+<h2>Appendix — Embedded source files</h2>
+<p>This section makes the page self-contained by embedding the two sibling files the exercise depends on.</p>
+
+<h3>adr-template.md</h3>
+<div class="codewrap">
+<pre><code># ADR-NNN: &lt;short title of the decision&gt;
+
+**Status:** Proposed | Accepted | Superseded
+**Date:** &lt;YYYY-MM-DD&gt;
+**Deciders:** &lt;who is accountable for this decision&gt;
+
+## Context
+
+&lt;What situation forces this decision? Facts only — every statement here should be traceable to a source (meeting note, requirement, measurement). 3–6 sentences.&gt;
+
+## Decision
+
+&lt;The decision, stated in one or two sentences, active voice: "We will …". If not yet decided, state the leading option and keep Status = Proposed.&gt;
+
+## Consequences
+
+&lt;What becomes easier, what becomes harder, what new obligations appear (cost, operations, skills, vendor lock-in). Include negative consequences honestly.&gt;
+
+## Alternatives considered
+
+&lt;For each rejected option: one line on what it was and one line on why it lost.&gt;
+
+## Open questions
+
+&lt;Anything that must be answered before or shortly after this decision is final. Assign an owner where known.&gt;</code></pre>
+</div>
+
+<h3>meeting-note.md</h3>
+<div class="codewrap">
+<pre><code># Meeting notes — Customer data sync, ERP EU / ERP Americas (draft, unreviewed)
+
+**Date:** March 11 — **Taken by:** Jonas (sorry, typing fast, gaps everywhere)
+**Attendees:** Marta (EA), Priya (Data), Tomás (ERP EU), Rachel (ERP Americas), Devon (Integration), Karim (CRM), (Legal joined late, left early)
+
+---
+
+Context recap from Marta: NorthGrove Foods runs two ERP instances since the Meridian acquisition — **NG-ERP-EU** (S/4HANA, Frankfurt) and **NG-ERP-AM** (older ECC, hosted in Ohio, migration "someday"). Customer master data lives in **CustomerHub** (our CRM) but both ERPs keep their own copies. Same customer exists 2–3 times with different IDs. Finance reconciliation eats days every quarter close.
+
+Current state (Devon): nightly CSV export from CustomerHub → SFTP → custom load scripts on each ERP. The Americas load script fails "maybe once a week", nobody owns it since Stefan left. EU side mostly OK but 24h delay causes the credit-limit issue Tomás keeps raising.
+
+Tomás: sales orders get blocked on stale credit limits. For him **near real-time sync is a must**, said "if a customer is updated in CustomerHub, ERP should know within minutes."
+
+Rachel: pushed back — for Americas, **nightly batch is fine**, finance only needs it for month-end anyway. "Let's not gold-plate this." (Not resolved — parking lot.)
+
+Volume question came up — Karim didn't have numbers, said "it's a lot of records, especially after Meridian". **TODO: Karim to pull actual record counts and change rates.** (didn't happen yet)
+
+Options on the table (Devon whiteboarded, photo lost, from memory):
+
+1. **iPaaS** — use the integration platform we already license for the e-invoicing flows. Devon likes it: monitoring, retries, connectors for both SAP and CustomerHub out of the box. Concern: per-connection licensing cost, and the platform team is a bottleneck (6-week lead time for new flows??)
+2. **Point-to-point APIs** — CustomerHub webhooks calling ERP APIs directly. Cheapest to start, Tomás's team could build the EU side themselves. Marta worried this recreates the spaghetti we're trying to kill.
+3. **Event broker** — publish customer-changed events, both ERPs (and future consumers) subscribe. Priya's favorite, "aligns with the platform strategy". Nobody in the room has run one in production. Ops question totally open.
+
+Priya mentioned the **MDM tool her team is piloting** — might become the golden record for customers "eventually"?? Unclear if it's in scope for this. Marta: "don't couple this project to the pilot." Left it there.
+
+Legal (before dropping off): reminded everyone customer data is personal data, "there are rules about customer data crossing regions, check with privacy office before you move anything." No specifics given. **TODO: someone to follow up with privacy office** (no owner assigned…)
+
+Mood in the room: leaning iPaaS I think? Marta asked Devon to "sketch the decision properly" for the architecture board. **Next steps: Devon drafts decision doc, review in 2 weeks.** Rachel on PTO next week. [missed the last 5 min, hard stop]</code></pre>
+</div>
+</main>
+<script>
+document.querySelectorAll('.codewrap').forEach(function (wrap) {
+  var pre = wrap.querySelector('pre');
+  if (!pre || wrap.querySelector('.copy-btn')) { return; }
+  var btn = document.createElement('button');
+  btn.className = 'copy-btn';
+  btn.type = 'button';
+  btn.textContent = 'Copy';
+  wrap.appendChild(btn);
+  btn.addEventListener('click', async function () {
+    var text = (pre.querySelector('code') || pre).textContent;
+    try { await navigator.clipboard.writeText(text); }
+    catch (err) {
+      var range = document.createRange();
+      range.selectNodeContents(pre);
+      var selection = getSelection();
+      selection.removeAllRanges();
+      selection.addRange(range);
+      document.execCommand('copy');
+      selection.removeAllRanges();
+    }
+    btn.textContent = 'Copied!';
+    btn.classList.add('ok');
+    setTimeout(function () {
+      btn.textContent = 'Copy';
+      btn.classList.remove('ok');
+    }, 1500);
+  });
+});
+</script>
+<script>
+document.querySelectorAll('main h2').forEach(function (h) {
+  var prev = h.previousElementSibling, anchor = null;
+  if (prev) {
+    if (prev.tagName === 'A' && prev.id) { anchor = prev; }
+    else if (prev.querySelector) { anchor = prev.querySelector('a[id]'); }
+  }
+  if (!anchor || !anchor.id) { return; }
+  var link = document.createElement('a');
+  link.className = 'headerlink';
+  link.href = '#' + anchor.id;
+  link.setAttribute('aria-label', 'Direct link to this section');
+  link.innerHTML = '<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>';
+  h.insertBefore(link, h.firstChild);
+});
+
+(function () {
+  var items = [];
+  document.querySelectorAll('main h2').forEach(function (h) {
+    var prev = h.previousElementSibling, anchor = null;
+    if (prev) {
+      if (prev.tagName === 'A' && prev.id) { anchor = prev; }
+      else if (prev.querySelector) { anchor = prev.querySelector('a[id]'); }
+    }
+    if (!anchor || !anchor.id) { return; }
+    items.push({
+      heading: h,
+      id: anchor.id,
+      label: h.textContent.split(String.fromCharCode(0x2014))[0].trim()
+    });
+  });
+  if (!items.length) { return; }
+
+  var nav = document.createElement('nav');
+  nav.className = 'section-nav';
+  nav.setAttribute('aria-label', 'Guide sections');
+  var title = document.createElement('div');
+  title.className = 'section-nav-title';
+  title.textContent = 'Sections';
+  nav.appendChild(title);
+
+  var links = items.map(function (item) {
+    var link = document.createElement('a');
+    link.href = '#' + item.id;
+    link.textContent = item.label;
+    link.title = item.label;
+    nav.appendChild(link);
+    return link;
+  });
+  document.body.appendChild(nav);
+
+  function topOf(el) { return el.getBoundingClientRect().top + window.scrollY; }
+
+  function currentIndex() {
+    var y = window.scrollY + 120;
+    var idx = 0;
+    for (var i = 0; i < items.length; i++) {
+      if (topOf(items[i].heading) <= y) { idx = i; }
+    }
+    return idx;
+  }
+
+  function highlight() {
+    var idx = currentIndex();
+    links.forEach(function (link, i) {
+      link.classList.toggle('active', i === idx);
+    });
+  }
+
+  window.addEventListener('scroll', highlight, { passive: true });
+  window.addEventListener('resize', highlight, { passive: true });
+  highlight();
+})();
+</script>
+</body>
+</html>
