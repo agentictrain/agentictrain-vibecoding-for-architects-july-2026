@@ -1,0 +1,444 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spec-first mini-build: portfolio explorer</title>
+<style>
+  :root { --bg:#fff; --fg:#1b1b1f; --muted:#5a5a66; --code-bg:#f4f4f7;
+           --border:#e2e2e8; --accent:#b4471f; --accent-fg:#fff; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg);
+          font:16px/1.65 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; }
+  main { max-width:820px; margin:0 auto; padding:2.5rem 1.25rem 5rem; }
+  h1,h2,h3 { line-height:1.25; }
+  h1 { font-size:1.9rem; }
+  h2 { margin-top:2.6rem; padding-top:1.2rem; border-top:1px solid var(--border); }
+  h3 { margin-top:1.8rem; }
+  a { color:var(--accent); }
+  hr { display:none; }
+  blockquote { margin:1rem 0; padding:.6rem 1rem; border-left:4px solid var(--accent);
+                background:#faf3f0; color:var(--fg); border-radius:0 6px 6px 0; }
+  blockquote p { margin:.4rem 0; }
+  code { background:var(--code-bg); padding:.12em .35em; border-radius:4px;
+          font:.88em ui-monospace,SFMono-Regular,Consolas,monospace; }
+  table { border-collapse:collapse; width:100%; margin:1.2rem 0; font-size:.93rem; }
+  th,td { border:1px solid var(--border); padding:.45rem .6rem; text-align:left;
+           vertical-align:top; }
+  th { background:var(--code-bg); }
+  .codewrap { position:relative; margin:1rem 0; }
+  .codewrap pre { margin:0; background:var(--code-bg); border:1px solid var(--border);
+                   border-radius:8px; padding:1rem 1rem; overflow:auto; }
+  .codewrap pre code { background:none; padding:0; font-size:.86rem; line-height:1.5;
+                        display:block; white-space:pre; }
+  .copy-btn { position:absolute; top:.5rem; right:.5rem; padding:.3rem .7rem;
+               font:.78rem/1 inherit; cursor:pointer; border:1px solid var(--border);
+               border-radius:6px; background:#fff; color:var(--muted); }
+  .copy-btn:hover { border-color:var(--accent); color:var(--accent); }
+  .copy-btn.ok { background:var(--accent); color:var(--accent-fg); border-color:var(--accent); }
+  @media (max-width:520px) { .copy-btn { position:static; display:inline-block;
+               margin:.4rem 0 0; } .codewrap { display:flex; flex-direction:column; } }
+
+  details.learn-more { margin:1.1rem 0; padding:.55rem 1rem; border-left:4px solid #1f6fb4;
+                       background:#eef5fb; border-radius:0 6px 6px 0; font-size:.92rem; }
+  details.learn-more summary { cursor:pointer; color:#1f6fb4; font-weight:600; }
+  details.learn-more summary:hover { text-decoration:underline; }
+  details.learn-more[open] summary { margin-bottom:.4rem; }
+  details.learn-more p { margin:.45rem 0; }
+  details.learn-more ul, details.learn-more ol { padding-left:1.2rem; margin:.45rem 0; }
+
+  @media (min-width: 1440px) {
+    details.learn-more {
+      float:right; clear:right; margin:0 0 1rem 0;
+      box-shadow:0 1px 4px rgba(0,0,0,.10); font-size:.88rem; }
+    details.learn-more {
+      width:clamp(290px, calc(85vw - 880px), 560px);
+      margin-right:calc(-1 * clamp(290px, calc(85vw - 880px), 560px) - 18px); }
+  }
+
+  div.food-for-thought { margin:1.1rem 0; padding:.55rem 1rem; border-left:4px solid #c9a227;
+                     background:#fbf6e7; border-radius:0 6px 6px 0; }
+  div.food-for-thought p { margin:.45rem 0; }
+  div.food-for-thought ul { margin:.45rem 0; padding-left:1.2rem; }
+
+  .artifact-list li { margin:.35rem 0; }
+  .deliverables li { margin:.3rem 0; }
+
+  main { margin-left:15%; margin-right:auto; }
+
+  .section-nav { position:fixed; top:2rem; left:1.25rem; width:calc(15% - 2.5rem);
+                 max-height:calc(100vh - 4rem); overflow-y:auto; font-size:.82rem;
+                 line-height:1.25; padding-right:.3rem; }
+  .section-nav-title { font-weight:700; text-transform:uppercase; letter-spacing:.04em;
+                 font-size:.7rem; color:var(--muted); margin:0 0 .5rem .5rem; }
+  .section-nav a { display:block; padding:.22rem .5rem; color:var(--muted);
+                 text-decoration:none; border-left:2px solid transparent;
+                 border-radius:0 4px 4px 0; white-space:nowrap; overflow:hidden;
+                 text-overflow:ellipsis; }
+  .section-nav a:hover { color:#1f6fb4; background:#eef5fb; }
+  .section-nav a.active { color:#1f6fb4; border-left-color:#1f6fb4; background:#eef5fb;
+                 font-weight:600; }
+  @media (max-width:1439px) { .section-nav { display:none; } }
+
+  h1 { margin-bottom:.25rem; }
+  p.subtitle { margin:0 0 1.6rem; font-size:1.2rem; color:var(--muted); font-weight:500; }
+
+  a.headerlink { float:left; margin-left:-26px; padding-right:6px; line-height:1;
+                  color:var(--muted); opacity:0; text-decoration:none; }
+  a.headerlink svg { vertical-align:middle; }
+  h2:hover a.headerlink, a.headerlink:focus { opacity:1; }
+</style>
+</head>
+<body>
+<main>
+<h1>Spec-first mini-build: portfolio explorer</h1>
+<p class="subtitle">Participant guide — one CSV, one spec, one double-clickable page</p>
+
+<p>You have <a href="application-portfolio.csv"><code>application-portfolio.csv</code></a> — 40 fictional applications at NorthGrove Foods. You will build a web page your team could use to explore this portfolio, <strong>writing the spec first</strong> and letting Copilot build it. No code, no installation: the result is a single HTML file you open in your browser.</p>
+
+<p><strong>Done when you have:</strong></p>
+<ul class="deliverables">
+<li><code>spec-001.md</code> — one page: goal, features in scope, out of scope, 3 acceptance criteria — immutable once approved</li>
+<li><code>spec-002.md</code> — the Step 5 change, in its own spec file (later requirements never rewrite <code>spec-001.md</code>)</li>
+<li>A working double-clickable HTML page built exactly to those specs</li>
+<li>A git history with ≥2 commits made by the agent</li>
+</ul>
+
+<p><strong>Table of contents:</strong></p>
+<ol>
+<li><a href="#setup">Setup</a></li>
+<li><a href="#step-1">Step 1 — The interview</a></li>
+<li><a href="#step-2">Step 2 — Approve the spec</a></li>
+<li><a href="#step-3">Step 3 — Open and test</a></li>
+<li><a href="#step-4">Step 4 — Checkpoint with git</a></li>
+<li><a href="#step-5">Step 5 — One change, spec first</a></li>
+<li><a href="#done">Done criteria</a></li>
+<li><a href="#extra-step-1">Extra Step 1 — Data-quality check</a></li>
+<li><a href="#extra-step-2">Extra Step 2 — Keep the CSV as an external source</a></li>
+<li><a href="#appendix">Appendix — Embedded source file</a></li>
+</ol>
+
+<p><a id="setup"></a></p>
+<h2>Setup</h2>
+<p>Open this folder in VS Code, open Copilot Chat, and switch the mode to <strong>Agent</strong>. The working folder is the one containing <code>instructions.md</code> and <a href="application-portfolio.csv"><code>application-portfolio.csv</code></a>.</p>
+<div class="codewrap">
+<pre><code>Folder: day-1/exercise-portfolio-explorer
+Chat mode: Agent</code></pre>
+</div>
+
+<p><a id="step-1"></a></p>
+<h2>Step 1 — The interview</h2>
+<p>Do <strong>not</strong> describe the whole solution. Make the agent interview you:</p>
+
+<div class="codewrap">
+<pre><code>I want a single, self-contained HTML file (no server, no installation —
+I will double-click it in my file explorer) that lets my team explore
+the application portfolio in application-portfolio.csv.
+
+Before building anything, interview me: ask me up to 6 questions, one
+at a time, about what the page must show and do. Then write spec-001.md —
+one page: goal, features in scope, out of scope, and 3 acceptance
+criteria phrased as "I can …". Wait for my approval before building.</code></pre>
+</div>
+
+<p>Answer as the architect you are — think about who would use this page and for what (cost review? rationalization candidates? criticality overview?).</p>
+
+<blockquote>
+<p><strong>If the agent skips the interview and starts building, stop it:</strong> <em>"You skipped the interview. Ask your questions first."</em></p>
+</blockquote>
+
+<p><a id="step-2"></a></p>
+<h2>Step 2 — Approve the spec</h2>
+<p>Read <code>spec-001.md</code>. Cut anything you don't need (say so in chat — the agent updates the file). This review is the <strong>only</strong> time <code>spec-001.md</code> changes: once you approve it, it is immutable, and every later requirement will get its own numbered spec file. When it matches what you meant:</p>
+
+<div class="codewrap">
+<pre><code>Approved. Build it exactly to spec-001.md. Embed the CSV data inside the
+HTML file so it works with a double-click, offline. When done, tell me
+how to open it and check each acceptance criterion yourself.</code></pre>
+</div>
+
+<p><a id="step-3"></a></p>
+<h2>Step 3 — Open and test</h2>
+<p>Open the HTML file: right-click it in the VS Code Explorer → <em>Reveal in File Explorer / Finder</em> → double-click. Then test <strong>your</strong> three acceptance criteria yourself — don't take the agent's word for it. Finally, make the agent prove one number on the page. The prompt below uses the total annual cost; if you'd rather check a different number, ask about that one instead:</p>
+
+<div class="codewrap">
+<pre><code>Prove that the total annual cost shown on the page is correct by
+computing it directly from application-portfolio.csv and showing me
+the calculation.</code></pre>
+</div>
+
+<p><a id="step-4"></a></p>
+<h2>Step 4 — Checkpoint with git</h2>
+<p>You will never type a git command in this course — the agent drives:</p>
+
+<div class="codewrap">
+<pre><code>Initialize a git repository in this folder and commit everything with
+the message "checkpoint: first working version". Show me the result.</code></pre>
+</div>
+
+<blockquote>
+<p><strong>If it reports an identity error, tell it:</strong> <em>"Configure a local git user name and email for this repository first, then commit."</em></p>
+</blockquote>
+
+<p><a id="step-5"></a></p>
+<h2>Step 5 — One change, spec first</h2>
+<p>Pick one improvement (a filter, a chart, a sort). <code>spec-001.md</code> is approved and therefore frozen — the new requirement goes in its own file. <strong>First</strong> have the agent write <code>spec-002.md</code>, approve it, <strong>then</strong> build it. The prompt below uses a chart as the improvement — swap in a filter or a sort if that fits your page better:</p>
+
+<div class="codewrap">
+<pre><code>spec-001.md is approved and immutable — do not modify it. Write
+spec-002.md describing exactly one change on top of it: a bar chart
+of total annual cost per business domain. Show me spec-002.md and
+wait for my approval before building. Once I approve, implement
+exactly that change and commit with a message describing it.</code></pre>
+</div>
+
+<details class="learn-more">
+<summary>Why immutable specs?</summary>
+<p>The same reason ADRs are never rewritten: an approved spec is a record of what was agreed, and the numbered files on top of it are the change history. If <code>spec-001.md</code> kept absorbing every new idea, you could no longer tell what was originally approved, what changed, or in which commit. One file per requirement also gives the agent a small, unambiguous work order — "implement spec-002.md" is harder to misread than "implement the new parts of spec-001.md".</p>
+</details>
+
+<p><a id="done"></a></p>
+<h2>Done criteria</h2>
+<p>You are done when the approved spec is intact, the Step 5 change has its own spec file, the page works offline with a double-click, and the agent has made at least two commits.</p>
+<table>
+<thead>
+<tr>
+<th>✔</th>
+<th>Item</th>
+<th>What to verify</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>☐</td>
+<td><code>spec-001.md</code></td>
+<td>One page: goal, in scope, out of scope, 3 "I can …" acceptance criteria — unchanged since approval</td>
+</tr>
+<tr>
+<td>☐</td>
+<td><code>spec-002.md</code></td>
+<td>Describes the Step 5 change on its own; <code>spec-001.md</code> untouched</td>
+</tr>
+<tr>
+<td>☐</td>
+<td>HTML page</td>
+<td>Opens with a double-click, offline, and passes your 3 acceptance criteria</td>
+</tr>
+<tr>
+<td>☐</td>
+<td>Number check</td>
+<td>One number on the page verified against <a href="application-portfolio.csv"><code>application-portfolio.csv</code></a> by calculation</td>
+</tr>
+<tr>
+<td>☐</td>
+<td>Git history</td>
+<td>≥2 commits, both made by the agent</td>
+</tr>
+</tbody>
+</table>
+
+<p><a id="extra-step-1"></a></p>
+<h2>Extra Step 1 — Data-quality check (if you finish early)</h2>
+<div class="codewrap">
+<pre><code>Check the CSV for data-quality issues an architect would care about.</code></pre>
+</div>
+<p>There is at least one to find.</p>
+
+<div class="food-for-thought">
+<p><strong>Add a "rationalization view":</strong> apps that are <code>Retiring</code> <strong>or</strong> <code>Phase-out</code>, with their total annual cost — did your page treat those two values as the same thing?</p>
+</div>
+
+<p><a id="extra-step-2"></a></p>
+<h2>Extra Step 2 — Keep the CSV as an external source</h2>
+<p>The CSV gets updated weekly. With the data embedded, someone has to rebuild the page every week. Ask the agent to keep <a href="application-portfolio.csv"><code>application-portfolio.csv</code></a> as an external source instead — spec first, as always:</p>
+
+<div class="codewrap">
+<pre><code>The portfolio CSV is updated weekly, so embedding the data means
+rebuilding this page every week. Without modifying any existing spec
+file, write spec-003.md: the page must read application-portfolio.csv
+as an external file and parse it when the page loads. Show me
+spec-003.md and wait for my approval before building. Once I approve,
+implement it — and tell me honestly whether this will still work when
+I double-click the HTML file. If not, explain why and list my options.</code></pre>
+</div>
+
+<details class="learn-more">
+<summary>Spoiler — can the JS read the CSV when the page loads?</summary>
+<p>Not from a double-click. A page opened from the file system runs on the <code>file://</code> scheme, where browsers block <code>fetch()</code> and <code>XMLHttpRequest</code> to other local files for security reasons. The same page works fine when served over HTTP.</p>
+<p>So this is a requirements conflict, not a coding problem: "no server, double-click" and "always-fresh external data" cannot both hold. Typical options the agent should surface:</p>
+<ul>
+<li>Serve the folder over HTTP (a tiny local server, or host it on the intranet)</li>
+<li>Keep double-click and add a file picker or drag-and-drop so the user loads the weekly CSV manually</li>
+<li>Keep embedding and re-run the build prompt weekly</li>
+</ul>
+<p>Watch whether the agent tells you this <em>before</em> building or only after the page breaks — and notice that the resolution belongs in a spec file, not in the code.</p>
+</details>
+
+<div class="food-for-thought">
+<p><strong>If your page now shows an error like:</strong> <em>"Could not read application-portfolio.csv at page load. In some browsers, opening HTML with file:// blocks local CSV fetch for security reasons."</em></p>
+<p>The code is fine — the browser is refusing. Pages opened with a double-click run on the <code>file://</code> scheme, where JavaScript is blocked from reading other local files. In other words, <code>spec-003.md</code> ("read the CSV at page load") now conflicts with <code>spec-001.md</code> ("works with a double-click, offline") — and a spec conflict is resolved in the specs, not by patching code. Hand it back to the agent:</p>
+<div class="codewrap">
+<pre><code>The page shows this error: "Could not read application-portfolio.csv
+at page load. In some browsers, opening HTML with file:// blocks
+local CSV fetch for security reasons." Explain the cause, then list
+my options with their trade-offs. Do not modify any existing spec
+file. When I pick an option, write spec-004.md for it, show it to me,
+and wait for my approval before building.</code></pre>
+</div>
+</div>
+
+<p><a id="appendix"></a></p>
+<h2>Appendix — Embedded source file</h2>
+<p>This section makes the page self-contained by embedding <a href="application-portfolio.csv"><code>application-portfolio.csv</code></a>, the file the exercise depends on.</p>
+
+<h3><a href="application-portfolio.csv">application-portfolio.csv</a></h3>
+<div class="codewrap">
+<pre><code>name,business_domain,tech_stack,lifecycle_status,hosting,business_criticality,annual_cost_eur,owner_region
+NG-ERP-EU,Finance,SAP S/4HANA,Invest,Azure,High,2400000,EMEA
+NG-ERP-AM,Finance,SAP ECC,Retiring,On-prem,High,1850000,Americas
+CustomerHub,Sales &amp; Marketing,Salesforce,Invest,SaaS,High,980000,Global
+PlantFloor MES,Manufacturing,Java / Oracle,Maintain,On-prem,High,720000,EMEA
+RecipeVault,R&amp;D,.NET / SQL Server,Maintain,Azure,High,410000,Global
+ColdChain Monitor,Supply Chain,Python / TimescaleDB,Invest,AWS,High,350000,Global
+FreightFlow TMS,Supply Chain,BlueYonder,Maintain,SaaS,High,890000,Global
+WarehouseOS,Supply Chain,Java / PostgreSQL,Maintain,On-prem,High,640000,EMEA
+DemandCast,Supply Chain,Python / Databricks,Invest,Azure,Medium,530000,Global
+QualityGate LIMS,Quality,LabWare,Maintain,On-prem,High,470000,EMEA
+AuditTrail QMS,Quality,Veeva,Invest,SaaS,Medium,380000,Global
+PeopleFirst HCM,HR,Workday,Invest,SaaS,High,1100000,Global
+ShiftPlanner,HR,.NET / SQL Server,Retiring,On-prem,Medium,190000,Americas
+LearnHub,HR,Cornerstone,Maintain,SaaS,Low,150000,Global
+PayCore EU,HR,SAP HCM,Phase-out,On-prem,High,310000,EMEA
+TradeSpend Manager,Sales &amp; Marketing,Anaplan,Invest,SaaS,Medium,560000,Global
+PromoPlanner,Sales &amp; Marketing,PHP / MySQL,Retiring,On-prem,Medium,120000,Americas
+RetailEyes,Sales &amp; Marketing,React / Node.js,Invest,AWS,Medium,290000,APAC
+BrandAssets DAM,Sales &amp; Marketing,Bynder,Maintain,SaaS,Low,140000,Global
+eShop B2B,Sales &amp; Marketing,SAP Commerce,Maintain,Azure,High,750000,EMEA
+InvoiceRobot,Finance,UiPath,Maintain,Azure,Medium,210000,Global
+TreasuryDesk,Finance,Kyriba,Maintain,SaaS,High,430000,Global
+SpendControl,Finance,Coupa,Invest,SaaS,Medium,510000,Global
+TaxEngine,Finance,Vertex,Maintain,SaaS,High,340000,Americas
+LegacyGL Consolidator,Finance,Cobol / DB2,Phase-out,On-prem,Medium,260000,Americas
+SupplierPortal,Supply Chain,Java / Oracle,Retiring,On-prem,Medium,230000,EMEA
+SourceRight SRM,Supply Chain,SAP Ariba,Invest,SaaS,High,690000,Global
+BatchGenius Scheduler,Manufacturing,C# / SQL Server,Maintain,On-prem,Medium,180000,EMEA
+LineSight OEE,Manufacturing,Python / InfluxDB,Invest,Azure,Medium,270000,APAC
+MaintenancePro EAM,Manufacturing,IBM Maximo,Maintain,On-prem,High,520000,Global
+EnergyWatch,Manufacturing,Node.js / MongoDB,Invest,AWS,Low,130000,EMEA
+SensoryLab,R&amp;D,R / Shiny,Maintain,On-prem,Low,90000,EMEA
+NutriCalc,R&amp;D,.NET / SQL Server,Maintain,Azure,Medium,160000,Global
+PackDesign 3D,R&amp;D,Siemens NX,Maintain,On-prem,Medium,300000,EMEA
+RegDocs Manager,Quality,Documentum,Retiring,On-prem,Medium,240000,Global
+IntegrationHub iPaaS,IT,Boomi,Invest,SaaS,High,620000,Global
+IdentityGate IAM,IT,Okta,Invest,SaaS,High,450000,Global
+ServiceNow ITSM,IT,ServiceNow,Invest,SaaS,High,830000,Global
+DataLake Foundation,IT,Azure Synapse,Invest,Azure,High,970000,Global
+LegacyReports Portal,IT,Crystal Reports,Phase-out,On-prem,Low,80000,Americas</code></pre>
+</div>
+</main>
+<script>
+document.querySelectorAll('.codewrap').forEach(function (wrap) {
+  var pre = wrap.querySelector('pre');
+  if (!pre || wrap.querySelector('.copy-btn')) { return; }
+  var btn = document.createElement('button');
+  btn.className = 'copy-btn';
+  btn.type = 'button';
+  btn.textContent = 'Copy';
+  wrap.appendChild(btn);
+  btn.addEventListener('click', async function () {
+    var text = (pre.querySelector('code') || pre).textContent;
+    try { await navigator.clipboard.writeText(text); }
+    catch (err) {
+      var range = document.createRange();
+      range.selectNodeContents(pre);
+      var selection = getSelection();
+      selection.removeAllRanges();
+      selection.addRange(range);
+      document.execCommand('copy');
+      selection.removeAllRanges();
+    }
+    btn.textContent = 'Copied!';
+    btn.classList.add('ok');
+    setTimeout(function () {
+      btn.textContent = 'Copy';
+      btn.classList.remove('ok');
+    }, 1500);
+  });
+});
+</script>
+<script>
+document.querySelectorAll('main h2').forEach(function (h) {
+  var prev = h.previousElementSibling, anchor = null;
+  if (prev) {
+    if (prev.tagName === 'A' && prev.id) { anchor = prev; }
+    else if (prev.querySelector) { anchor = prev.querySelector('a[id]'); }
+  }
+  if (!anchor || !anchor.id) { return; }
+  var link = document.createElement('a');
+  link.className = 'headerlink';
+  link.href = '#' + anchor.id;
+  link.setAttribute('aria-label', 'Direct link to this section');
+  link.innerHTML = '<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>';
+  h.insertBefore(link, h.firstChild);
+});
+
+(function () {
+  var items = [];
+  document.querySelectorAll('main h2').forEach(function (h) {
+    var prev = h.previousElementSibling, anchor = null;
+    if (prev) {
+      if (prev.tagName === 'A' && prev.id) { anchor = prev; }
+      else if (prev.querySelector) { anchor = prev.querySelector('a[id]'); }
+    }
+    if (!anchor || !anchor.id) { return; }
+    items.push({
+      heading: h,
+      id: anchor.id,
+      label: h.textContent.split(String.fromCharCode(0x2014))[0].replace(/\([^)]*\)/g, '').trim()
+    });
+  });
+  if (!items.length) { return; }
+
+  var nav = document.createElement('nav');
+  nav.className = 'section-nav';
+  nav.setAttribute('aria-label', 'Guide sections');
+  var title = document.createElement('div');
+  title.className = 'section-nav-title';
+  title.textContent = 'Sections';
+  nav.appendChild(title);
+
+  var links = items.map(function (item) {
+    var link = document.createElement('a');
+    link.href = '#' + item.id;
+    link.textContent = item.label;
+    link.title = item.label;
+    nav.appendChild(link);
+    return link;
+  });
+  document.body.appendChild(nav);
+
+  function topOf(el) { return el.getBoundingClientRect().top + window.scrollY; }
+
+  function currentIndex() {
+    var y = window.scrollY + 120;
+    var idx = 0;
+    for (var i = 0; i < items.length; i++) {
+      if (topOf(items[i].heading) <= y) { idx = i; }
+    }
+    return idx;
+  }
+
+  function highlight() {
+    var idx = currentIndex();
+    links.forEach(function (link, i) {
+      link.classList.toggle('active', i === idx);
+    });
+  }
+
+  window.addEventListener('scroll', highlight, { passive: true });
+  window.addEventListener('resize', highlight, { passive: true });
+  highlight();
+})();
+</script>
+</body>
+</html>

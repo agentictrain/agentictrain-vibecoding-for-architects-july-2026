@@ -1,0 +1,41 @@
+name,business_domain,tech_stack,lifecycle_status,hosting,business_criticality,annual_cost_eur,owner_region
+NG-ERP-EU,Finance,SAP S/4HANA,Invest,Azure,High,2400000,EMEA
+NG-ERP-AM,Finance,SAP ECC,Retiring,On-prem,High,1850000,Americas
+CustomerHub,Sales & Marketing,Salesforce,Invest,SaaS,High,980000,Global
+PlantFloor MES,Manufacturing,Java / Oracle,Maintain,On-prem,High,720000,EMEA
+RecipeVault,R&D,.NET / SQL Server,Maintain,Azure,High,410000,Global
+ColdChain Monitor,Supply Chain,Python / TimescaleDB,Invest,AWS,High,350000,Global
+FreightFlow TMS,Supply Chain,BlueYonder,Maintain,SaaS,High,890000,Global
+WarehouseOS,Supply Chain,Java / PostgreSQL,Maintain,On-prem,High,640000,EMEA
+DemandCast,Supply Chain,Python / Databricks,Invest,Azure,Medium,530000,Global
+QualityGate LIMS,Quality,LabWare,Maintain,On-prem,High,470000,EMEA
+AuditTrail QMS,Quality,Veeva,Invest,SaaS,Medium,380000,Global
+PeopleFirst HCM,HR,Workday,Invest,SaaS,High,1100000,Global
+ShiftPlanner,HR,.NET / SQL Server,Retiring,On-prem,Medium,190000,Americas
+LearnHub,HR,Cornerstone,Maintain,SaaS,Low,150000,Global
+PayCore EU,HR,SAP HCM,Phase-out,On-prem,High,310000,EMEA
+TradeSpend Manager,Sales & Marketing,Anaplan,Invest,SaaS,Medium,560000,Global
+PromoPlanner,Sales & Marketing,PHP / MySQL,Retiring,On-prem,Medium,120000,Americas
+RetailEyes,Sales & Marketing,React / Node.js,Invest,AWS,Medium,290000,APAC
+BrandAssets DAM,Sales & Marketing,Bynder,Maintain,SaaS,Low,140000,Global
+eShop B2B,Sales & Marketing,SAP Commerce,Maintain,Azure,High,750000,EMEA
+InvoiceRobot,Finance,UiPath,Maintain,Azure,Medium,210000,Global
+TreasuryDesk,Finance,Kyriba,Maintain,SaaS,High,430000,Global
+SpendControl,Finance,Coupa,Invest,SaaS,Medium,510000,Global
+TaxEngine,Finance,Vertex,Maintain,SaaS,High,340000,Americas
+LegacyGL Consolidator,Finance,Cobol / DB2,Phase-out,On-prem,Medium,260000,Americas
+SupplierPortal,Supply Chain,Java / Oracle,Retiring,On-prem,Medium,230000,EMEA
+SourceRight SRM,Supply Chain,SAP Ariba,Invest,SaaS,High,690000,Global
+BatchGenius Scheduler,Manufacturing,C# / SQL Server,Maintain,On-prem,Medium,180000,EMEA
+LineSight OEE,Manufacturing,Python / InfluxDB,Invest,Azure,Medium,270000,APAC
+MaintenancePro EAM,Manufacturing,IBM Maximo,Maintain,On-prem,High,520000,Global
+EnergyWatch,Manufacturing,Node.js / MongoDB,Invest,AWS,Low,130000,EMEA
+SensoryLab,R&D,R / Shiny,Maintain,On-prem,Low,90000,EMEA
+NutriCalc,R&D,.NET / SQL Server,Maintain,Azure,Medium,160000,Global
+PackDesign 3D,R&D,Siemens NX,Maintain,On-prem,Medium,300000,EMEA
+RegDocs Manager,Quality,Documentum,Retiring,On-prem,Medium,240000,Global
+IntegrationHub iPaaS,IT,Boomi,Invest,SaaS,High,620000,Global
+IdentityGate IAM,IT,Okta,Invest,SaaS,High,450000,Global
+ServiceNow ITSM,IT,ServiceNow,Invest,SaaS,High,830000,Global
+DataLake Foundation,IT,Azure Synapse,Invest,Azure,High,970000,Global
+LegacyReports Portal,IT,Crystal Reports,Phase-out,On-prem,Low,80000,Americas
