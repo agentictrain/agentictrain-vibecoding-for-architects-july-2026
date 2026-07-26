@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Integration Architecture Copilot</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="styles.css">
+    <script src="weather-signal.js" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#controls">Skip to context and controls</a>
+    <main>
+      <header class="page-header">
+        <p class="eyebrow">Workshop proof of concept</p>
+        <h1>Integration Architecture Copilot</h1>
+        <p class="lede">
+          Build a safe city search, then fetch and map weather evidence into a
+          bounded WeatherSignal contract.
+        </p>
+        <p id="starter-status" class="status" role="status" aria-live="polite">
+          Preparing city search.
+        </p>
+      </header>
+      <section id="controls" aria-labelledby="controls-heading">
+        <div class="section-heading">
+          <p class="step">Region 1</p>
+          <h2 id="controls-heading">Context and controls</h2>
+        </div>
+        <p>
+          Search and select one public location, then fetch and inspect weather evidence.
+        </p>
+        <div class="control-grid">
+          <article class="panel panel-search" aria-labelledby="location-heading">
+            <h3 id="location-heading">1. Find a city</h3>
+            <div class="field">
+            <label for="location-query">Location</label>
+            <input
+              id="location-query"
+              name="location-query"
+              type="search"
+              autocomplete="off"
+              placeholder="Type at least 2 characters"
+              role="combobox"
+              aria-autocomplete="list"
+              aria-expanded="false"
+              aria-controls="location-suggestions"
+              aria-activedescendant=""
+            >
+            </div>
+            <p id="search-help" class="field-note">
+              Results include city, optional admin area, country, and timezone when available.
+            </p>
+            <div class="search-results-wrap">
+              <ul
+                id="location-suggestions"
+                class="search-results"
+                role="listbox"
+                aria-label="Location suggestions"
+              ></ul>
+            </div>
+            <p id="search-status" class="search-status" role="status" aria-live="polite">
+              Start typing to search for a location.
+            </p>
+            <div id="search-alert" class="search-alert" role="alert" hidden></div>
+            <div id="selected-location" class="selected-location" hidden></div>
+          </article>
+
+          <article class="panel panel-later" aria-labelledby="later-heading">
+            <h3 id="later-heading">2. Context choices</h3>
+            <p>Scenario and units are required context for workshop evidence and later advisory.</p>
+            <div class="field">
+              <label for="scenario">Fictional operational scenario</label>
+              <select id="scenario" name="scenario">
+                <option value="">Choose a scenario</option>
+                <option value="warehouse-planning">Fictional warehouse planning</option>
+                <option value="delivery-planning">Fictional delivery planning</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="unit-system">Unit system</label>
+              <select id="unit-system" name="unit-system">
+                <option value="metric" selected>Metric (degC, km/h, mm)</option>
+                <option value="imperial">Imperial (degF, mph, in)</option>
+              </select>
+            </div>
+          </article>
+        </div>
+        <div class="actions">
+          <button id="fetch-weather" type="button" disabled>Fetch weather</button>
+          <button type="button" disabled>Generate review</button>
+        </div>
+      </section>
+      <section id="evidence" aria-labelledby="evidence-heading">
+        <div class="section-heading">
+          <p class="step">Region 2</p>
+          <h2 id="evidence-heading">Weather evidence</h2>
+        </div>
+        <p id="weather-status" class="weather-status" role="status" aria-live="polite">
+          Select a location, then fetch weather.
+        </p>
+        <div id="weather-error" class="search-alert" role="alert" hidden></div>
+        <div id="weather-empty" class="weather-empty" hidden>
+          <p>No weather evidence yet. Select a location and choose Fetch weather.</p>
+        </div>
+        <div id="weather-loading" class="weather-loading" hidden>
+          <p>Loading live weather evidence for the selected location.</p>
+        </div>
+        <div id="weather-actions" class="weather-actions" hidden>
+          <button id="weather-retry" type="button">Retry live weather</button>
+        </div>
+        <div id="weather-success" class="weather-success" hidden>
+          <div id="fallback-banner" class="fallback-banner" hidden>
+            <p class="fallback-banner-title">Fictional fallback data</p>
+            <p id="fallback-banner-message"></p>
+            <p id="fallback-timezone-note"></p>
+          </div>
+          <article class="weather-card" aria-labelledby="weather-card-heading">
+            <h3 id="weather-card-heading">Readable weather signal</h3>
+            <div id="weather-readable"></div>
+          </article>
+          <article id="weather-advisory-area" class="weather-advisory-area" aria-labelledby="weather-advisory-heading">
+            <h3 id="weather-advisory-heading">Fictional workshop advisory</h3>
+            <p>Facilitator-approved rules are unavailable in this phase, so no weather-derived advisory is emitted.</p>
+          </article>
+          <details class="weather-json">
+            <summary id="weather-raw-summary">Raw Open-Meteo response</summary>
+            <pre id="weather-raw-json"></pre>
+          </details>
+          <details class="weather-json">
+            <summary>Mapped WeatherSignal object</summary>
+            <pre id="weather-mapped-json"></pre>
+          </details>
+        </div>
+      </section>
+      <section
+        id="review"
+        aria-labelledby="review-heading"
+      >
+        <div class="section-heading">
+          <p class="step">Region 3</p>
+          <h2 id="review-heading">Reserved for a future workshop phase</h2>
+        </div>
+        <p class="advisory">
+          This reserved region has no controls or hidden behavior in the weather-evidence MVP.
+        </p>
+      </section>
+    </main>
+  </body>
+</html>

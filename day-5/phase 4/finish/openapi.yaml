@@ -1,0 +1,261 @@
+# WeatherSignal API — OpenAPI 3.0 spec
+
+```yaml
+openapi: 3.0.3
+info:
+  title: WeatherSignal API
+  version: 1.0.0
+  description: |
+    Workshop PoC API spec generated from the WeatherSignal data mapping.
+    Advisory only — not an approved or production API.
+paths:
+  /weather:
+    get:
+      summary: Get weather signal for a location
+      parameters:
+        - name: latitude
+          in: query
+          required: true
+          schema:
+            type: number
+        - name: longitude
+          in: query
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: Weather signal for the requested location
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WeatherSignal"
+        "400":
+          description: Invalid coordinates
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: No weather data for the requested location
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "502":
+          description: Upstream weather provider unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  schemas:
+    WeatherSignal:
+      type: object
+      required:
+        - location
+        - latitude
+        - longitude
+        - timezone
+        - isFallback
+        - current
+        - hourly
+        - daily
+      properties:
+        location:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+        timezone:
+          type: string
+        isFallback:
+          type: boolean
+        current:
+          $ref: "#/components/schemas/Current"
+        hourly:
+          $ref: "#/components/schemas/Hourly"
+        daily:
+          $ref: "#/components/schemas/Daily"
+    Current:
+      type: object
+      required:
+        - temperature
+        - apparentTemperature
+        - humidity
+        - precipitation
+        - weatherCode
+        - windSpeed
+        - windDirection
+        - windGusts
+        - cloudCover
+        - pressure
+        - isDay
+      properties:
+        temperature:
+          type: number
+        apparentTemperature:
+          type: number
+        humidity:
+          type: number
+        precipitation:
+          type: number
+        weatherCode:
+          type: integer
+        windSpeed:
+          type: number
+        windDirection:
+          type: integer
+        windGusts:
+          type: number
+        cloudCover:
+          type: number
+        pressure:
+          type: number
+        isDay:
+          type: integer
+          enum: [0, 1]
+    Hourly:
+      type: object
+      required:
+        - time
+        - temperature
+        - precipitationProbability
+        - precipitation
+        - weatherCode
+        - windSpeed
+      properties:
+        time:
+          type: array
+          items:
+            type: string
+          minItems: 24
+          maxItems: 24
+        temperature:
+          type: array
+          items:
+            type: number
+          minItems: 24
+          maxItems: 24
+        precipitationProbability:
+          type: array
+          items:
+            type: number
+          minItems: 24
+          maxItems: 24
+        precipitation:
+          type: array
+          items:
+            type: number
+          minItems: 24
+          maxItems: 24
+        weatherCode:
+          type: array
+          items:
+            type: integer
+          minItems: 24
+          maxItems: 24
+        windSpeed:
+          type: array
+          items:
+            type: number
+          minItems: 24
+          maxItems: 24
+    Daily:
+      type: object
+      required:
+        - date
+        - temperatureMax
+        - temperatureMin
+        - precipitationSum
+        - precipitationProbabilityMax
+        - weatherCode
+        - windSpeedMax
+        - sunrise
+        - sunset
+      properties:
+        date:
+          type: array
+          items:
+            type: string
+          minItems: 7
+          maxItems: 7
+        temperatureMax:
+          type: array
+          items:
+            type: number
+          minItems: 7
+          maxItems: 7
+        temperatureMin:
+          type: array
+          items:
+            type: number
+          minItems: 7
+          maxItems: 7
+        precipitationSum:
+          type: array
+          items:
+            type: number
+          minItems: 7
+          maxItems: 7
+        precipitationProbabilityMax:
+          type: array
+          items:
+            type: number
+          minItems: 7
+          maxItems: 7
+        weatherCode:
+          type: array
+          items:
+            type: integer
+          minItems: 7
+          maxItems: 7
+        windSpeedMax:
+          type: array
+          items:
+            type: number
+          minItems: 7
+          maxItems: 7
+        sunrise:
+          type: array
+          items:
+            type: string
+          minItems: 7
+          maxItems: 7
+        sunset:
+          type: array
+          items:
+            type: string
+          minItems: 7
+          maxItems: 7
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+```
+
+## Validation notes
+
+- Every field in the spec traces back to the WeatherSignal mapping. No
+  invented fields.
+- The spec defines one endpoint (`GET /weather`) — no invented CRUD
+  endpoints. The mapping describes a read-only data shape, so a single
+  GET is appropriate.
+- No auth scheme added — the PoC has no auth. The spec does not declare
+  `securitySchemes`.
+- Error codes (400, 404, 502) are standard HTTP, not invented.
+- Array cardinalities (24 for hourly, 7 for daily) match the mapping.
+
+### Claims removed
+
+- ~~`POST /weather` for creating custom signals.~~ — Invented endpoint.
+  The mapping has no create operation.
+- ~~`securitySchemes: bearerAuth`~~ — Invented auth. The PoC has no
+  auth.

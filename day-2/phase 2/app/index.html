@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Integration Architecture Copilot</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="styles.css">
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#controls">Skip to context and controls</a>
+    <main>
+      <header class="page-header">
+        <div class="header-meta">
+          <p class="eyebrow">Disposable workshop proof of concept</p>
+          <span class="header-tag">Public weather only</span>
+        </div>
+        <h1>Integration Architecture Copilot</h1>
+        <p class="lede">
+          Turn public weather data and a fictional scenario into an advisory
+          weather-grounded review.
+        </p>
+        <p id="app-status" class="status" role="status" aria-live="polite">
+          Ready. Search for a public location to begin.
+        </p>
+      </header>
+
+      <section id="controls" aria-labelledby="controls-heading">
+        <div class="section-heading">
+          <span class="step">01</span>
+          <h2 id="controls-heading">Context and controls</h2>
+        </div>
+        <div class="control-layout">
+          <div class="context-panel">
+            <form id="location-form" class="search-form">
+              <div class="field">
+                <label for="location-query">Public location</label>
+                <div class="input-action">
+                  <input
+                    id="location-query"
+                    name="location-query"
+                    type="search"
+                    autocomplete="off"
+                    minlength="2"
+                    required
+                    placeholder="City or postcode"
+                  >
+                  <button id="search-button" class="button-secondary" type="submit">Search</button>
+                </div>
+              </div>
+            </form>
+            <div id="location-results" class="search-results" aria-label="Location search results"></div>
+            <p id="selected-location" class="selection" aria-live="polite">No location selected.</p>
+            <div class="field scenario-field">
+              <label for="scenario">Fictional operational scenario</label>
+              <select id="scenario" name="scenario">
+                <option value="warehouse">Warehouse planning</option>
+                <option value="delivery">Delivery planning</option>
+              </select>
+            </div>
+          </div>
+
+          <fieldset class="settings-panel">
+            <legend>Runtime model settings</legend>
+            <p class="panel-note">Temporary values clear on reload. Use a disposable demo credential.</p>
+            <div class="field">
+              <label for="model-endpoint">Approved OpenAI-compatible endpoint</label>
+              <input
+                id="model-endpoint"
+                name="model-endpoint"
+                type="url"
+                inputmode="url"
+                autocomplete="off"
+                spellcheck="false"
+                placeholder="https://example.test/v1"
+              >
+            </div>
+            <div class="field">
+              <label for="model-name">Model name</label>
+              <input
+                id="model-name"
+                name="model-name"
+                type="text"
+                autocomplete="off"
+                spellcheck="false"
+                placeholder="openai/gpt-oss-20b"
+              >
+            </div>
+            <div class="field">
+              <label for="model-credential">Temporary demo credential</label>
+              <input
+                id="model-credential"
+                name="model-credential"
+                type="password"
+                autocomplete="new-password"
+                aria-describedby="credential-note"
+                placeholder="Memory only"
+              >
+              <p id="credential-note" class="field-note">
+                Used only in the Authorization header. Never persisted, logged, or sent in the prompt.
+              </p>
+            </div>
+            <button id="clear-settings" class="button-quiet" type="button">Clear model settings</button>
+          </fieldset>
+        </div>
+        <div class="actions">
+          <button id="fetch-weather" type="button" disabled>Fetch weather</button>
+          <button id="generate-review" class="button-accent" type="button" disabled>Generate review</button>
+        </div>
+      </section>
+
+      <section id="evidence" aria-labelledby="evidence-heading">
+        <div class="section-heading">
+          <span class="step">02</span>
+          <h2 id="evidence-heading">Weather evidence</h2>
+        </div>
+        <div id="weather-state" class="state-panel state-empty">
+          <div>
+            <span id="weather-state-label" class="state-label">Empty</span>
+            <p id="weather-state-message">Select a location, then fetch weather evidence.</p>
+          </div>
+          <div class="state-actions">
+            <button id="retry-weather" class="button-secondary" type="button" hidden>Retry live weather</button>
+            <button id="use-fallback" class="button-quiet" type="button" hidden>Use fictional fallback</button>
+          </div>
+        </div>
+
+        <div id="weather-content" hidden>
+          <article class="evidence-view" aria-labelledby="readable-heading">
+            <div class="view-heading">
+              <div>
+                <p class="view-kicker">Readable view</p>
+                <h3 id="readable-heading">Conditions and forecast</h3>
+              </div>
+              <span id="source-badge" class="source-badge"></span>
+            </div>
+            <p id="weather-location" class="location-heading"></p>
+            <dl id="current-conditions" class="metric-grid"></dl>
+            <div class="forecast-block">
+              <h4>Next 24 hours</h4>
+              <div id="hourly-forecast" class="forecast-strip"></div>
+            </div>
+            <div class="forecast-block">
+              <h4>Next 7 days</h4>
+              <div id="daily-forecast" class="daily-grid"></div>
+            </div>
+          </article>
+
+          <details class="data-view">
+            <summary>Raw Open-Meteo response</summary>
+            <pre id="raw-response" tabindex="0"></pre>
+          </details>
+          <details class="data-view">
+            <summary>Mapped WeatherSignal object</summary>
+            <pre id="mapped-signal" tabindex="0"></pre>
+          </details>
+        </div>
+      </section>
+
+      <section id="review" aria-labelledby="review-heading">
+        <div class="section-heading">
+          <span class="step">03</span>
+          <h2 id="review-heading">Weather-grounded review</h2>
+        </div>
+        <p class="advisory">
+          Workshop-only advisory. This output is not approved architecture or a production decision.
+        </p>
+        <div id="review-state" class="state-panel state-empty">
+          <div>
+            <span id="review-state-label" class="state-label">Empty</span>
+            <p id="review-state-message">Fetch weather evidence before generating a review.</p>
+          </div>
+          <button id="retry-review" class="button-secondary" type="button" hidden>Retry review</button>
+        </div>
+        <div id="review-content" class="review-grid" hidden>
+          <article class="review-card review-summary">
+            <h3>Summary</h3>
+            <p id="review-summary"></p>
+          </article>
+          <article class="review-card">
+            <h3>Risks</h3>
+            <ul id="review-risks"></ul>
+          </article>
+          <article class="review-card">
+            <h3>Actions</h3>
+            <ul id="review-actions"></ul>
+          </article>
+          <article class="review-card">
+            <h3>Questions</h3>
+            <ul id="review-questions"></ul>
+          </article>
+          <article class="review-card review-evidence">
+            <h3>Evidence</h3>
+            <ul id="review-evidence"></ul>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

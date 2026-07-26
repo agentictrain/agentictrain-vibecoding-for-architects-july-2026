@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sales Dashboard</title>
+<style>
+:root { font-family: system-ui, sans-serif; color: #1a2a3a; }
+* { box-sizing: border-box; }
+body { margin: 0; background: #f4f6f9; }
+main { width: min(100% - 2rem, 72rem); margin: 1rem auto; padding: 1rem; }
+h1 { font-size: clamp(1.4rem, 3vw, 2rem); }
+.card { background: #fff; border: 1px solid #d8e0e8; border-radius: 0.75rem; padding: 1rem; margin-bottom: 1rem; }
+.card h2 { font-size: 1.1rem; margin: 0 0 0.75rem; }
+.kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr)); gap: 1rem; margin-bottom: 1rem; }
+.kpi { background: #fff; border: 1px solid #d8e0e8; border-radius: 0.75rem; padding: 1rem; text-align: center; }
+.kpi__value { font-size: 1.8rem; font-weight: 800; margin: 0.25rem 0 0; }
+.kpi__label { font-size: 0.8rem; color: #6b7c8a; text-transform: uppercase; letter-spacing: 0.05em; }
+.bar { height: 1.5rem; border-radius: 0.3rem; min-width: 2px; }
+.bar--north { background: #116466; }
+.bar--south { background: #2a9d8f; }
+.bar--east { background: #f2a65a; }
+.bar--west { background: #6d4d9f; }
+.bar-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.4rem; }
+.bar-row__label { width: 4rem; font-weight: 700; font-size: 0.85rem; }
+.bar-row__track { flex: 1; background: #eef2f5; border-radius: 0.3rem; overflow: hidden; }
+.bar-row__value { width: 4rem; font-size: 0.85rem; text-align: right; }
+table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+th, td { text-align: left; padding: 0.5rem 0.6rem; border-bottom: 1px solid #e2e8ee; }
+th { font-weight: 700; color: #4a5a6a; text-transform: uppercase; font-size: 0.78rem; letter-spacing: 0.04em; }
+@media (max-width: 36rem) { .bar-row__label { width: 3rem; } .bar-row__value { width: 3rem; } }
+</style>
+</head>
+<body>
+<main>
+<h1>Sales Dashboard</h1>
+<p style="color:#6b7c8a;">Fictional workshop data — advisory only.</p>
+
+<div class="kpi-row" id="kpis"></div>
+
+<div class="card">
+<h2>Revenue by region</h2>
+<div id="revenue-bars"></div>
+</div>
+
+<div class="card">
+<h2>Orders by month</h2>
+<div id="orders-bars"></div>
+</div>
+
+<div class="card">
+<h2>Returns rate by region</h2>
+<div id="returns-bars"></div>
+</div>
+
+<div class="card">
+<h2>Full data</h2>
+<table id="data-table"><thead><tr><th>Region</th><th>Month</th><th>Revenue</th><th>Orders</th><th>Returns</th></tr></thead><tbody></tbody></table>
+</div>
+</main>
+
+<script>
+var DATA = [
+  {region:"North",month:"Jan",revenue:42000,orders:310,returns:12},
+  {region:"North",month:"Feb",revenue:38000,orders:280,returns:9},
+  {region:"North",month:"Mar",revenue:51000,orders:380,returns:15},
+  {region:"South",month:"Jan",revenue:31000,orders:220,returns:8},
+  {region:"South",month:"Feb",revenue:29000,orders:210,returns:7},
+  {region:"South",month:"Mar",revenue:39000,orders:290,returns:11},
+  {region:"East",month:"Jan",revenue:25000,orders:180,returns:5},
+  {region:"East",month:"Feb",revenue:27000,orders:190,returns:6},
+  {region:"East",month:"Mar",revenue:33000,orders:240,returns:9},
+  {region:"West",month:"Jan",revenue:48000,orders:350,returns:14},
+  {region:"West",month:"Feb",revenue:44000,orders:320,returns:12},
+  {region:"West",month:"Mar",revenue:56000,orders:410,returns:18}
+];
+
+var REGIONS = ["North","South","East","West"];
+var MONTHS = ["Jan","Feb","Mar"];
+var COLORS = {North:"bar--north",South:"bar--south",East:"bar--east",West:"bar--west"};
+
+function sum(arr,key){return arr.reduce(function(a,r){return a+r[key];},0);}
+
+function kpis(){
+  var totalRevenue=sum(DATA,"revenue");
+  var totalOrders=sum(DATA,"orders");
+  var totalReturns=sum(DATA,"returns");
+  var returnRate=((totalReturns/totalOrders)*100).toFixed(1);
+  var el=document.getElementById("kpis");
+  [{l:"Total revenue",v:"$"+totalRevenue.toLocaleString()},
+   {l:"Total orders",v:totalOrders.toLocaleString()},
+   {l:"Total returns",v:totalReturns.toLocaleString()},
+   {l:"Return rate",v:returnRate+"%"}].forEach(function(k){
+    var d=document.createElement("div");d.className="kpi";
+    d.innerHTML='<p class="kpi__label">'+k.l+'</p><p class="kpi__value">'+k.v+'</p>';
+    el.appendChild(d);
+  });
+}
+
+function barChart(containerId,labelFn,valueFn,barClassFn,maxVal){
+  var el=document.getElementById(containerId);el.innerHTML="";
+  REGIONS.forEach(function(r){
+    var rows=DATA.filter(function(d){return d.region===r;});
+    var val=valueFn(rows,r);
+    var pct=Math.round((val/maxVal)*100);
+    var row=document.createElement("div");row.className="bar-row";
+    row.innerHTML='<span class="bar-row__label">'+labelFn(r)+'</span>'+
+      '<div class="bar-row__track"><div class="bar '+barClassFn(r)+'" style="width:'+pct+'%"></div></div>'+
+      '<span class="bar-row__value">'+val.toLocaleString()+'</span>';
+    el.appendChild(row);
+  });
+}
+
+function table(){
+  var tb=document.querySelector("#data-table tbody");tb.innerHTML="";
+  DATA.forEach(function(d){
+    var tr=document.createElement("tr");
+    tr.innerHTML="<td>"+d.region+"</td><td>"+d.month+"</td><td>$"+d.revenue.toLocaleString()+"</td><td>"+d.orders+"</td><td>"+d.returns+"</td>";
+    tb.appendChild(tr);
+  });
+}
+
+var maxRevenue=Math.max.apply(null,REGIONS.map(function(r){return sum(DATA.filter(function(d){return d.region===r;}),"revenue");}));
+var maxOrders=Math.max.apply(null,REGIONS.map(function(r){return sum(DATA.filter(function(d){return d.region===r;}),"orders");}));
+var maxReturns=Math.max.apply(null,REGIONS.map(function(r){
+  var rows=DATA.filter(function(d){return d.region===r;});
+  return (sum(rows,"returns")/sum(rows,"orders")*100);
+}));
+
+kpis();
+barChart("revenue-bars",function(r){return r;},function(rows){return sum(rows,"revenue");},function(r){return COLORS[r];},maxRevenue);
+barChart("orders-bars",function(r){return r;},function(rows){return sum(rows,"orders");},function(r){return COLORS[r];},maxOrders);
+barChart("returns-bars",function(r){return r;},function(rows){return(sum(rows,"returns")/sum(rows,"orders")*100).toFixed(1)+"%";},function(r){return COLORS[r];},maxReturns);
+table();
+</script>
+</body>
+</html>

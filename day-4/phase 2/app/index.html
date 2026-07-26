@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Weather Workshop PoC</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="styles.css">
+    <script src="weather-signal.js" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#controls">Skip to context and controls</a>
+    <main class="page-shell">
+      <header class="masthead">
+        <div>
+          <p class="eyebrow">Weather workshop proof of concept</p>
+          <h1>Weather evidence, bounded on purpose</h1>
+          <p class="lede">
+            Search a public city to load one Open-Meteo forecast automatically,
+            browse current, hourly, and daily weather, or load a visibly
+            fictional fallback on purpose.
+          </p>
+          <p id="app-status" class="status-pill" role="status" aria-live="polite">
+            Select a location to load weather automatically.
+          </p>
+        </div>
+        <aside class="notice-card" aria-label="Workshop safety note">
+          <p class="notice-card__eyebrow">Workshop only</p>
+          <p class="notice-card__title">Not a real decision tool</p>
+          <p class="notice-card__body">
+            Live and fictional evidence stay visibly separate. Review generation
+            remains a later phase.
+          </p>
+        </aside>
+      </header>
+      <div class="workspace-grid">
+        <section id="controls" class="panel" aria-labelledby="controls-heading">
+          <div class="section-heading">
+            <p class="step">Region 1</p>
+            <h2 id="controls-heading">Pick the context</h2>
+          </div>
+          <p class="section-copy">
+            Search a public place and select one result to load weather
+            automatically. Use Refresh weather to fetch again. Editing the
+            search after a selection clears that selection on purpose.
+          </p>
+          <div class="panel__body">
+          <form id="weather-form" class="control-stack" novalidate>
+            <div class="field">
+              <label for="location-query">City or place</label>
+              <input
+                id="location-query"
+                name="location-query"
+                type="search"
+                autocomplete="off"
+                placeholder="Type at least two characters"
+                role="combobox"
+                aria-autocomplete="list"
+                aria-expanded="false"
+                aria-controls="search-results"
+                aria-describedby="location-help search-feedback"
+              >
+              <p id="location-help" class="field-note">
+                Suggestions come from Open-Meteo geocoding after a short pause.
+              </p>
+              <p id="search-feedback" class="field-note field-note--status" role="status" aria-live="polite"></p>
+              <div id="search-results-panel" class="results-panel" hidden>
+                <p class="results-heading">Search results</p>
+                <ul id="search-results" class="results-list" aria-label="Location results"></ul>
+              </div>
+            </div>
+
+            <section id="selected-location" class="selection-card selection-card--empty" aria-labelledby="selected-location-heading">
+              <div class="selection-card__head">
+                <h3 id="selected-location-heading">Selected location</h3>
+                <span id="selection-tag" class="tag">Not ready</span>
+              </div>
+              <p id="selected-location-copy">Choose one search result to load weather automatically.</p>
+            </section>
+
+            <div class="field">
+              <label for="scenario">Fictional operational scenario</label>
+              <select id="scenario" name="scenario">
+                <option value="">Choose a scenario</option>
+                <option value="warehouse-planning">Warehouse planning</option>
+                <option value="delivery-planning">Delivery planning</option>
+              </select>
+              <p class="field-note">Stored for the later review phase. It does not change the weather fetch.</p>
+            </div>
+
+            <div class="field">
+              <label for="unit-system">Unit system</label>
+              <select id="unit-system" name="unit-system">
+                <option value="metric">Metric</option>
+                <option value="imperial">Imperial</option>
+              </select>
+            </div>
+
+            <div class="settings-launcher">
+              <div>
+                <h3>Model settings</h3>
+                <p class="field-note">Configure the later review phase. No model request is made yet.</p>
+              </div>
+              <button id="open-model-settings" class="button button--secondary" type="button">
+                Model settings
+              </button>
+            </div>
+
+            <div class="button-row">
+              <button id="fetch-weather" class="button button--primary" type="submit" disabled>
+                Refresh weather
+              </button>
+              <button id="load-fallback" class="button button--secondary" type="button">
+                Load fictional fallback
+              </button>
+            </div>
+          </form>
+
+          <dialog
+            id="model-settings-dialog"
+            class="settings-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="model-settings-heading"
+          >
+            <form id="model-settings-form" class="settings-dialog__form" autocomplete="off" novalidate>
+              <div class="settings-dialog__heading">
+                <p class="step">Later review phase</p>
+                <h2 id="model-settings-heading">Model settings</h2>
+                <p>
+                  These settings stay in memory for this page only. Saving does not make a model request.
+                </p>
+              </div>
+
+              <div class="field">
+                <label for="model-base-url">Groq endpoint</label>
+                <input
+                  id="model-base-url"
+                  name="baseUrl"
+                  type="url"
+                  inputmode="url"
+                  autocomplete="off"
+                  spellcheck="false"
+                >
+              </div>
+
+              <div class="field">
+                <label for="model-name">Model name</label>
+                <input
+                  id="model-name"
+                  name="model"
+                  type="text"
+                  autocomplete="off"
+                  spellcheck="false"
+                >
+              </div>
+
+              <div class="field">
+                <label for="model-api-key">Temporary demo credential</label>
+                <input
+                  id="model-api-key"
+                  name="apiKey"
+                  type="password"
+                  autocomplete="new-password"
+                  spellcheck="false"
+                >
+                <p class="field-note">Use a disposable demo credential. It clears when the page reloads.</p>
+              </div>
+
+              <div class="settings-dialog__actions">
+                <button id="clear-model-settings" class="button button--ghost" type="button">
+                  Clear model settings
+                </button>
+                <div class="button-row">
+                  <button id="cancel-model-settings" class="button button--secondary" type="button">
+                    Cancel
+                  </button>
+                  <button class="button button--primary" type="submit">Save</button>
+                </div>
+              </div>
+            </form>
+          </dialog>
+          </div>
+        </section>
+
+        <section id="evidence" class="panel panel--evidence" aria-labelledby="evidence-heading">
+          <div class="section-heading">
+            <p class="step">Region 2</p>
+            <h2 id="evidence-heading">Weather evidence</h2>
+          </div>
+          <p class="section-copy">
+            This region shows one active attempt at a time: current conditions,
+            hourly and daily forecasts, and provenance.
+          </p>
+          <div class="panel__body">
+          <div id="weather-region" class="weather-region" aria-live="polite" aria-busy="false"></div>
+          </div>
+        </section>
+
+        <section id="review" class="panel panel--review" aria-labelledby="review-heading">
+          <div class="section-heading">
+            <p class="step">Region 3</p>
+            <h2 id="review-heading">Reserved for a future workshop phase</h2>
+          </div>
+          <p class="review-warning">
+            Facilitator-approved advisory rules are unavailable in this
+            checkpoint, so this region stays reserved and emits no
+            weather-derived advice.
+          </p>
+          <div class="panel__body">
+          <div class="review-card-stack">
+            <article class="review-card">
+              <h3>Scenario held for later</h3>
+              <p id="scenario-echo">No scenario selected yet.</p>
+            </article>
+            <article class="review-card">
+              <h3>What is implemented now</h3>
+              <p>
+                City search, automatic live weather fetch, atomic WeatherSignal
+                mapping, hourly and daily evidence with filters and pagination,
+                explicit fictional fallback, and retry-friendly failure states.
+              </p>
+            </article>
+            <article class="review-card review-card--muted">
+              <h3>Next phase</h3>
+              <p>
+                A later step can send only the mapped WeatherSignal and the
+                chosen fictional scenario to the approved LLM endpoint.
+              </p>
+            </article>
+          </div>
+          </div>
+        </section>
+      </div>
+
+      <div id="live-region" class="sr-only" role="status" aria-live="polite"></div>
+    </main>
+  </body>
+</html>

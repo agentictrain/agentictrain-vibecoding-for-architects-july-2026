@@ -1,0 +1,191 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000">
+  <defs>
+    <pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.2" fill="#d6d3cc" opacity="0.55"/>
+    </pattern>
+    <pattern id="blueHatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">
+      <line x1="0" y1="0" x2="0" y2="8" stroke="#a5d8ff" stroke-width="3" opacity="0.45"/>
+    </pattern>
+    <pattern id="yellowHatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">
+      <line x1="0" y1="0" x2="0" y2="8" stroke="#ffd43b" stroke-width="3" opacity="0.35"/>
+    </pattern>
+    <pattern id="greenHatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">
+      <line x1="0" y1="0" x2="0" y2="8" stroke="#8ce99a" stroke-width="3" opacity="0.35"/>
+    </pattern>
+    <filter id="paperShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="8" dy="12" stdDeviation="10" flood-color="#343a40" flood-opacity="0.15"/>
+    </filter>
+    <style>
+      .hand { font-family: "Comic Sans MS", "Bradley Hand", "Marker Felt", cursive; fill: #1f2933; }
+      .title { font-size: 30px; font-weight: 700; }
+      .section { font-size: 23px; font-weight: 700; }
+      .body { font-size: 17px; }
+      .small { font-size: 14px; }
+      .rough { fill: none; stroke: #1f2933; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+      .echo { fill: none; stroke: #1f2933; stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round; opacity: 0.42; }
+      .thin { fill: none; stroke: #495057; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    </style>
+  </defs>
+
+  <rect width="1600" height="1000" fill="#fffdf8"/>
+  <rect width="1600" height="1000" fill="url(#dots)"/>
+
+  <!-- Handwritten heading -->
+  <text x="62" y="66" class="hand title">Integration Architecture Copilot</text>
+  <path d="M61 78 C242 73 408 85 568 76" class="rough" stroke="#e8590c"/>
+  <path d="M66 82 C241 79 409 88 561 80" class="echo" stroke="#e8590c"/>
+  <text x="65" y="108" class="hand body" fill="#5f3dc4">rough UI idea — what the participant sees, not an architecture diagram!</text>
+
+  <!-- Browser doodle frame -->
+  <path d="M48 143 C362 138 694 147 1006 141 C1210 137 1406 143 1548 139 L1553 931 C1232 937 911 927 590 935 C377 940 198 930 47 936Z" fill="#ffffff" stroke="#1f2933" stroke-width="3"/>
+  <path d="M51 147 C369 144 690 151 1010 146 C1214 142 1408 148 1544 144 L1548 927 C1230 932 909 923 590 930 C378 935 202 927 52 932Z" class="echo"/>
+  <path d="M49 192 C478 197 939 187 1550 194" class="rough"/>
+  <path d="M53 196 C482 201 941 191 1546 198" class="echo"/>
+  <circle cx="78" cy="169" r="8" fill="#ff6b6b" stroke="#1f2933" stroke-width="2"/>
+  <circle cx="105" cy="169" r="8" fill="#ffd43b" stroke="#1f2933" stroke-width="2"/>
+  <circle cx="132" cy="169" r="8" fill="#69db7c" stroke="#1f2933" stroke-width="2"/>
+  <path d="M178 155 C421 154 576 158 741 153 L744 182 C521 186 326 179 177 184Z" fill="#f1f3f5" stroke="#495057" stroke-width="2"/>
+  <text x="198" y="176" class="hand small" fill="#687076">public weather + fictional scenario + grounded review</text>
+
+  <!-- Region 1 -->
+  <path d="M76 224 C193 216 318 225 434 219 L441 878 C310 885 194 875 80 882Z" fill="#e7f5ff" stroke="#1971c2" stroke-width="4"/>
+  <path d="M82 229 C196 222 315 230 428 224 L435 873 C309 879 197 871 86 876Z" fill="url(#blueHatch)" stroke="#1971c2" stroke-width="1.5" opacity="0.8"/>
+  <g transform="rotate(-1 260 260)">
+    <text x="105" y="261" class="hand section" fill="#1864ab">1. Context + controls</text>
+    <path d="M104 271 C210 267 317 275 407 269" fill="none" stroke="#1971c2" stroke-width="2"/>
+  </g>
+
+  <text x="108" y="311" class="hand body">Where are we looking?</text>
+  <path d="M105 328 C198 324 315 330 403 326 L405 374 C296 378 201 371 104 376Z" fill="#fff" stroke="#1f2933" stroke-width="2.5"/>
+  <circle cx="129" cy="351" r="10" class="thin"/>
+  <path d="M136 358 l10 10" class="thin"/>
+  <text x="159" y="358" class="hand body" fill="#687076">Search a public location...</text>
+
+  <path d="M115 390 C213 385 306 392 394 388 L397 426 C300 431 207 424 116 428Z" fill="#d3f9d8" stroke="#2b8a3e" stroke-width="2"/>
+  <path d="M128 407 l7 7 13-16" fill="none" stroke="#2b8a3e" stroke-width="3"/>
+  <text x="161" y="415" class="hand small" fill="#2b8a3e">Portland, Oregon selected</text>
+
+  <text x="108" y="469" class="hand body">What's the fictional scenario?</text>
+  <path d="M104 486 C208 482 309 490 405 484 L408 533 C299 538 203 530 104 535Z" fill="#fff" stroke="#1f2933" stroke-width="2.5"/>
+  <text x="126" y="517" class="hand body">Delivery planning</text>
+  <path d="M372 504 l10 10 10-10" class="thin"/>
+
+  <path d="M100 570 C203 564 310 572 409 567 L414 730 C307 735 205 728 101 734Z" fill="#fff9db" stroke="#f08c00" stroke-width="2.5" stroke-dasharray="8 7"/>
+  <text x="121" y="600" class="hand body" fill="#d9480f">model settings</text>
+  <text x="121" y="623" class="hand small" fill="#687076">endpoint · glm-5.2 · temp key</text>
+  <path d="M120 642 C207 639 305 644 391 641" class="thin"/>
+  <path d="M120 671 C207 668 305 674 391 670" class="thin"/>
+  <path d="M120 700 C207 696 305 702 391 699" class="thin"/>
+  <text x="142" y="752" class="hand small" fill="#d9480f">key stays in memory only!</text>
+  <path d="M132 741 C113 747 105 731 114 716" fill="none" stroke="#e8590c" stroke-width="2.5"/>
+  <path d="M113 716 l-1 11 10-5" fill="#e8590c"/>
+
+  <path d="M104 782 C189 776 269 783 332 779 L335 829 C257 835 182 826 103 833Z" fill="#1971c2" stroke="#1f2933" stroke-width="3"/>
+  <text x="132" y="814" class="hand body" fill="#fff">Fetch weather</text>
+  <path d="M346 780 C367 778 389 782 408 780 L411 830 C389 834 368 829 346 832Z" fill="#ffd43b" stroke="#1f2933" stroke-width="3"/>
+  <path d="M363 806 l10 9 19-22" fill="none" stroke="#1f2933" stroke-width="3"/>
+
+  <!-- Connector arrow 1 -->
+  <path d="M444 447 C462 428 478 429 494 443" fill="none" stroke="#e8590c" stroke-width="4"/>
+  <path d="M485 430 l11 14-17 5" fill="#e8590c"/>
+  <text x="451" y="414" class="hand small" fill="#e8590c" transform="rotate(-5 451 414)">map it</text>
+
+  <!-- Region 2 -->
+  <path d="M501 222 C710 216 903 226 1087 219 L1094 879 C905 886 705 876 503 883Z" fill="#fff9db" stroke="#f08c00" stroke-width="4"/>
+  <path d="M507 228 C710 222 900 231 1081 225 L1088 873 C903 880 708 871 510 877Z" fill="url(#yellowHatch)" stroke="#f08c00" stroke-width="1.5" opacity="0.8"/>
+  <g transform="rotate(0.5 790 260)">
+    <text x="530" y="261" class="hand section" fill="#d9480f">2. Weather evidence</text>
+    <path d="M530 272 C691 267 867 276 1047 269" fill="none" stroke="#f08c00" stroke-width="2"/>
+  </g>
+
+  <!-- Current card doodle -->
+  <path d="M531 299 C695 294 882 301 1058 296 L1062 453 C883 459 700 451 532 456Z" fill="#fff" stroke="#1f2933" stroke-width="2.5"/>
+  <text x="557" y="329" class="hand small" fill="#687076">CURRENT CONDITIONS</text>
+  <text x="556" y="408" class="hand" font-size="62" font-weight="700">18°C</text>
+  <circle cx="904" cy="359" r="31" fill="#ffd43b" stroke="#1f2933" stroke-width="2.5"/>
+  <path d="M868 391 C879 368 906 373 916 389 C931 374 960 381 966 404 L861 404Z" fill="#d0ebff" stroke="#1f2933" stroke-width="2.5"/>
+  <text x="742" y="424" class="hand small">wind 14 km/h  ·  rain 10%  ·  humidity 63%</text>
+
+  <!-- Hourly doodle -->
+  <path d="M533 479 C698 474 882 481 1061 476 L1063 611 C886 617 699 609 532 614Z" fill="#fff" stroke="#1f2933" stroke-width="2.5"/>
+  <text x="557" y="507" class="hand body">next 24 hours</text>
+  <path d="M559 576 C619 550 660 567 714 537 C767 507 814 572 861 544 C910 516 962 548 1035 518" fill="none" stroke="#e8590c" stroke-width="3.5"/>
+  <g fill="#e8590c">
+    <circle cx="559" cy="576" r="4"/><circle cx="714" cy="537" r="4"/><circle cx="861" cy="544" r="4"/><circle cx="1035" cy="518" r="4"/>
+  </g>
+  <path d="M557 590 C712 587 872 593 1037 588" fill="none" stroke="#adb5bd" stroke-width="1.5"/>
+  <text x="559" y="605" class="hand small">now</text><text x="700" y="605" class="hand small">6pm</text><text x="855" y="605" class="hand small">midnight</text><text x="1000" y="605" class="hand small">6am</text>
+
+  <!-- Seven days -->
+  <path d="M533 638 C702 633 883 641 1062 636 L1065 742 C883 748 704 739 532 745Z" fill="#fff" stroke="#1f2933" stroke-width="2.5"/>
+  <text x="557" y="668" class="hand body">7-day forecast</text>
+  <g class="hand small" text-anchor="middle">
+    <text x="575" y="704">M</text><text x="646" y="704">T</text><text x="717" y="704">W</text><text x="788" y="704">T</text><text x="859" y="704">F</text><text x="930" y="704">S</text><text x="1001" y="704">S</text>
+    <text x="575" y="727">☀ 19°</text><text x="646" y="727">☀ 21°</text><text x="717" y="727">☁ 17°</text><text x="788" y="727">☂ 15°</text><text x="859" y="727">☀ 20°</text><text x="930" y="727">☀ 23°</text><text x="1001" y="727">☀ 22°</text>
+  </g>
+
+  <!-- Evidence views -->
+  <path d="M532 773 C699 768 883 776 1062 771 L1064 841 C883 846 702 838 533 844Z" fill="#fff" stroke="#1f2933" stroke-width="2.5"/>
+  <path d="M550 789 C623 786 693 791 761 788 L763 826 C692 830 623 825 550 828Z" fill="#d0ebff" stroke="#1971c2" stroke-width="2"/>
+  <text x="566" y="814" class="hand small" fill="#1864ab">readable card</text>
+  <text x="787" y="814" class="hand small">raw API ▾</text>
+  <text x="913" y="814" class="hand small">WeatherSignal ▾</text>
+  <text x="684" y="862" class="hand small" fill="#d9480f" transform="rotate(-2 684 862)">same evidence, 3 inspectable views</text>
+
+  <!-- Connector arrow 2 -->
+  <path d="M1095 450 C1117 430 1136 432 1154 447" fill="none" stroke="#5f3dc4" stroke-width="4"/>
+  <path d="M1145 434 l11 14-17 5" fill="#5f3dc4"/>
+  <text x="1100" y="416" class="hand small" fill="#5f3dc4" transform="rotate(4 1100 416)">ground it!</text>
+
+  <!-- Region 3 -->
+  <path d="M1161 222 C1286 217 1403 225 1520 219 L1527 879 C1405 885 1283 876 1164 882Z" fill="#ebfbee" stroke="#2b8a3e" stroke-width="4"/>
+  <path d="M1167 228 C1287 223 1399 231 1514 225 L1521 873 C1404 879 1286 872 1170 876Z" fill="url(#greenHatch)" stroke="#2b8a3e" stroke-width="1.5" opacity="0.8"/>
+  <g transform="rotate(-0.7 1350 260)">
+    <text x="1188" y="260" class="hand section" fill="#2b8a3e">3. Grounded review</text>
+    <path d="M1188 271 C1300 267 1405 275 1495 269" fill="none" stroke="#2b8a3e" stroke-width="2"/>
+  </g>
+
+  <path d="M1190 300 C1286 296 1390 302 1498 297 L1501 365 C1390 369 1287 363 1190 368Z" fill="#fff" stroke="#1f2933" stroke-width="2.5"/>
+  <text x="1211" y="326" class="hand small" fill="#2b8a3e">SUMMARY</text>
+  <path d="M1211 341 C1295 338 1399 344 1479 340" class="thin"/>
+  <path d="M1211 354 C1289 351 1382 357 1452 353" class="thin"/>
+
+  <text x="1198" y="407" class="hand body" fill="#c92a2a">⚠ risks</text>
+  <circle cx="1207" cy="435" r="4" fill="#c92a2a"/><path d="M1221 435 C1305 432 1398 438 1477 434" class="thin"/>
+  <circle cx="1207" cy="461" r="4" fill="#c92a2a"/><path d="M1221 461 C1302 457 1372 464 1450 460" class="thin"/>
+
+  <text x="1198" y="509" class="hand body" fill="#2b8a3e">✓ actions</text>
+  <path d="M1197 527 C1285 522 1392 529 1495 524 L1497 576 C1396 581 1291 574 1197 579Z" fill="#d3f9d8" stroke="#2b8a3e" stroke-width="2"/>
+  <text x="1216" y="558" class="hand small">1. front-load exposed deliveries</text>
+  <path d="M1197 589 C1288 584 1395 591 1495 586 L1498 638 C1393 643 1291 636 1197 641Z" fill="#d3f9d8" stroke="#2b8a3e" stroke-width="2"/>
+  <text x="1216" y="620" class="hand small">2. recheck Thursday forecast</text>
+
+  <text x="1198" y="683" class="hand body" fill="#5f3dc4">? questions</text>
+  <path d="M1210 702 C1290 698 1388 704 1481 700" class="thin"/>
+  <path d="M1210 721 C1297 717 1368 724 1459 720" class="thin"/>
+
+  <text x="1198" y="764" class="hand body" fill="#1864ab">↳ evidence links</text>
+  <path d="M1198 781 C1264 778 1323 782 1377 779 L1379 810 C1319 814 1258 809 1197 812Z" fill="#d0ebff" stroke="#1971c2" stroke-width="1.7"/>
+  <text x="1211" y="802" class="hand small" fill="#1864ab">hourly.precipitation</text>
+  <path d="M1386 781 C1422 778 1459 783 1498 780 L1500 811 C1461 814 1423 809 1386 812Z" fill="#d0ebff" stroke="#1971c2" stroke-width="1.7"/>
+  <text x="1400" y="802" class="hand small" fill="#1864ab">daily.*</text>
+
+  <path d="M1194 833 C1288 828 1395 836 1501 831 L1504 862 C1394 867 1287 860 1194 865Z" fill="#fff3bf" stroke="#f08c00" stroke-width="2"/>
+  <text x="1210" y="855" class="hand small" fill="#d9480f">model fails? evidence stays put.</text>
+
+  <!-- Sticky note advisory -->
+  <g transform="rotate(-3 1326 116)" filter="url(#paperShadow)">
+    <path d="M1121 53 C1250 48 1383 57 1517 51 L1520 139 C1383 145 1248 136 1124 142Z" fill="#fff3bf" stroke="#1f2933" stroke-width="2.5"/>
+    <path d="M1464 52 L1517 51 L1519 101Z" fill="#ffe066" stroke="#1f2933" stroke-width="1.5"/>
+    <text x="1150" y="88" class="hand body" fill="#d9480f">Workshop-only advisory</text>
+    <text x="1150" y="118" class="hand body" font-weight="700">NOT approved architecture!</text>
+  </g>
+
+  <!-- State notes -->
+  <path d="M737 891 C824 886 922 893 1019 889 L1020 934 C920 939 824 932 738 936Z" fill="#f3f0ff" stroke="#5f3dc4" stroke-width="2" stroke-dasharray="7 6"/>
+  <text x="758" y="919" class="hand small" fill="#5f3dc4">states: loading · live · fallback · empty · error + retry</text>
+  <path d="M717 912 C666 923 613 909 589 873" fill="none" stroke="#5f3dc4" stroke-width="2.5"/>
+  <path d="M589 873 l12 6-3-13" fill="#5f3dc4"/>
+
+  <text x="64" y="975" class="hand small" fill="#687076">phase 1 sketch · plain HTML/CSS/JS later · public data + fictional context only</text>
+</svg>

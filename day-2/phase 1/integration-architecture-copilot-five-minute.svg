@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="850" viewBox="0 0 1400 850">
+  <style>
+    .hand { font-family: "Comic Sans MS", "Chalkboard SE", "Marker Felt", cursive; fill: #000; }
+    .line { fill: none; stroke: #000; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+    .thin { fill: none; stroke: #000; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+    .dash { fill: none; stroke: #000; stroke-width: 3; stroke-linecap: round; stroke-dasharray: 9 9; }
+  </style>
+
+  <rect width="1400" height="850" fill="#fff"/>
+
+  <!-- title scribbled first -->
+  <text x="54" y="62" class="hand" font-size="32" font-weight="700">weather helper thing</text>
+  <path d="M51 73 C137 68 244 78 359 71" class="line"/>
+  <text x="1020" y="52" class="hand" font-size="18">5 min sketch!!</text>
+  <path d="M1165 57 C1217 81 1288 80 1340 53" class="thin"/>
+
+  <!-- wonky browser -->
+  <path d="M43 105 C302 99 611 110 883 104 C1080 100 1237 109 1359 103 L1365 775 C1102 781 847 769 586 778 C365 785 190 774 39 780Z" class="line"/>
+  <path d="M43 146 C355 151 757 140 1360 148" class="line"/>
+  <circle cx="69" cy="126" r="7" class="thin"/>
+  <circle cx="94" cy="126" r="7" class="thin"/>
+  <circle cx="119" cy="126" r="7" class="thin"/>
+  <text x="147" y="132" class="hand" font-size="15">the app</text>
+
+  <!-- box 1 -->
+  <path d="M68 178 C176 171 291 183 397 176 L402 715 C284 723 175 711 71 719Z" class="line"/>
+  <text x="91" y="216" class="hand" font-size="25" font-weight="700">1. pick stuff</text>
+  <path d="M90 226 C179 220 280 230 370 223" class="thin"/>
+
+  <text x="91" y="267" class="hand" font-size="17">where?</text>
+  <path d="M91 281 C174 276 275 285 370 279 L373 326 C277 332 179 324 91 329Z" class="thin"/>
+  <circle cx="113" cy="303" r="9" class="thin"/>
+  <path d="M120 310 l10 9" class="thin"/>
+  <text x="142" y="310" class="hand" font-size="15">type a city...</text>
+
+  <text x="91" y="367" class="hand" font-size="17">pretend job:</text>
+  <path d="M91 381 C177 375 279 385 370 379 L373 428 C277 434 179 426 91 431Z" class="thin"/>
+  <text x="111" y="412" class="hand" font-size="16">deliver boxes</text>
+  <path d="M343 398 l9 10 9-10" class="thin"/>
+
+  <path d="M91 462 C178 456 281 466 371 460 L374 556 C277 562 181 554 91 559Z" class="dash"/>
+  <text x="109" y="489" class="hand" font-size="17">AI bits</text>
+  <path d="M111 505 C181 501 276 508 353 504" class="thin"/>
+  <path d="M111 531 C181 527 276 534 353 530" class="thin"/>
+  <text x="111" y="581" class="hand" font-size="13">don't save the secret!</text>
+  <path d="M112 589 C178 598 248 594 312 584" class="thin"/>
+
+  <path d="M93 619 C178 613 277 622 370 616 L374 670 C278 676 178 668 92 673Z" fill="#000" stroke="#000" stroke-width="3"/>
+  <text x="145" y="654" class="hand" font-size="19" font-weight="700" fill="#fff">GET WEATHER</text>
+  <path d="M104 692 C143 698 181 696 222 689" class="thin"/>
+  <text x="235" y="700" class="hand" font-size="13">click!</text>
+
+  <!-- arrow -->
+  <path d="M405 434 C424 416 442 421 456 439" class="line"/>
+  <path d="M446 428 l12 12-16 6" fill="#000"/>
+
+  <!-- box 2 -->
+  <path d="M465 178 C647 171 818 184 966 176 L973 716 C799 724 637 712 467 720Z" class="line"/>
+  <text x="491" y="216" class="hand" font-size="25" font-weight="700">2. weather stuff</text>
+  <path d="M491 226 C626 220 789 231 939 223" class="thin"/>
+
+  <path d="M492 251 C635 246 795 256 945 249 L948 390 C796 396 635 387 491 393Z" class="thin"/>
+  <text x="515" y="281" class="hand" font-size="15">right now</text>
+  <text x="514" y="354" class="hand" font-size="60" font-weight="700">18°</text>
+  <!-- childish sun -->
+  <circle cx="840" cy="311" r="34" class="line"/>
+  <path d="M840 258 v-18 M840 382 v-18 M787 311 h-19 M912 311 h-19 M802 273 l-14-14 M892 363 l-14-14 M878 273 l14-14 M788 363 l14-14" class="thin"/>
+  <!-- cloud -->
+  <path d="M797 357 C804 334 826 337 837 351 C851 332 881 339 888 362 L790 362Z" fill="#fff" stroke="#000" stroke-width="3"/>
+  <text x="694" y="378" class="hand" font-size="14">wind + rain + etc.</text>
+
+  <path d="M492 414 C636 409 795 418 946 412 L949 525 C798 531 635 522 491 528Z" class="thin"/>
+  <text x="514" y="443" class="hand" font-size="17">today-ish</text>
+  <path d="M516 495 C571 479 609 490 659 462 C715 433 755 499 806 470 C848 446 887 468 924 447" class="line"/>
+  <circle cx="516" cy="495" r="4" fill="#000"/><circle cx="659" cy="462" r="4" fill="#000"/><circle cx="806" cy="470" r="4" fill="#000"/><circle cx="924" cy="447" r="4" fill="#000"/>
+
+  <path d="M492 550 C637 545 796 555 947 548 L950 634 C798 640 635 631 491 637Z" class="thin"/>
+  <text x="515" y="580" class="hand" font-size="17">the week</text>
+  <g class="hand" font-size="14">
+    <text x="520" y="614">M ☀</text><text x="580" y="614">T ☀</text><text x="640" y="614">W ☁</text><text x="700" y="614">T ☂</text><text x="760" y="614">F ☀</text><text x="820" y="614">S ☀</text><text x="880" y="614">S ☀</text>
+  </g>
+
+  <path d="M492 658 C637 653 796 662 947 656 L949 695 C798 700 635 693 491 698Z" class="dash"/>
+  <text x="510" y="684" class="hand" font-size="14">nice view | raw data | mapped thing</text>
+
+  <!-- arrow -->
+  <path d="M976 435 C995 417 1011 422 1025 439" class="line"/>
+  <path d="M1016 428 l12 12-16 6" fill="#000"/>
+
+  <!-- box 3 -->
+  <path d="M1035 178 C1134 173 1238 183 1335 176 L1341 716 C1232 723 1133 712 1038 719Z" class="line"/>
+  <text x="1058" y="215" class="hand" font-size="25" font-weight="700">3. AI says...</text>
+  <path d="M1058 225 C1145 220 1232 229 1313 223" class="thin"/>
+
+  <text x="1060" y="271" class="hand" font-size="18" font-weight="700">summary</text>
+  <path d="M1061 288 C1137 284 1239 291 1314 287" class="thin"/>
+  <path d="M1061 309 C1141 305 1227 312 1294 308" class="thin"/>
+
+  <text x="1060" y="354" class="hand" font-size="18" font-weight="700">uh-ohs</text>
+  <circle cx="1071" cy="379" r="5" fill="#000"/><path d="M1088 379 C1158 375 1239 382 1314 378" class="thin"/>
+  <circle cx="1071" cy="406" r="5" fill="#000"/><path d="M1088 406 C1161 402 1225 409 1291 405" class="thin"/>
+
+  <text x="1060" y="451" class="hand" font-size="18" font-weight="700">do these</text>
+  <path d="M1061 469 C1139 464 1233 473 1315 467 L1317 510 C1234 515 1138 508 1060 513Z" class="thin"/>
+  <text x="1078" y="497" class="hand" font-size="14">1. do a sensible thing</text>
+  <path d="M1061 526 C1139 521 1233 530 1315 524 L1317 567 C1234 572 1138 565 1060 570Z" class="thin"/>
+  <text x="1078" y="554" class="hand" font-size="14">2. check again later</text>
+
+  <text x="1060" y="612" class="hand" font-size="18" font-weight="700">proof ↓</text>
+  <path d="M1061 629 C1139 624 1232 633 1315 627 L1317 666 C1234 671 1138 664 1060 669Z" class="dash"/>
+  <text x="1076" y="655" class="hand" font-size="14">weather field names</text>
+  <text x="1060" y="698" class="hand" font-size="13">if AI breaks, weather stays :)</text>
+
+  <!-- sticky note -->
+  <g transform="rotate(3 1110 89)">
+    <path d="M994 48 C1108 42 1233 53 1346 46 L1349 119 C1230 125 1113 116 998 122Z" fill="#fff" stroke="#000" stroke-width="3"/>
+    <text x="1018" y="79" class="hand" font-size="16">workshop only!</text>
+    <text x="1018" y="104" class="hand" font-size="17" font-weight="700">NOT a real decision</text>
+  </g>
+
+  <text x="53" y="823" class="hand" font-size="14">three boxes. done. go get coffee.</text>
+</svg>

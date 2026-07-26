@@ -1,0 +1,13 @@
+Region,Month,Revenue,Orders,Returns
+North,Jan,42000,310,12
+North,Feb,38000,280,9
+North,Mar,51000,380,15
+South,Jan,31000,220,8
+South,Feb,29000,210,7
+South,Mar,39000,290,11
+East,Jan,25000,180,5
+East,Feb,27000,190,6
+East,Mar,33000,240,9
+West,Jan,48000,350,14
+West,Feb,44000,320,12
+West,Mar,56000,410,18

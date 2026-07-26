@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Integration Architecture Copilot</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="styles.css">
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#controls">Skip to context and controls</a>
+    <main>
+      <header class="page-header">
+        <p class="eyebrow">Workshop proof of concept</p>
+        <h1>Integration Architecture Copilot</h1>
+        <p class="lede">
+          Step 1 builds a safe city search and selection flow before any weather
+          retrieval or review logic.
+        </p>
+        <p id="starter-status" class="status" role="status" aria-live="polite">
+          Preparing city search.
+        </p>
+      </header>
+      <section id="controls" aria-labelledby="controls-heading">
+        <div class="section-heading">
+          <p class="step">Region 1</p>
+          <h2 id="controls-heading">Context and controls</h2>
+        </div>
+        <p>
+          Search and select one public location. Weather fetch and review remain
+          intentionally disabled in this step.
+        </p>
+        <div class="control-grid">
+          <article class="panel panel-search" aria-labelledby="location-heading">
+            <h3 id="location-heading">1. Find a city</h3>
+            <div class="field">
+            <label for="location-query">Location</label>
+            <input
+              id="location-query"
+              name="location-query"
+              type="search"
+              autocomplete="off"
+              placeholder="Type at least 2 characters"
+              role="combobox"
+              aria-autocomplete="list"
+              aria-expanded="false"
+              aria-controls="location-suggestions"
+              aria-activedescendant=""
+            >
+            </div>
+            <p id="search-help" class="field-note">
+              Results include city, optional admin area, country, and timezone when available.
+            </p>
+            <div class="search-results-wrap">
+              <ul
+                id="location-suggestions"
+                class="search-results"
+                role="listbox"
+                aria-label="Location suggestions"
+              ></ul>
+            </div>
+            <p id="search-status" class="search-status" role="status" aria-live="polite">
+              Start typing to search for a location.
+            </p>
+            <div id="search-alert" class="search-alert" role="alert" hidden></div>
+            <div id="selected-location" class="selected-location" hidden></div>
+          </article>
+
+          <article class="panel panel-later" aria-labelledby="later-heading">
+            <h3 id="later-heading">2. Next steps (locked for now)</h3>
+            <p>Scenario, weather retrieval, and review generation are part of later tasks.</p>
+            <div class="field">
+              <label for="scenario">Fictional operational scenario</label>
+              <select id="scenario" name="scenario" disabled>
+                <option value="">Choose a scenario</option>
+                <option value="warehouse">Fictional warehouse planning</option>
+                <option value="delivery">Fictional delivery planning</option>
+              </select>
+            </div>
+          </article>
+        </div>
+        <div class="actions">
+          <button id="fetch-weather" type="button" disabled>Fetch weather</button>
+          <button type="button" disabled>Generate review</button>
+        </div>
+      </section>
+      <section id="evidence" aria-labelledby="evidence-heading">
+        <div class="section-heading">
+          <p class="step">Region 2</p>
+          <h2 id="evidence-heading">Weather evidence</h2>
+        </div>
+        <p>
+          Live and fallback evidence will stay visibly distinct when this
+          region is implemented on Day 3. Open-Meteo is the planned public
+          data source; this starter does not request it.
+        </p>
+        <div class="placeholder-grid">
+          <article class="placeholder">
+            <h3>Weather signal</h3>
+            <p>Human-readable source observations will appear here.</p>
+          </article>
+          <article class="placeholder">
+            <h3>Raw API response</h3>
+            <p>The public response will remain available for inspection.</p>
+          </article>
+          <article class="placeholder">
+            <h3>Mapped WeatherSignal</h3>
+            <p>The bounded internal data shape will appear here.</p>
+          </article>
+        </div>
+      </section>
+      <section
+        id="review"
+        aria-labelledby="review-heading"
+      >
+        <div class="section-heading">
+          <p class="step">Region 3</p>
+          <h2 id="review-heading">Weather-grounded review</h2>
+        </div>
+        <p class="advisory">
+          Workshop-only advisory output. Generated content is not approved
+          architecture or a production decision.
+        </p>
+        <div class="placeholder-grid">
+          <article class="placeholder">
+            <h3>Summary</h3>
+            <p>What the weather means for the chosen scenario (1–3 sentences).</p>
+          </article>
+          <article class="placeholder">
+            <h3>Risks</h3>
+            <p>Weather-related operational risks (1–6 items).</p>
+          </article>
+          <article class="placeholder">
+            <h3>Actions</h3>
+            <p>Recommended actions for these conditions (1–6 items).</p>
+          </article>
+          <article class="placeholder">
+            <h3>Questions</h3>
+            <p>What we don't know yet (1–6 items).</p>
+          </article>
+          <article class="placeholder">
+            <h3>Evidence</h3>
+            <p>WeatherSignal field IDs that back each claim (1–6 items).</p>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

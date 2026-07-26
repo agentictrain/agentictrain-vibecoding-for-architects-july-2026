@@ -1,0 +1,196 @@
+(function createWeatherReviewNamespace(globalObject, factory) {
+  const api = factory(globalObject);
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = api;
+  }
+  globalObject.WeatherReview = api;
+})(typeof globalThis !== 'undefined' ? globalThis : this, function createWeatherReviewApi(globalObject) {
+  const REQUIRED_FIELDS = ['summary', 'risks', 'actions', 'questions', 'evidence'];
+  const LIST_FIELDS = ['risks', 'actions', 'questions', 'evidence'];
+  const BLOCKED_PATH_SEGMENTS = ['__proto__', 'prototype', 'constructor'];
+  const SYSTEM_PROMPT = [
+    'Return one JSON object with exactly five fields: summary, risks, actions, questions, evidence.',
+    'summary must be a non-empty string of 1 to 3 sentences explaining what the weather means for the chosen scenario.',
+    'risks, actions, questions, and evidence must each be arrays of 1 to 6 non-empty plain-text strings.',
+    'Keep risks and actions weather-related. Questions must identify unknowns without inventing answers.',
+    'Every evidence item must be a real dot-delimited field path on the supplied signal and must start with WeatherSignal.',
+    'Do not return Markdown, HTML, commentary, or fields outside this contract.'
+  ].join(' ');
+
+  async function requestReview(signal, scenario, settings, options) {
+    const requestOptions = options || {};
+    validateRequestInputs(signal, scenario, settings);
+    const fetchImplementation = requestOptions.fetchImplementation || globalObject.fetch;
+    if (typeof fetchImplementation !== 'function') {
+      throw new Error('The review service is unavailable in this browser.');
+    }
+
+    const url = `${settings.baseUrl.trim().replace(/\/+$/, '')}/v1/chat/completions`;
+    let response;
+    try {
+      response = await fetchImplementation(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${settings.apiKey}`
+        },
+        body: JSON.stringify({
+          model: settings.model.trim(),
+          messages: [
+            { role: 'system', content: SYSTEM_PROMPT },
+            { role: 'user', content: JSON.stringify({ signal: signal, scenario: scenario.trim() }) }
+          ],
+          stream: false,
+          response_format: { type: 'json_object' },
+          temperature: 0.2
+        }),
+        signal: requestOptions.signal
+      });
+    } catch (error) {
+      if (error && error.name === 'AbortError') {
+        throw error;
+      }
+      throw new Error('Model request could not be completed. Check the endpoint, network, and browser CORS access.');
+    }
+
+    if (!response || !response.ok) {
+      const statusSuffix = response && Number.isInteger(response.status) ? ` with status ${response.status}` : '';
+      throw new Error(`Model request failed${statusSuffix}. Check the settings and try again.`);
+    }
+
+    let payload;
+    try {
+      payload = await response.json();
+    } catch (error) {
+      throw new Error('Model returned an unreadable response.');
+    }
+
+    const content = payload && Array.isArray(payload.choices) && payload.choices[0] &&
+      payload.choices[0].message && payload.choices[0].message.content;
+    if (typeof content !== 'string' || !content.trim()) {
+      throw new Error('Model returned no review content.');
+    }
+
+    let review;
+    try {
+      review = JSON.parse(content);
+    } catch (error) {
+      throw new Error('Model review was not valid JSON.');
+    }
+
+    return validateReview(review, signal);
+  }
+
+  function validateRequestInputs(signal, scenario, settings) {
+    if (!isPlainObject(signal)) {
+      throw new Error('Weather evidence is required before generating a review.');
+    }
+    if (typeof scenario !== 'string' || !scenario.trim()) {
+      throw new Error('Choose a scenario before generating a review.');
+    }
+    if (!isPlainObject(settings) || typeof settings.baseUrl !== 'string' || !settings.baseUrl.trim()) {
+      throw new Error('Groq endpoint is required.');
+    }
+    if (typeof settings.model !== 'string' || !settings.model.trim()) {
+      throw new Error('Model name is required.');
+    }
+    if (typeof settings.apiKey !== 'string' || !settings.apiKey) {
+      throw new Error('Temporary demo credential is required.');
+    }
+  }
+
+  function validateReview(review, signal) {
+    if (!isPlainObject(review)) {
+      throw new Error('Model review must be a JSON object.');
+    }
+
+    const fields = Object.keys(review).sort();
+    const expectedFields = REQUIRED_FIELDS.slice().sort();
+    if (fields.length !== expectedFields.length || fields.some(function differs(field, index) {
+      return field !== expectedFields[index];
+    })) {
+      throw new Error('Model review must contain exactly summary, risks, actions, questions, and evidence.');
+    }
+
+    const summary = requirePlainText(review.summary, 'summary');
+    if (countSentences(summary) > 3) {
+      throw new Error('Model review summary must contain 1 to 3 sentences.');
+    }
+
+    const validated = { summary: summary };
+    LIST_FIELDS.forEach(function validateList(field) {
+      validated[field] = validateStringArray(review[field], field);
+    });
+
+    validated.evidence.forEach(function validateEvidencePath(path, index) {
+      if (!resolvesWeatherSignalPath(path, signal)) {
+        throw new Error(`Model review evidence item ${index + 1} contains a path that does not exist on the WeatherSignal.`);
+      }
+    });
+
+    return validated;
+  }
+
+  function validateStringArray(value, field) {
+    if (!Array.isArray(value) || value.length < 1 || value.length > 6) {
+      throw new Error(`Model review ${field} must contain 1 to 6 items.`);
+    }
+    return value.map(function validateItem(item, index) {
+      return requirePlainText(item, `${field}[${index}]`);
+    });
+  }
+
+  function requirePlainText(value, field) {
+    if (typeof value !== 'string' || !value.trim()) {
+      throw new Error(`Model review ${field} must be a non-empty string.`);
+    }
+    const text = value.trim();
+    if (/<\/?[a-z][^>]*>/i.test(text) || /```|^\s*#{1,6}\s/m.test(text)) {
+      throw new Error(`Model review ${field} must be plain text.`);
+    }
+    return text;
+  }
+
+  function countSentences(value) {
+    const endings = value.match(/[.!?]+(?=\s|$)/g);
+    return endings ? endings.length : 1;
+  }
+
+  function resolvesWeatherSignalPath(path, signal) {
+    if (typeof path !== 'string') {
+      return false;
+    }
+    const segments = path.trim().split('.');
+    if (segments.length < 2 || segments.shift() !== 'WeatherSignal') {
+      return false;
+    }
+
+    let value = signal;
+    return segments.every(function resolveSegment(segment) {
+      if (!segment || BLOCKED_PATH_SEGMENTS.includes(segment) || value === null ||
+          (typeof value !== 'object' && !Array.isArray(value))) {
+        return false;
+      }
+      if (!Object.prototype.hasOwnProperty.call(value, segment)) {
+        return false;
+      }
+      value = value[segment];
+      return value !== undefined && value !== null;
+    });
+  }
+
+  function isPlainObject(value) {
+    if (!value || Object.prototype.toString.call(value) !== '[object Object]') {
+      return false;
+    }
+    const prototype = Object.getPrototypeOf(value);
+    return prototype === Object.prototype || prototype === null;
+  }
+
+  return {
+    SYSTEM_PROMPT: SYSTEM_PROMPT,
+    requestReview: requestReview,
+    validateReview: validateReview,
+    resolvesWeatherSignalPath: resolvesWeatherSignalPath
+  };
+});

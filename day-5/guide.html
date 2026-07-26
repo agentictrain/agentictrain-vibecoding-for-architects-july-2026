@@ -1,0 +1,650 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Day 5 — Architect skills: find, run, and judge</title>
+  <style>
+:root { color-scheme: light; font-family: Inter, system-ui, sans-serif; line-height: 1.6; }
+* { box-sizing: border-box; }
+body { margin: 0; color: #172033; background: #f5f7fb; }
+main { box-sizing: border-box; width: min(100% - 2rem, 72rem); margin: 2rem auto; padding: clamp(1rem, 3vw, 3rem); background: white; border-radius: 1rem; }
+h1, h2, h3 { line-height: 1.2; color: #0b2554; }
+a { color: #075bbb; }
+img { max-width: 100%; height: auto; }
+.code-block { position: relative; }
+pre { overflow-x: auto; padding: 3.2rem 1rem 1rem; border-radius: .5rem; color: #f8fafc; background: #172033; }
+.copy-button { position: absolute; top: .55rem; right: .55rem; border: 2px solid #0b2554; border-radius: .35rem; padding: .35rem .7rem; color: #172033; background: #fff; cursor: pointer; }
+.copy-status { position: absolute; top: .65rem; left: .8rem; min-height: 1.5rem; color: #e2e8f0; font-weight: 700; }
+.copy-button[data-copy-state="success"] { background: #d1fae5; }
+.copy-button[data-copy-state="error"] { color: #7f1d1d; background: #fee2e2; }
+.guide-alert { margin: 1.25rem 0; padding: .85rem 1rem; border: 1px solid; border-left-width: .45rem; border-radius: .5rem; }
+.guide-alert p:last-child { margin-bottom: 0; }
+.guide-alert-title { margin: 0 0 .35rem; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; }
+.guide-alert-note { border-color: #1d4ed8; background: #eff6ff; }
+.guide-alert-important { border-color: #0b6e4f; background: #ecfdf5; }
+.guide-alert-warning { border-color: #b45309; background: #fff7ed; }
+.guide-objective, .guide-checkpoint, .guide-observation, .guide-recovery { padding-left: .7rem; border-left: .35rem solid; }
+.guide-objective { border-color: #2563eb; }
+.guide-checkpoint { border-color: #7c3aed; }
+.guide-observation { border-color: #0f766e; }
+.guide-recovery { border-color: #b45309; }
+
+/* Heading anchor links (GitHub-style hover reveal) */
+h2 { position: relative; }
+a.headerlink { position: absolute; left: -1.6rem; top: 0; bottom: 0; width: 1.2rem; display: flex; align-items: center; color: #64748b; opacity: 0; text-decoration: none; }
+a.headerlink:hover, a.headerlink:focus-visible { color: #075bbb; opacity: 1; }
+a.headerlink svg { vertical-align: middle; width: 1rem; height: 1rem; }
+
+/* Left-rail section navigation with scroll-spy */
+.section-nav { position: fixed; top: 2rem; left: 1.25rem; width: calc(15% - 2.5rem); max-height: calc(100vh - 4rem); overflow-y: auto; font-size: .82rem; line-height: 1.25; padding-right: .3rem; }
+.section-nav-title { font-weight: 700; text-transform: uppercase; letter-spacing: .04em; font-size: .7rem; color: #64748b; margin: 0 0 .5rem .5rem; }
+.section-nav a { display: block; padding: .22rem .5rem; color: #64748b; text-decoration: none; border-left: 2px solid transparent; border-radius: 0 4px 4px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.section-nav a:hover { color: #075bbb; background: #eef5fb; }
+.section-nav a.active { color: #075bbb; border-left-color: #075bbb; background: #eef5fb; font-weight: 600; }
+@media (max-width: 1439px) { .section-nav { display: none; } }
+
+/* Wide-screen floating callouts: tuck guide-alert asides into the right margin */
+@media (min-width: 1440px) {
+  main { margin-left: 15%; margin-right: auto; }
+  .guide-alert { float: right; clear: right; width: 290px; margin: 0 -310px 1rem 0; box-shadow: 0 1px 4px rgba(0,0,0,.10); font-size: .88rem; }
+}
+
+:focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }
+@media (max-width: 42rem) { main { width: 100%; margin: 0; border-radius: 0; } }
+@media print {
+  body { color: #000; background: #fff; }
+  main { width: 100%; margin: 0; padding: 0; box-shadow: none; }
+  .copy-button, .copy-status, .section-nav, a.headerlink { display: none; }
+  .guide-alert { float: none; width: auto; margin: 1rem 0; box-shadow: none; }
+  pre { white-space: pre-wrap; overflow-wrap: anywhere; padding: .75rem; color: #000; background: #f3f4f6; border: 1px solid #94a3b8; }
+  a { color: #000; text-decoration: underline; }
+}
+</style>
+</head>
+<body>
+  <main data-source-sha256="3760164f001ee839c2ec2b79ac4b4ebe24ff357d61744f7915579e50457eaee6">
+<h1>Day 5 — Architect skills: find, run, and judge</h1>
+<p>Today you learn the full skill lifecycle — search, inspect, install, run,
+and judge — by practicing it on real architect tasks. A <strong>skill</strong> is a
+reusable AI workflow you install once and trigger by name instead of
+re-prompting every time. You&#39;ll browse the catalog, then do five hands-on
+exercises: draft an ADR, review an architecture, generate an API spec,
+explore a codebase, and build a dashboard from a spreadsheet. The same
+habit from all week: the skill&#39;s output is a claim, not a fact, until
+you&#39;ve read it critically.</p>
+<p>You will not write the code yourself — you tell GitHub Copilot what to
+build, check the result, and fix what&#39;s wrong.</p>
+<p>The whole thing takes two hours. Every exercise follows the same loop:
+read the problem, find a skill, inspect it, install it, run it, and
+read the output critically.</p>
+<aside class="guide-alert guide-alert-note" role="note" aria-label="Note">
+<p class="guide-alert-title">NOTE</p>
+<p>A shared <a href="../glossary.md">course glossary</a> defines every technical term
+used across all four days. Open it in a tab and refer back when a term is
+unfamiliar.</p></aside><h2 id="prerequisites-and-preflight">Prerequisites and preflight</h2>
+<p>Before the clock starts, make sure you have:</p>
+<ul>
+<li>GitHub Copilot working in your editor.</li>
+<li><code>npx</code> available in your terminal (the skills CLI needs it).</li>
+<li><code>git</code> available in your terminal (one exercise clones a public repo).</li>
+<li>A web browser open to <a href="https://skills.sh">skills.sh</a>.</li>
+</ul>
+<aside class="guide-alert guide-alert-warning" role="note" aria-label="Warning">
+<p class="guide-alert-title">WARNING</p>
+<p>Only install skills from sources you&#39;ve inspected. Do not paste
+personal or production credentials into any skill, prompt, or terminal.</p></aside><aside class="guide-alert guide-alert-note" role="note" aria-label="Note">
+<p class="guide-alert-title">NOTE</p>
+<p><strong>Every exercise today needs internet.</strong> You&#39;ll browse <a href="https://skills.sh">skills.sh</a>,
+install skills from it, and (in one exercise) clone a public GitHub repo.
+If your network blocks any of those, you can still read the <code>PROBLEM.md</code>
+files and the shipped <code>finish/</code> examples — but you won&#39;t be able to run
+the install-invoke-verify loop yourself. If you&#39;re working alone with no
+network at all, work through the exercises you can and read the
+<code>finish/</code> folders for the rest.</p></aside><aside class="guide-alert guide-alert-note" role="note" aria-label="Note">
+<p class="guide-alert-title">NOTE</p>
+<p><strong>About <code>DISABLE_TELEMETRY=1</code>.</strong> The <code>npx skills</code> CLI sends anonymous
+usage data (which commands you run, which skills you install) to the
+skills.sh service by default. It does not send file contents, prompts,
+or credentials. Every install and remove command in this guide prefixes
+<code>DISABLE_TELEMETRY=1</code> so the command you run sends nothing. If you&#39;d
+rather turn it off for your whole session, run
+<code>export DISABLE_TELEMETRY=1</code> once in your terminal before you start.</p></aside><h2 id="what-is-a-skill">What is a skill</h2>
+<p>Quick reference for the terms you&#39;ll see today:</p>
+<ul>
+<li>A <strong>prompt</strong> is a one-time request for this interaction.</li>
+<li>A <strong>custom instruction</strong> is persistent local guidance.</li>
+<li>A <strong>skill</strong> is a reusable, triggerable workflow package with resources
+and stop conditions — install once, invoke by name later. Think
+&quot;review my ADR&quot; instead of re-typing the whole review prompt every
+time.</li>
+<li>An <strong>agent</strong> combines reasoning, context, and tools to act on a task.</li>
+<li>An <strong>MCP tool</strong> connects the agent to an external capability or data
+source.</li>
+</ul>
+<p>You want <strong>skills</strong> — things you install once and trigger by name.</p>
+<h2 id="the-loop-you-follow-all-day">The loop you follow all day</h2>
+<p>Every exercise is the same seven steps:</p>
+<ol>
+<li><strong>Read the problem.</strong> Understand what artifact you need.</li>
+<li><strong>Find a skill.</strong> Search <a href="https://skills.sh">skills.sh</a> for words
+related to the task.</li>
+<li><strong>Inspect the source.</strong> Before installing, read every file: <code>SKILL.md</code>,
+scripts, references. What does the skill do when it runs? What does it
+touch on your machine? Specifically check:<ul>
+<li><strong>Commands</strong> — what runs on your machine when you invoke it?</li>
+<li><strong>Network</strong> — does it call any URL? Which ones?</li>
+<li><strong>File writes</strong> — where does it write? Only inside your project, or
+elsewhere?</li>
+<li><strong>Credentials</strong> — does it ask for a key, token, or login? (If yes,
+stop — never paste a real credential into a skill.)</li>
+<li><strong>Stop conditions</strong> — how do you know when it&#39;s done? How do you
+undo it?</li>
+</ul>
+</li>
+<li><strong>Install it.</strong> Install the skill after inspecting the source.</li>
+<li><strong>Run it.</strong> Invoke the skill on a small, fictional version of the
+task. No real internal systems, vendor names, or secrets.</li>
+<li><strong>Read the output critically.</strong> Label each claim: source evidence /
+model inference / assumption / unsupported claim. Did the skill
+invent constraints, policies, or stakeholders? Did it fill gaps with
+plausible-sounding but unsupported reasoning?</li>
+<li><strong>Keep or remove.</strong> Is the output good enough you&#39;d put your name on
+it? If not, remove the skill and prove cleanup:<div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 1" aria-describedby="copy-status-1">Copy</button><span id="copy-status-1" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-bash">DISABLE_TELEMETRY=1 npx skills remove &lt;skill-name&gt; --yes
+npx skills list
+</code></pre></div>
+A success message isn&#39;t proof — run <code>npx skills list</code> and confirm the
+skill is gone.</li>
+</ol>
+<h2 id="how-checkpoints-work">How checkpoints work</h2>
+<p>Each exercise has its own <code>starter/</code> and <code>finish/</code> folder. The <code>starter/</code>
+folder has the problem description and any input files you need. The
+<code>finish/</code> folder has a known-good result for comparison.</p>
+<aside class="guide-alert guide-alert-note" role="note" aria-label="Note">
+<p class="guide-alert-title">NOTE</p>
+<p>The <code>finish/</code> folder is <strong>one example answer</strong>, not the only answer.
+Different skills, different prompts, and different models produce
+different output — that&#39;s expected. Use <code>finish/</code> to check whether your
+result is in the right shape (the ADR has the right sections, the API
+spec traces to the mapping, the dashboard charts match the CSV), not to
+match it word for word.</p></aside><p>If you get stuck, open the <code>finish/</code> folder for that exercise. Keep your
+blocked work so you can compare.</p>
+<p>The checkpoint path for Day 5:</p>
+<div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 2" aria-describedby="copy-status-2">Copy</button><span id="copy-status-2" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">course/day-5/phase 1/starter/   browse skills.sh
+course/day-5/phase 2/starter/   draft an ADR
+course/day-5/phase 3/starter/   review an architecture
+course/day-5/phase 4/starter/   generate an API spec
+course/day-5/phase 5/starter/   review an existing codebase
+course/day-5/phase 6/starter/   build a dashboard from a spreadsheet
+course/day-5/phase 7/starter/   turn meeting notes into a decision doc (optional)
+</code></pre></div>
+<h2 id="outcome-and-two-hour-route">Outcome and two-hour route</h2>
+<ul>
+<li><strong>0–10 min — Phase 1: Browse skills.sh.</strong> See the catalog, search, and
+bookmark it.</li>
+<li><strong>10–30 min — Phase 2: Draft an ADR.</strong> Find an ADR skill, run it, read
+the output.</li>
+<li><strong>30–50 min — Phase 3: Review an architecture.</strong> Find a review skill,
+run it, read the output.</li>
+<li><strong>50–70 min — Phase 4: Generate an API spec.</strong> Find an API spec skill,
+run it, validate against the source mapping.</li>
+<li><strong>70–90 min — Phase 5: Review an existing codebase.</strong> Clone a public
+repo, find a codebase exploration skill, ask it questions.</li>
+<li><strong>90–110 min — Phase 6: Build a dashboard from a spreadsheet.</strong> Find a
+dashboard or charting skill, run it against a CSV, check the charts
+match the data.</li>
+<li><strong>110–120 min — Hand off.</strong> Show one skill, one artifact, one claim you
+caught.</li>
+<li><strong>If you have time left — Optional Phase 7: Turn meeting notes into a
+decision document.</strong></li>
+</ul>
+<hr>
+<h2 id="phase-1-browse-skillssh">Phase 1 — Browse skills.sh</h2>
+<p>Open <a href="https://skills.sh">skills.sh</a>. Spend a few minutes getting
+familiar:</p>
+<ul>
+<li><strong>The catalog.</strong> Browse the list. What categories exist? What are the
+most popular skills?</li>
+<li><strong>Search.</strong> Try words related to your job: &quot;ADR,&quot; &quot;architecture
+review,&quot; &quot;API spec,&quot; &quot;OpenAPI,&quot; &quot;codebase,&quot; &quot;dashboard,&quot; &quot;meeting
+notes,&quot; &quot;decision.&quot; See what comes up.</li>
+<li><strong>A skill page.</strong> Click into a skill. Look at the description,
+publisher, install command, and the source files. What does the page
+tell you about what the skill does and what it touches?</li>
+</ul>
+<p>Bookmark the site. You&#39;ll be searching it for every exercise.</p>
+<p><strong>Checkpoint 1:</strong> you&#39;ve browsed skills.sh and searched for at least
+three task words.</p>
+<hr>
+<h2 id="phase-2-exercise-1-draft-an-adr">Phase 2 — Exercise 1: Draft an ADR</h2>
+<p>Open <code>course/day-5/phase 2/starter/</code> and read <code>PROBLEM.md</code>. It describes
+a fictional decision you need an ADR for.</p>
+<p><strong>The problem:</strong> You need an Architecture Decision Record for a fictional
+decision: &quot;should we use event sourcing for our order service?&quot; You could
+write it from scratch, or find a skill that drafts ADRs from a short
+problem statement.</p>
+<p><strong>Find and install a skill:</strong></p>
+<ol>
+<li>Search skills.sh for &quot;ADR&quot; or &quot;architecture decision.&quot;</li>
+<li>Inspect its source: read the <code>SKILL.md</code>, any scripts, and the
+install command. What does it do when it runs? What does it write?</li>
+<li>Install it:<div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 3" aria-describedby="copy-status-3">Copy</button><span id="copy-status-3" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-bash">DISABLE_TELEMETRY=1 npx --yes skills add &lt;skill-source&gt; --yes
+</code></pre></div>
+</li>
+</ol>
+<p><strong>Ask Copilot</strong> (copy this whole block):</p>
+<div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 4" aria-describedby="copy-status-4">Copy</button><span id="copy-status-4" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">Use the &lt;skill-name&gt; skill. Here&#39;s a short, fictional decision I need
+an ADR for: should we use event sourcing for our order service? Draft
+the ADR. Don&#39;t invent constraints, policies, or stakeholders that
+aren&#39;t in the problem statement.
+</code></pre></div>
+<p><strong>Read the output critically:</strong></p>
+<ul>
+<li>Does the ADR state the decision, drivers, alternatives, and
+consequences?</li>
+<li>Did the model invent constraints, policies, or stakeholders?</li>
+<li>Which claims are source evidence, which are inferences, which are
+unsupported?</li>
+<li>Fix the overclaims. Keep or remove the skill.</li>
+</ul>
+<p>If you&#39;re stuck, open <code>course/day-5/phase 2/finish/</code> to see a known-good
+ADR.</p>
+<p><strong>Checkpoint 2:</strong> you&#39;ve drafted an ADR with a skill and labeled the
+claims.</p>
+<hr>
+<h2 id="phase-3-exercise-2-review-an-architecture-for-missing-nfrs">Phase 3 — Exercise 2: Review an architecture for missing NFRs</h2>
+<p>Open <code>course/day-5/phase 3/starter/</code> and read <code>PROBLEM.md</code>. It has a
+fictional architecture description you&#39;ll review.</p>
+<p><strong>The problem:</strong> You have a short fictional architecture description. You
+need to find missing non-functional requirements, risks, and
+dependencies.</p>
+<p><strong>Find and install a skill:</strong></p>
+<ol>
+<li>Search skills.sh for &quot;architecture review,&quot; &quot;NFR,&quot; or &quot;risk review.&quot;</li>
+<li>Inspect the source, then install it.</li>
+</ol>
+<p><strong>Ask Copilot</strong> (copy this whole block):</p>
+<div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 5" aria-describedby="copy-status-5">Copy</button><span id="copy-status-5" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">Use the &lt;skill-name&gt; skill. Review this fictional architecture for
+missing non-functional requirements, risks, and dependencies:
+
+A small e-commerce checkout service. A single Node.js backend handles
+cart, payment, and order creation. It talks to Stripe for payments and
+PostgreSQL for order storage. The frontend is a React SPA. There is no
+queue, no cache, and no CDN. Deployed on a single VM.
+
+Don&#39;t invent compliance requirements or SLAs that aren&#39;t stated.
+</code></pre></div>
+<p><strong>Read the output critically:</strong></p>
+<ul>
+<li>Which findings are grounded in the description?</li>
+<li>Which are reasonable inferences (e.g. &quot;no cache means slow under
+load&quot;)?</li>
+<li>Which are unsupported (e.g. &quot;GDPR requires...&quot; when GDPR wasn&#39;t
+mentioned)?</li>
+<li>Did it miss something obvious (e.g. no backup strategy, no
+rate-limiting)?</li>
+<li>Fix the overclaims. Keep or remove the skill.</li>
+</ul>
+<p>If you&#39;re stuck, open <code>course/day-5/phase 3/finish/</code> to see a known-good
+review.</p>
+<p><strong>Checkpoint 3:</strong> you&#39;ve reviewed an architecture with a skill and
+labeled the findings.</p>
+<hr>
+<h2 id="phase-4-exercise-3-generate-an-api-spec-from-a-data-mapping">Phase 4 — Exercise 3: Generate an API spec from a data mapping</h2>
+<p>Open <code>course/day-5/phase 4/starter/</code> and read <code>PROBLEM.md</code>. It has the
+<code>WeatherSignal</code> data mapping you&#39;ll turn into an API spec.</p>
+<p><strong>The problem:</strong> You have a small data mapping — the <code>WeatherSignal</code>
+shape from Day 3. You need an API spec with endpoints, request/response
+shapes, and error codes.</p>
+<p><strong>Find and install a skill:</strong></p>
+<ol>
+<li>Search skills.sh for &quot;API spec,&quot; &quot;OpenAPI,&quot; or &quot;Swagger.&quot;</li>
+<li>Inspect the source, then install it.</li>
+</ol>
+<p><strong>Ask Copilot</strong> (copy this whole block):</p>
+<div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 6" aria-describedby="copy-status-6">Copy</button><span id="copy-status-6" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">Use the &lt;skill-name&gt; skill. Generate an API spec from this data
+mapping. Include endpoints, request/response shapes, and error codes.
+Don&#39;t invent endpoints, fields, or auth schemes that aren&#39;t in the
+source mapping.
+
+WeatherSignal {
+  location: string
+  latitude: number
+  longitude: number
+  timezone: string
+  isFallback: boolean
+  current: {
+    temperature: number
+    apparentTemperature: number
+    humidity: number
+    precipitation: number
+    weatherCode: number
+    windSpeed: number
+    windDirection: number
+    windGusts: number
+    cloudCover: number
+    pressure: number
+    isDay: number
+  }
+  hourly: {
+    time: string[24]
+    temperature: number[24]
+    precipitationProbability: number[24]
+    precipitation: number[24]
+    weatherCode: number[24]
+    windSpeed: number[24]
+  }
+  daily: {
+    date: string[7]
+    temperatureMax: number[7]
+    temperatureMin: number[7]
+    precipitationSum: number[7]
+    precipitationProbabilityMax: number[7]
+    weatherCode: number[7]
+    windSpeedMax: number[7]
+    sunrise: string[7]
+    sunset: string[7]
+  }
+}
+</code></pre></div>
+<p><strong>Validate the spec against the mapping:</strong></p>
+<ul>
+<li>Does every field in the spec trace back to the mapping?</li>
+<li>Did it invent endpoints or fields that don&#39;t exist in the source?</li>
+<li>Did it add auth schemes the PoC doesn&#39;t have?</li>
+<li>Are the error codes sensible or invented?</li>
+<li>Fix the overclaims. Keep or remove the skill.</li>
+</ul>
+<p>If you&#39;re stuck, open <code>course/day-5/phase 4/finish/</code> to see a known-good
+spec.</p>
+<p><strong>Checkpoint 4:</strong> you&#39;ve generated an API spec with a skill and
+validated it against the source.</p>
+<hr>
+<h2 id="phase-5-exercise-4-review-an-existing-codebase">Phase 5 — Exercise 4: Review an existing codebase</h2>
+<p>Open <code>course/day-5/phase 5/starter/</code> and read <code>PROBLEM.md</code>. It tells you
+which repo to explore and what questions to ask.</p>
+<p><strong>The problem:</strong> You explore a small codebase. You need to understand what it
+does, how it&#39;s structured, and where the risks are — without reading every
+file yourself.</p>
+<p><strong>Set up — pick one:</strong></p>
+<ul>
+<li><strong>Bundled sample (offline):</strong> use the tiny todo app shipped at
+<code>course/day-5/phase 5/starter/sample-repo/</code>. It&#39;s a three-file app with a
+couple of intentional smells. No clone needed.</li>
+<li><strong>Public repo (online):</strong><div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 7" aria-describedby="copy-status-7">Copy</button><span id="copy-status-7" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-bash">git clone https://github.com/&lt;a-small-public-repo&gt; .
+</code></pre></div>
+Pick a small, public, non-sensitive repo — for example a todo app, a
+weather app, or any small open-source project you&#39;re curious about.</li>
+</ul>
+<p><strong>Find and install a skill:</strong></p>
+<ol>
+<li>Search skills.sh for &quot;codebase,&quot; &quot;code review,&quot; &quot;onboarding,&quot; or
+&quot;explore.&quot;</li>
+<li>Inspect the source, then install it.</li>
+</ol>
+<p><strong>Ask Copilot</strong> (copy this whole block):</p>
+<div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 8" aria-describedby="copy-status-8">Copy</button><span id="copy-status-8" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">Use the &lt;skill-name&gt; skill. Explore this codebase and answer:
+1. What does this codebase do?
+2. Where are the main entry points?
+3. What are the biggest risks or code smells?
+Don&#39;t hallucinate files or patterns that don&#39;t exist. If you&#39;re not
+sure, say so.
+</code></pre></div>
+<p><strong>Read the answers critically:</strong></p>
+<ul>
+<li>Does each claim trace to actual code you can point to?</li>
+<li>Did it hallucinate files, functions, or patterns that don&#39;t exist?</li>
+<li>Did it miss something obvious (e.g. no tests, no error handling,
+hardcoded secrets)?</li>
+<li>Is the structure description accurate or guessed?</li>
+<li>Verify two claims by opening the actual files. Fix or discard the
+skill&#39;s wrong answers. Keep or remove the skill.</li>
+</ul>
+<p>If you&#39;re stuck, open <code>course/day-5/phase 5/finish/</code> to see a known-good
+exploration.</p>
+<p><strong>Checkpoint 5:</strong> you&#39;ve explored a codebase with a skill and verified
+the claims against the real code.</p>
+<hr>
+<h2 id="phase-6-exercise-5-build-a-dashboard-from-a-spreadsheet">Phase 6 — Exercise 5: Build a dashboard from a spreadsheet</h2>
+<p>Open <code>course/day-5/phase 6/starter/</code> and read <code>PROBLEM.md</code>. It has a CSV
+file with fictional operational data you&#39;ll turn into a dashboard.</p>
+<p><strong>The problem:</strong> You have a CSV file with fictional operational data.
+You need a visual dashboard a stakeholder can read — a Power BI
+replacement, built with plain HTML/CSS/JS and no backend.</p>
+<p><strong>Find and install a skill:</strong></p>
+<ol>
+<li>Search skills.sh for &quot;dashboard,&quot; &quot;chart,&quot; &quot;data visualization,&quot; or
+&quot;report.&quot;</li>
+<li>Inspect the source, then install it.</li>
+</ol>
+<p><strong>Ask Copilot</strong> (copy this whole block):</p>
+<div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 9" aria-describedby="copy-status-9">Copy</button><span id="copy-status-9" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">Use the &lt;skill-name&gt; skill. Build an HTML dashboard from the CSV file
+at course/day-5/phase 6/starter/data.csv. Include charts for revenue
+by region, orders by month, and returns rate. Use plain HTML, CSS, and
+JavaScript — no build step, no npm, no backend. The dashboard must open
+by double-clicking index.html. Don&#39;t invent metrics that aren&#39;t in the
+file.
+</code></pre></div>
+<p><strong>Read the output critically:</strong></p>
+<ul>
+<li>Do the charts match the data in the CSV?</li>
+<li>Are the labels and units correct?</li>
+<li>Did it invent metrics or columns that aren&#39;t in the file?</li>
+<li>Does it work from a double-click with no install?</li>
+<li>Does it look readable at a narrow width (390px)?</li>
+<li><strong>Accessibility:</strong> Tab through the dashboard — every chart and table must
+be reachable with the keyboard and have a visible focus outline. Run
+Lighthouse → Accessibility on the generated <code>index.html</code>. Fix anything
+below 100 (missing labels, low contrast, no <code>&lt;main&gt;</code> landmark). A
+stakeholder dashboard that a screen-reader user can&#39;t read isn&#39;t done.</li>
+<li>Fix the overclaims. Keep or remove the skill.</li>
+</ul>
+<p>If you&#39;re stuck, open <code>course/day-5/phase 6/finish/</code> to see a known-good
+dashboard.</p>
+<p><strong>Checkpoint 6:</strong> you&#39;ve built a dashboard with a skill and verified
+the charts match the data.</p>
+<hr>
+<h2 id="optional-phase-7-exercise-6-turn-meeting-notes-into-a-decision-document">Optional Phase 7 — Exercise 6: Turn meeting notes into a decision document</h2>
+<p>If you have time left, try one more.</p>
+<p>Open <code>course/day-5/phase 7/starter/</code> and read <code>PROBLEM.md</code>. It has a
+fictional meeting transcript you&#39;ll turn into a decision document.</p>
+<p><strong>The problem:</strong> You have a short fictional meeting transcript. You need
+a decision document: the decision, the rationale, who agreed, what&#39;s
+open.</p>
+<p><strong>Find and install a skill:</strong></p>
+<ol>
+<li>Search skills.sh for &quot;meeting notes,&quot; &quot;decision document,&quot; or
+&quot;summary.&quot;</li>
+<li>Inspect the source, then install it.</li>
+</ol>
+<p><strong>Ask Copilot</strong> (copy this whole block):</p>
+<div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 10" aria-describedby="copy-status-10">Copy</button><span id="copy-status-10" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">Use the &lt;skill-name&gt; skill. Turn this meeting transcript into a
+decision document with: the decision, the rationale, who agreed, and
+what&#39;s still open. Don&#39;t attribute opinions to people who didn&#39;t speak.
+Don&#39;t invent a consensus that wasn&#39;t reached.
+
+Meeting: Platform team sync, 2026-07-24
+Attendees: Alice (tech lead), Bob (infra), Carlos (backend), Dana (data)
+
+Alice: We need to pick a message broker for the new order service.
+  Kafka or SQS?
+Bob: Kafka gives us replay and ordering, but ops is heavier. We&#39;d need
+  a cluster.
+Carlos: SQS is simpler. We don&#39;t need replay for orders. But we lose
+  ordering guarantees across consumers.
+Dana: For analytics, replay would be nice. But we can batch from the DB
+  instead.
+Alice: So the trade-off is ops cost vs replay. Anyone feel strongly?
+Bob: I&#39;d rather not run a Kafka cluster for one service.
+Carlos: Agreed. SQS for now, revisit if we need replay.
+Alice: OK. SQS. Dana, you&#39;re OK with batching from DB?
+Dana: Yes, for now.
+Alice: Open question: what happens if SQS has a regional outage? Bob,
+  can you look into a fallback?
+Bob: I&#39;ll check multi-region options for next week.
+</code></pre></div>
+<p><strong>Read the output critically:</strong></p>
+<ul>
+<li>Did the model attribute opinions to people who didn&#39;t speak?</li>
+<li>Did it invent a consensus that wasn&#39;t reached?</li>
+<li>Did it fill gaps with plausible-sounding but unsupported reasoning?</li>
+<li>Are the open questions captured accurately?</li>
+<li>Fix the overclaims. Keep or remove the skill.</li>
+</ul>
+<p>If you&#39;re stuck, open <code>course/day-5/phase 7/finish/</code> to see a known-good
+decision document.</p>
+<p><strong>Checkpoint 7 (optional):</strong> you&#39;ve turned meeting notes into a decision
+document with a skill and labeled the claims.</p>
+<hr>
+<h2 id="common-mistakes">Common mistakes</h2>
+<ul>
+<li><strong>Installing without inspecting.</strong> The whole day turns on
+inspect-before-install. If you skip the source read, you&#39;ve handed a
+third-party workflow write access to your machine with no idea what it
+does. A stop at inspection is a valid result.</li>
+<li><strong>Trusting the install count.</strong> A popular skill isn&#39;t a safe skill. The
+count is anonymous CLI telemetry, not a quality signal. Read the
+<code>SKILL.md</code>, the scripts, and the network targets before you install.</li>
+<li><strong>Pasting a real credential into a skill.</strong> Skills are third-party
+workflows. If one asks for an API key, token, or login, stop. Use
+fictional inputs only.</li>
+<li><strong>Accepting the skill&#39;s output as fact.</strong> Every skill&#39;s output is a claim.
+Label each one: source evidence / inference / assumption / unsupported.
+The most common failure is invented constraints, policies, or
+stakeholders that weren&#39;t in the problem statement.</li>
+<li><strong>Forgetting to remove the skill.</strong> &quot;Keep or remove&quot; is a real step. If
+the output isn&#39;t good enough to put your name on, remove the skill and
+prove cleanup with <code>npx skills list</code>. A success message isn&#39;t proof.</li>
+<li><strong>Not verifying claims against the source.</strong> In the codebase exercise,
+open the actual files and check two claims the skill made. In the
+dashboard exercise, confirm the charts match the CSV numbers. Trust is
+earned by cross-checking, not by shape.</li>
+</ul>
+<hr>
+<h2 id="hand-off">Hand off</h2>
+<p>For the five-minute close, show (or write down, if you&#39;re working offline):</p>
+<ul>
+<li>One skill you used and what it produced.</li>
+<li>One claim you caught and fixed (source evidence vs unsupported).</li>
+<li>One sentence on whether you&#39;d use this skill on Monday — and what you
+wouldn&#39;t trust it for.</li>
+</ul>
+<p>If you&#39;re working offline or didn&#39;t finish every exercise, that&#39;s fine —
+write the same three lines for whichever exercise you completed. The
+deliverable is the judgment, not the count.</p>
+<p>Close with the repeatable loop you used all week and all day:</p>
+<div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 11" aria-describedby="copy-status-11">Copy</button><span id="copy-status-11" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">read the problem -&gt; find a skill -&gt; inspect the source -&gt; install -&gt;
+run it -&gt; read the output critically -&gt; keep or remove
+</code></pre></div>
+<p>The skill is a tool. Its output is a claim, not a fact, until you&#39;ve read
+it critically. The same habit you built all week: specify, generate,
+validate, read critically — now applied to reusable skills for real
+architect tasks.</p>
+<hr>
+<h2 id="references">References</h2>
+<p>The full list lives at <a href="../references.md">course/references.md</a>. The most
+relevant for today:</p>
+<ul>
+<li><a href="https://skills.sh">skills.sh</a> — the catalog you search for every exercise</li>
+<li><a href="https://github.com/superpowers-extra/skills">skills CLI</a> — the <code>npx skills</code>
+command reference (<code>add</code>, <code>remove</code>, <code>list</code>, <code>DISABLE_TELEMETRY</code>)</li>
+<li><a href="https://docs.github.com/en/copilot">GitHub Copilot docs</a> — for invoking
+the skills once installed</li>
+<li><a href="https://developer.chrome.com/docs/lighthouse/accessibility/scoring">Lighthouse accessibility audit</a> —
+for the dashboard exercise a11y check</li>
+</ul>
+  </main>
+  <script>
+async function copyText(value) {
+  if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+    try {
+      await navigator.clipboard.writeText(value);
+      return;
+    } catch (_) {
+      // Continue to the selection fallback used by file:// delivery pages.
+    }
+  }
+  const helper = document.createElement('textarea');
+  helper.value = value;
+  helper.setAttribute('readonly', '');
+  helper.style.position = 'fixed';
+  helper.style.opacity = '0';
+  document.body.append(helper);
+  helper.select();
+  const copied = typeof document.execCommand === 'function' && document.execCommand('copy');
+  helper.remove();
+  if (!copied) throw new Error('Clipboard unavailable');
+}
+
+document.querySelectorAll('.copy-button').forEach((button) => {
+  button.addEventListener('click', async () => {
+    const code = button.parentElement.querySelector('code').textContent;
+    const status = button.parentElement.querySelector('.copy-status');
+    try {
+      await copyText(code);
+      button.dataset.copyState = 'success';
+      button.textContent = 'Copied';
+      status.textContent = 'Copied to clipboard.';
+    } catch (_) {
+      button.dataset.copyState = 'error';
+      button.textContent = 'Copy failed';
+      status.textContent = 'Copy failed. Select the code and copy it manually.';
+    }
+  });
+});
+</script>
+  <script>
+(function () {
+  var headings = Array.from(document.querySelectorAll('main h2[id]'));
+  if (!headings.length) return;
+
+  // Header anchor links
+  headings.forEach(function (h) {
+    var link = document.createElement('a');
+    link.className = 'headerlink';
+    link.href = '#' + h.id;
+    link.setAttribute('aria-label', 'Direct link to this section');
+    link.innerHTML = "<svg viewBox=\"0 0 16 16\" aria-hidden=\"true\"><path fill=\"currentColor\" d=\"m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z\"></path></svg>";
+    h.insertBefore(link, h.firstChild);
+  });
+
+  // Left-rail section nav with scroll-spy
+  var nav = document.createElement('nav');
+  nav.className = 'section-nav';
+  nav.setAttribute('aria-label', 'Sections');
+  var title = document.createElement('div');
+  title.className = 'section-nav-title';
+  title.textContent = 'Sections';
+  nav.appendChild(title);
+
+  var links = headings.map(function (h) {
+    var link = document.createElement('a');
+    link.href = '#' + h.id;
+    var label = h.textContent.trim();
+    link.textContent = label;
+    link.title = label;
+    nav.appendChild(link);
+    return link;
+  });
+  document.body.appendChild(nav);
+
+  function topOf(el) { return el.getBoundingClientRect().top + window.scrollY; }
+  function currentIndex() {
+    var y = window.scrollY + 120;
+    var idx = 0;
+    for (var i = 0; i < headings.length; i++) {
+      if (topOf(headings[i]) <= y) idx = i;
+    }
+    return idx;
+  }
+  function highlight() {
+    var i = currentIndex();
+    links.forEach(function (link, idx) { link.classList.toggle('active', idx === i); });
+  }
+  window.addEventListener('scroll', highlight, { passive: true });
+  window.addEventListener('resize', highlight, { passive: true });
+  highlight();
+})();
+</script>
+</body>
+</html>

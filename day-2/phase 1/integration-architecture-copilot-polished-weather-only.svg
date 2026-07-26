@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="950" viewBox="0 0 1400 950">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#dff2f0"/><stop offset=".55" stop-color="#f7f4ea"/><stop offset="1" stop-color="#f4e7d7"/></linearGradient>
+    <linearGradient id="weather" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#123c48"/><stop offset="1" stop-color="#1e6970"/></linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="10" stdDeviation="18" flood-color="#17383d" flood-opacity=".13"/></filter>
+    <style>
+      .sans{font-family:"Avenir Next","Trebuchet MS",sans-serif}.serif{font-family:"Iowan Old Style",Georgia,serif}.ink{fill:#17383d}.muted{fill:#6b7d7d}.tiny{font-size:12px;font-weight:700;letter-spacing:1.4px}.label{font-size:13px;font-weight:700}.body{font-size:14px}.card{fill:#fffefa;stroke:#dbe3df}
+    </style>
+  </defs>
+  <rect width="1400" height="950" fill="url(#bg)"/>
+  <path d="M0 90 C280 130 440 35 730 84 S1120 135 1400 55 V0 H0Z" fill="#9bd1cb" opacity=".28"/>
+  <g filter="url(#shadow)"><rect x="48" y="38" width="1304" height="866" rx="8" fill="#f8faf6"/></g>
+  <rect x="48" y="38" width="1304" height="88" rx="8" fill="#17383d"/>
+  <circle cx="82" cy="82" r="17" fill="#f3bf63"/><path d="M73 86 C77 78 85 75 92 81 C86 82 81 86 79 92Z" fill="#17383d"/>
+  <text x="112" y="72" class="sans" font-size="12" font-weight="700" fill="#a8d8d1" letter-spacing="1.7">WORKSHOP PROOF OF CONCEPT</text>
+  <text x="112" y="101" class="serif" font-size="27" font-weight="700" fill="#fffefa">Public Weather Explorer</text>
+  <rect x="1110" y="65" width="210" height="34" rx="17" fill="#244d52" stroke="#4f7779"/><circle cx="1129" cy="82" r="5" fill="#f3bf63"/><text x="1143" y="87" class="sans" font-size="12" font-weight="700" fill="#e7f2ee">PUBLIC DATA · LIVE EVIDENCE</text>
+
+  <!-- controls -->
+  <rect x="48" y="126" width="330" height="778" fill="#eef3ed"/><line x1="378" y1="126" x2="378" y2="904" stroke="#d2ddd7"/>
+  <text x="78" y="168" class="sans tiny" fill="#d45f46">01 · CONTEXT &amp; CONTROLS</text>
+  <text x="78" y="205" class="serif ink" font-size="25" font-weight="700">Choose a location</text>
+  <text x="78" y="232" class="sans body muted">Explore bounded public weather evidence.</text>
+  <text x="78" y="280" class="sans label ink">Public location</text>
+  <rect x="78" y="294" width="270" height="48" rx="6" fill="#fff" stroke="#78918f"/>
+  <circle cx="100" cy="318" r="7" fill="none" stroke="#476b6c" stroke-width="2"/><path d="M105 323 l7 7" stroke="#476b6c" stroke-width="2"/>
+  <text x="123" y="324" class="sans body ink">Portland, Oregon</text>
+  <rect x="78" y="351" width="270" height="40" rx="4" fill="#dfeeea"/><circle cx="98" cy="371" r="5" fill="#2c7775"/><text x="112" y="376" class="sans" font-size="13" font-weight="700" fill="#1f5f60">Location selected</text>
+  <text x="78" y="438" class="sans label ink">Forecast range</text>
+  <rect x="78" y="452" width="270" height="48" rx="6" fill="#fff" stroke="#78918f"/><text x="96" y="482" class="sans body ink">Current + 24 hours + 7 days</text><path d="M322 471 l7 7 7-7" fill="none" stroke="#476b6c" stroke-width="2"/>
+  <g transform="translate(78 540)"><rect width="270" height="52" rx="6" fill="#17383d"/><path d="M45 17 v18 M36 26 h18" stroke="#f3bf63" stroke-width="2" stroke-linecap="round"/><text x="70" y="32" class="sans" font-size="14" font-weight="700" fill="#fffefa">Fetch weather evidence</text></g>
+  <g transform="translate(78 627)"><circle cx="9" cy="9" r="9" fill="#dfeeea"/><path d="M5 9 l3 3 5-6" fill="none" stroke="#26716e" stroke-width="2"/><text x="27" y="7" class="sans" font-size="12" font-weight="700" fill="#26716e">Live evidence ready</text><text x="27" y="25" class="sans" font-size="12" fill="#6b7d7d">Updated from Open-Meteo</text></g>
+  <rect x="78" y="702" width="270" height="112" rx="6" fill="#fffefa" stroke="#d4ded9"/><text x="96" y="731" class="sans tiny muted">VISIBLE STATES</text><text x="96" y="760" class="sans body ink">Loading · live · fallback</text><text x="96" y="785" class="sans body ink">Empty · error with retry</text>
+  <text x="78" y="859" class="sans" font-size="11" fill="#7b8987">Public Open-Meteo data only.</text>
+
+  <!-- evidence -->
+  <text x="418" y="168" class="sans tiny" fill="#d45f46">02 · WEATHER EVIDENCE</text>
+  <g filter="url(#shadow)"><rect x="418" y="190" width="894" height="236" rx="8" fill="url(#weather)"/></g>
+  <circle cx="1194" cy="272" r="65" fill="#f3bf63"/><path d="M1135 304 C1162 278 1189 312 1210 290 C1235 264 1272 285 1285 315 H1135Z" fill="#d5ebe6"/>
+  <text x="450" y="231" class="sans" font-size="13" font-weight="700" fill="#a8d8d1">PORTLAND · CURRENT CONDITIONS</text>
+  <text x="450" y="326" class="serif" font-size="82" font-weight="700" fill="#fffefa">18°</text>
+  <text x="595" y="284" class="serif" font-size="25" font-weight="700" fill="#fffefa">Bright with passing cloud</text><text x="595" y="314" class="sans" font-size="13" fill="#cce5df">Feels like 17°C · Daylight</text>
+  <g transform="translate(450 364)" class="sans"><text font-size="11" font-weight="700" fill="#9fc9c5">RAIN</text><text y="24" font-size="16" font-weight="700" fill="#fffefa">10%</text><text x="145" font-size="11" font-weight="700" fill="#9fc9c5">WIND</text><text x="145" y="24" font-size="16" font-weight="700" fill="#fffefa">14 km/h SW</text><text x="330" font-size="11" font-weight="700" fill="#9fc9c5">HUMIDITY</text><text x="330" y="24" font-size="16" font-weight="700" fill="#fffefa">63%</text><text x="500" font-size="11" font-weight="700" fill="#9fc9c5">PRESSURE</text><text x="500" y="24" font-size="16" font-weight="700" fill="#fffefa">1018 hPa</text></g>
+  <rect x="418" y="448" width="894" height="170" rx="8" class="card"/><text x="444" y="482" class="serif ink" font-size="19" font-weight="700">Next 24 hours</text>
+  <path d="M446 568 C520 548 584 561 650 530 S766 548 832 539 S944 516 1002 536 S1112 551 1284 503" fill="none" stroke="#df6c50" stroke-width="3"/>
+  <line x1="446" y1="586" x2="1284" y2="586" stroke="#dce4df"/><g class="sans" font-size="11" fill="#6b7d7d" text-anchor="middle"><text x="450" y="603">NOW</text><text x="590" y="603">3 PM</text><text x="730" y="603">6 PM</text><text x="870" y="603">9 PM</text><text x="1010" y="603">12 AM</text><text x="1150" y="603">3 AM</text><text x="1280" y="603">6 AM</text></g>
+  <rect x="418" y="640" width="894" height="170" rx="8" class="card"/><text x="444" y="674" class="serif ink" font-size="19" font-weight="700">Seven-day outlook</text>
+  <g class="sans" text-anchor="middle"><g fill="#6b7d7d" font-size="11" font-weight="700"><text x="490" y="711">TODAY</text><text x="614" y="711">TUE</text><text x="738" y="711">WED</text><text x="862" y="711">THU</text><text x="986" y="711">FRI</text><text x="1110" y="711">SAT</text><text x="1234" y="711">SUN</text></g><g font-size="27"><text x="490" y="750">☀</text><text x="614" y="750">☀</text><text x="738" y="750">☁</text><text x="862" y="750">☂</text><text x="986" y="750">☀</text><text x="1110" y="750">☀</text><text x="1234" y="750">☀</text></g><g class="ink" font-size="14" font-weight="700"><text x="490" y="782">19° / 11°</text><text x="614" y="782">21° / 12°</text><text x="738" y="782">17° / 10°</text><text x="862" y="782">15° / 9°</text><text x="986" y="782">20° / 11°</text><text x="1110" y="782">23° / 13°</text><text x="1234" y="782">22° / 14°</text></g></g>
+  <rect x="418" y="832" width="894" height="54" rx="8" class="card"/><rect x="430" y="843" width="238" height="32" rx="4" fill="#17383d"/><text x="549" y="864" class="sans" font-size="12" font-weight="700" text-anchor="middle" fill="#fffefa">READABLE VIEW</text><text x="821" y="864" class="sans" font-size="12" font-weight="700" text-anchor="middle" fill="#6b7d7d">RAW API RESPONSE</text><text x="1135" y="864" class="sans" font-size="12" font-weight="700" text-anchor="middle" fill="#6b7d7d">MAPPED WEATHER SIGNAL</text>
+  <text x="700" y="930" class="sans" font-size="12" font-weight="700" text-anchor="middle" fill="#355f60">PUBLIC WEATHER EVIDENCE · READABLE, RAW, AND MAPPED</text>
+</svg>
