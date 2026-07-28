@@ -63,7 +63,7 @@ a.headerlink svg { vertical-align: middle; width: 1rem; height: 1rem; }
 </style>
 </head>
 <body>
-  <main data-source-sha256="3760164f001ee839c2ec2b79ac4b4ebe24ff357d61744f7915579e50457eaee6">
+  <main data-source-sha256="34c764dc76737d5037d0c7b89cc7d23cc9544feeedd6a5ac66f703283b99cd2b">
 <h1>Day 5 — Architect skills: find, run, and judge</h1>
 <p>Today you learn the full skill lifecycle — search, inspect, install, run,
 and judge — by practicing it on real architect tasks. A <strong>skill</strong> is a
@@ -140,6 +140,16 @@ elsewhere?</li>
 stop — never paste a real credential into a skill.)</li>
 <li><strong>Stop conditions</strong> — how do you know when it&#39;s done? How do you
 undo it?</li>
+<li><strong>Automated scan</strong> — run <a href="https://github.com/nvidia/skillspector">SkillSpector</a>
+on the skill before installing. It&#39;s a free security scanner from
+NVIDIA that detects 68 vulnerability patterns across 17 categories
+(prompt injection, data exfiltration, privilege escalation, supply
+chain, malicious code, and more). It gives a risk score (0-100)
+and a recommendation: SAFE, CAUTION, or DO NOT INSTALL. Install it
+with <code>uv tool install git+https://github.com/nvidia/skillspector.git</code>
+and scan with <code>skillspector scan ./my-skill/ --no-llm</code> (static
+analysis only, no API key needed). Research shows 26.1% of skills
+contain vulnerabilities — scan before you install.</li>
 </ul>
 </li>
 <li><strong>Install it.</strong> Install the skill after inspecting the source.</li>
@@ -180,24 +190,104 @@ course/day-5/phase 7/starter/   turn meeting notes into a decision doc (optional
 </code></pre></div>
 <h2 id="outcome-and-two-hour-route">Outcome and two-hour route</h2>
 <ul>
-<li><strong>0–10 min — Phase 1: Browse skills.sh.</strong> See the catalog, search, and
+<li><strong>0–15 min — Phase 0: Connect Jira and create a ticket.</strong> Install the
+Copilot-for-Jira app, log in, and create a ticket summarizing what you
+built on Days 2, 3, and 4.</li>
+<li><strong>15–25 min — Phase 1: Browse skills.sh.</strong> See the catalog, search, and
 bookmark it.</li>
-<li><strong>10–30 min — Phase 2: Draft an ADR.</strong> Find an ADR skill, run it, read
+<li><strong>25–45 min — Phase 2: Draft an ADR.</strong> Find an ADR skill, run it, read
 the output.</li>
-<li><strong>30–50 min — Phase 3: Review an architecture.</strong> Find a review skill,
+<li><strong>45–65 min — Phase 3: Review an architecture.</strong> Find a review skill,
 run it, read the output.</li>
-<li><strong>50–70 min — Phase 4: Generate an API spec.</strong> Find an API spec skill,
+<li><strong>65–85 min — Phase 4: Generate an API spec.</strong> Find an API spec skill,
 run it, validate against the source mapping.</li>
-<li><strong>70–90 min — Phase 5: Review an existing codebase.</strong> Clone a public
+<li><strong>85–105 min — Phase 5: Review an existing codebase.</strong> Clone a public
 repo, find a codebase exploration skill, ask it questions.</li>
-<li><strong>90–110 min — Phase 6: Build a dashboard from a spreadsheet.</strong> Find a
+<li><strong>105–115 min — Phase 6: Build a dashboard from a spreadsheet.</strong> Find a
 dashboard or charting skill, run it against a CSV, check the charts
 match the data.</li>
-<li><strong>110–120 min — Hand off.</strong> Show one skill, one artifact, one claim you
+<li><strong>115–120 min — Hand off.</strong> Show one skill, one artifact, one claim you
 caught.</li>
 <li><strong>If you have time left — Optional Phase 7: Turn meeting notes into a
 decision document.</strong></li>
 </ul>
+<hr>
+<h2 id="phase-0-connect-jira-and-create-a-ticket">Phase 0 — Connect Jira and create a ticket</h2>
+<p>Before you start the skills lab, connect GitHub Copilot to Jira and
+create a ticket that captures everything you built this week. This is
+the same thing you&#39;d do at work: log the work, link the repo, hand it
+off to a teammate.</p>
+<h3>Step 1 — Install the Copilot-for-Jira app</h3>
+<ol>
+<li>Go to the <a href="https://marketplace.atlassian.com/apps/1582455624">GitHub Copilot for Jira app</a>
+on the Atlassian Marketplace.</li>
+<li>Click <strong>Get it now</strong> and select your Jira site.</li>
+<li>After installation, click <strong>Configure</strong> in the confirmation message.</li>
+<li>Authorize the app to access your GitHub organization and repositories.</li>
+<li>Choose the organization and repositories the app can access, then
+click <strong>Install</strong>.</li>
+</ol>
+<p>If your facilitator has already installed the app for the workshop, skip
+to Step 2.</p>
+<h3>Step 2 — Connect your GitHub account</h3>
+<ol>
+<li>In Jira, go to your personal account settings.</li>
+<li>Under <strong>GitHub Copilot for Jira</strong>, sign in to GitHub and authorize
+the app.</li>
+</ol>
+<h3>Step 3 — Create a ticket summarizing the week</h3>
+<p>Create a new Jira work item (a story or task) that captures what you
+built across Days 2, 3, and 4. Use this as a template — fill in the
+details from your own work:</p>
+<div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 3" aria-describedby="copy-status-3">Copy</button><span id="copy-status-3" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">Title: Weather PoC with AI review — workshop summary
+
+Description:
+
+Built a disposable browser proof of concept over three sessions:
+
+1. Planning (Day 2):
+   - Sketched the UI in Excalidraw (three regions: controls, weather
+     evidence, review placeholder).
+   - Wrote a spec, ADR, implementation plan, and glossary using the
+     write-spec, architecture, writing-plans, and grill-with-docs skills.
+   - Ran an adversarial review (inquisition / rubber duck) on the v2
+     spec and plan.
+
+2. Weather app (Day 3):
+   - Built a plain HTML/CSS/JS app that searches Open-Meteo for public
+     locations, fetches current + hourly + daily weather, and maps it
+     into a bounded WeatherSignal contract.
+   - Added fictional fallback with visible labels and error/retry states.
+   - Reviewed the implementation against the spec using rubber duck and
+     spar.
+
+3. AI review (Day 4):
+   - Added a runtime settings area (Groq API endpoint, model name
+     `openai/gpt-oss-20b`, temporary credential — never persisted).
+   - Used Copilot&#39;s plan mode to plan the review, then built it.
+   - The app sends WeatherSignal + a fictional scenario to the model and
+     displays a five-field review (summary, risks, actions, questions,
+     evidence).
+
+4. Packaging (Day 5 — in progress):
+   - Writing a handoff README and a WHAT_NEXT doc.
+   - Zipping the PoC for a stakeholder.
+   - Trying skills from skills.sh for recurring architect tasks.
+
+Repo: [link to your repository]
+Status: PoC — advisory only, not approved architecture.
+</code></pre></div>
+<h3>Step 4 — Assign Copilot to the ticket (optional)</h3>
+<p>If you want to see Copilot cloud agent in action from Jira:</p>
+<ol>
+<li>Assign <strong>GitHub Copilot</strong> to the work item.</li>
+<li>Copilot reads the ticket and starts a session in your repo.</li>
+<li>Watch the activity stream in the Jira chat panel.</li>
+</ol>
+<p>This is the same workflow you&#39;d use at work: write a ticket, assign
+Copilot, and it opens a PR.</p>
+<p><strong>Checkpoint 0:</strong> Jira is connected, you&#39;re logged in, and you&#39;ve
+created a ticket summarizing the week&#39;s work.</p>
 <hr>
 <h2 id="phase-1-browse-skillssh">Phase 1 — Browse skills.sh</h2>
 <p>Open <a href="https://skills.sh">skills.sh</a>. Spend a few minutes getting
@@ -213,8 +303,35 @@ publisher, install command, and the source files. What does the page
 tell you about what the skill does and what it touches?</li>
 </ul>
 <p>Bookmark the site. You&#39;ll be searching it for every exercise.</p>
-<p><strong>Checkpoint 1:</strong> you&#39;ve browsed skills.sh and searched for at least
-three task words.</p>
+<h3>Install SkillSpector (security scanner)</h3>
+<p>Before you install any skill from skills.sh, you need a way to check if
+it&#39;s safe. <strong>SkillSpector</strong> is a free, open-source security scanner from
+NVIDIA that analyzes skills for 68 vulnerability patterns across 17
+categories — prompt injection, data exfiltration, credential harvesting,
+malicious code, supply chain attacks, and more.</p>
+<p>Research from NVIDIA shows <strong>26.1% of skills contain at least one
+vulnerability</strong> and <strong>5.2% show likely malicious intent</strong>. You wouldn&#39;t
+install a npm package without checking it — treat skills the same way.</p>
+<p>Install SkillSpector (requires Python 3.12+):</p>
+<div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 4" aria-describedby="copy-status-4">Copy</button><span id="copy-status-4" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-bash">uv tool install git+https://github.com/nvidia/skillspector.git
+</code></pre></div>
+<p>Or with pip:</p>
+<div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 5" aria-describedby="copy-status-5">Copy</button><span id="copy-status-5" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-bash">pip install git+https://github.com/nvidia/skillspector.git
+</code></pre></div>
+<p>Test it works:</p>
+<div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 6" aria-describedby="copy-status-6">Copy</button><span id="copy-status-6" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-bash">skillspector scan --help
+</code></pre></div>
+<p>You&#39;ll use <code>skillspector scan &lt;path&gt; --no-llm</code> on every skill you find
+today, before you install it. The <code>--no-llm</code> flag runs static analysis
+only (no API key needed). It gives you a risk score (0-100) and a
+recommendation:</p>
+<ul>
+<li><strong>0-20 (LOW / SAFE):</strong> go ahead</li>
+<li><strong>21-50 (MEDIUM / CAUTION):</strong> read the findings before installing</li>
+<li><strong>51-100 (HIGH or CRITICAL / DO NOT INSTALL):</strong> stop</li>
+</ul>
+<p><strong>Checkpoint 1:</strong> you&#39;ve browsed skills.sh, searched for at least
+three task words, and installed SkillSpector.</p>
 <hr>
 <h2 id="phase-2-exercise-1-draft-an-adr">Phase 2 — Exercise 1: Draft an ADR</h2>
 <p>Open <code>course/day-5/phase 2/starter/</code> and read <code>PROBLEM.md</code>. It describes
@@ -228,12 +345,12 @@ problem statement.</p>
 <li>Search skills.sh for &quot;ADR&quot; or &quot;architecture decision.&quot;</li>
 <li>Inspect its source: read the <code>SKILL.md</code>, any scripts, and the
 install command. What does it do when it runs? What does it write?</li>
-<li>Install it:<div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 3" aria-describedby="copy-status-3">Copy</button><span id="copy-status-3" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-bash">DISABLE_TELEMETRY=1 npx --yes skills add &lt;skill-source&gt; --yes
+<li>Install it:<div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 7" aria-describedby="copy-status-7">Copy</button><span id="copy-status-7" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-bash">DISABLE_TELEMETRY=1 npx --yes skills add &lt;skill-source&gt; --yes
 </code></pre></div>
 </li>
 </ol>
 <p><strong>Ask Copilot</strong> (copy this whole block):</p>
-<div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 4" aria-describedby="copy-status-4">Copy</button><span id="copy-status-4" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">Use the &lt;skill-name&gt; skill. Here&#39;s a short, fictional decision I need
+<div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 8" aria-describedby="copy-status-8">Copy</button><span id="copy-status-8" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">Use the &lt;skill-name&gt; skill. Here&#39;s a short, fictional decision I need
 an ADR for: should we use event sourcing for our order service? Draft
 the ADR. Don&#39;t invent constraints, policies, or stakeholders that
 aren&#39;t in the problem statement.
@@ -264,7 +381,7 @@ dependencies.</p>
 <li>Inspect the source, then install it.</li>
 </ol>
 <p><strong>Ask Copilot</strong> (copy this whole block):</p>
-<div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 5" aria-describedby="copy-status-5">Copy</button><span id="copy-status-5" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">Use the &lt;skill-name&gt; skill. Review this fictional architecture for
+<div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 9" aria-describedby="copy-status-9">Copy</button><span id="copy-status-9" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">Use the &lt;skill-name&gt; skill. Review this fictional architecture for
 missing non-functional requirements, risks, and dependencies:
 
 A small e-commerce checkout service. A single Node.js backend handles
@@ -302,7 +419,7 @@ shapes, and error codes.</p>
 <li>Inspect the source, then install it.</li>
 </ol>
 <p><strong>Ask Copilot</strong> (copy this whole block):</p>
-<div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 6" aria-describedby="copy-status-6">Copy</button><span id="copy-status-6" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">Use the &lt;skill-name&gt; skill. Generate an API spec from this data
+<div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 10" aria-describedby="copy-status-10">Copy</button><span id="copy-status-10" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">Use the &lt;skill-name&gt; skill. Generate an API spec from this data
 mapping. Include endpoints, request/response shapes, and error codes.
 Don&#39;t invent endpoints, fields, or auth schemes that aren&#39;t in the
 source mapping.
@@ -371,7 +488,7 @@ file yourself.</p>
 <li><strong>Bundled sample (offline):</strong> use the tiny todo app shipped at
 <code>course/day-5/phase 5/starter/sample-repo/</code>. It&#39;s a three-file app with a
 couple of intentional smells. No clone needed.</li>
-<li><strong>Public repo (online):</strong><div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 7" aria-describedby="copy-status-7">Copy</button><span id="copy-status-7" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-bash">git clone https://github.com/&lt;a-small-public-repo&gt; .
+<li><strong>Public repo (online):</strong><div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 11" aria-describedby="copy-status-11">Copy</button><span id="copy-status-11" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-bash">git clone https://github.com/&lt;a-small-public-repo&gt; .
 </code></pre></div>
 Pick a small, public, non-sensitive repo — for example a todo app, a
 weather app, or any small open-source project you&#39;re curious about.</li>
@@ -383,7 +500,7 @@ weather app, or any small open-source project you&#39;re curious about.</li>
 <li>Inspect the source, then install it.</li>
 </ol>
 <p><strong>Ask Copilot</strong> (copy this whole block):</p>
-<div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 8" aria-describedby="copy-status-8">Copy</button><span id="copy-status-8" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">Use the &lt;skill-name&gt; skill. Explore this codebase and answer:
+<div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 12" aria-describedby="copy-status-12">Copy</button><span id="copy-status-12" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">Use the &lt;skill-name&gt; skill. Explore this codebase and answer:
 1. What does this codebase do?
 2. Where are the main entry points?
 3. What are the biggest risks or code smells?
@@ -418,7 +535,7 @@ replacement, built with plain HTML/CSS/JS and no backend.</p>
 <li>Inspect the source, then install it.</li>
 </ol>
 <p><strong>Ask Copilot</strong> (copy this whole block):</p>
-<div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 9" aria-describedby="copy-status-9">Copy</button><span id="copy-status-9" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">Use the &lt;skill-name&gt; skill. Build an HTML dashboard from the CSV file
+<div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 13" aria-describedby="copy-status-13">Copy</button><span id="copy-status-13" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">Use the &lt;skill-name&gt; skill. Build an HTML dashboard from the CSV file
 at course/day-5/phase 6/starter/data.csv. Include charts for revenue
 by region, orders by month, and returns rate. Use plain HTML, CSS, and
 JavaScript — no build step, no npm, no backend. The dashboard must open
@@ -458,7 +575,7 @@ open.</p>
 <li>Inspect the source, then install it.</li>
 </ol>
 <p><strong>Ask Copilot</strong> (copy this whole block):</p>
-<div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 10" aria-describedby="copy-status-10">Copy</button><span id="copy-status-10" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">Use the &lt;skill-name&gt; skill. Turn this meeting transcript into a
+<div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 14" aria-describedby="copy-status-14">Copy</button><span id="copy-status-14" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">Use the &lt;skill-name&gt; skill. Turn this meeting transcript into a
 decision document with: the decision, the rationale, who agreed, and
 what&#39;s still open. Don&#39;t attribute opinions to people who didn&#39;t speak.
 Don&#39;t invent a consensus that wasn&#39;t reached.
@@ -533,7 +650,7 @@ wouldn&#39;t trust it for.</li>
 write the same three lines for whichever exercise you completed. The
 deliverable is the judgment, not the count.</p>
 <p>Close with the repeatable loop you used all week and all day:</p>
-<div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 11" aria-describedby="copy-status-11">Copy</button><span id="copy-status-11" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">read the problem -&gt; find a skill -&gt; inspect the source -&gt; install -&gt;
+<div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 15" aria-describedby="copy-status-15">Copy</button><span id="copy-status-15" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">read the problem -&gt; find a skill -&gt; inspect the source -&gt; install -&gt;
 run it -&gt; read the output critically -&gt; keep or remove
 </code></pre></div>
 <p>The skill is a tool. Its output is a claim, not a fact, until you&#39;ve read

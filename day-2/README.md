@@ -30,7 +30,8 @@ install), and the following agent skills installed for GitHub Copilot:
 - `architecture` — creates an Architecture Decision Record
 - `writing-plans` — writes an ordered implementation plan
 - `inquisition` — adversarial review of specs, plans, or code against
-  project doctrine; reports deviations as "heresies" with severity levels
+  project doctrine; reports deviations as "heresies" with severity levels.
+  Installed as a custom agent (see Phase 6).
 
 Some of these skills come from **superpowers**, others you can find on
 [skills.sh](https://skills.sh).
@@ -168,7 +169,7 @@ the known-good state for that phase. Keep your blocked work for comparison.
 - **30–45 min — Phase 3: Specs without grill.** Generate spec, ADR, plan from the raw brief.
 - **45–60 min — Phase 4: Grill the brief.** Run `grill-with-docs` on the brief.
 - **60–80 min — Phase 5: Specs with grill.** Generate spec, ADR, plan from the grilled brief.
-- **80–95 min — Phase 6: Adversarial review.** Run the inquisition skill and/or rubber-duck on the v2 docs. Fix Blocking / Mortal / Grave findings.
+- **80–95 min — Phase 6: Adversarial review.** Run the torquemada custom agent, the inquisition skill via #runSubagent, and/or rubber-duck on the v2 docs. Fix Blocking / Mortal / Grave findings.
 - **95–110 min — Phase 7: Compare.** Compare v1 vs v2. See the difference grilling makes.
 - **110–120 min — Hand off.** Use your Phase 7 result or open `course/day-3/starter/`.
 
@@ -634,63 +635,48 @@ Then produce three documents and save them:
 
 ## Phase 6 — Adversarial review
 
-Now review the v2 spec and plan with **two adversarial tools**. They
-complement each other: one checks against project rules, the other gives
-a general second opinion from a different AI model. Use both if you have
-time; use at least one.
+Now review the v2 spec and plan with **three adversarial tools**. They
+complement each other: one delegates a review to a subagent in your
+current session, one runs the inquisition skill in a brand new session,
+and rubber duck gives a general second opinion from a different AI
+model. Use all three if you have time; use at least one.
 
-### Option A — Inquisition skill (doctrine compliance)
+### Option 1 — #runSubagent (review in a separate context)
 
-The inquisition is an adversarial reviewer — it reads the project's
-doctrine (AGENTS.md, TECH.md, the spec, the plan) and reports every
-deviation, gap, and weak reasoning as a "heresy" with a severity level
-(Mortal, Grave, Venial, Suspicion). It's the same habit you built with
-the grill in Phase 4, but applied to the finished documents instead of
-the brief.
+**Subagents** let you delegate a task to an isolated agent with its own
+context window — it runs without interrupting your main session and
+returns the result when done.
 
-The inquisition skill is bundled in this repo as a zip. If it wasn't
-installed during the preflight, ask Copilot to install it now:
-
-```text
-Install the inquisition skill globally from the local zip at
-assets/skills/inquisition.zip. After installing, confirm it's available.
-```
-
-If Copilot can't install from a zip directly, unzip it yourself and
-point Copilot at the folder:
-
-```bash
-unzip assets/skills/inquisition.zip -d /tmp/inquisition-skill
-```
-
-Then ask Copilot:
+First, make sure the inquisition skill is installed (see preflight or
+unzip `assets/skills/inquisition.zip` and install it). Then enable the
+`runSubagent` tool in your Copilot session (click the tools icon and
+enable `runSubagent`), and type:
 
 ```text
-Install the inquisition skill globally from the local folder at
-/tmp/inquisition-skill/inquisition. After installing, confirm it's
-available.
+#runSubagent Execute Torquemada to run an adversarial review of the repo.
 ```
 
-**Ask Copilot:**
+The subagent runs independently and returns the report to your main
+session. Read it and fix **Mortal** and **Grave** findings before you
+continue. **Venial** and **Suspicion** items are judgment calls.
+
+### Option 2 — Inquisition skill in a new session
+
+Open a **brand new Copilot session** in your project folder (not the
+session you used for Phases 3–5). The new session has no memory of your
+previous work — it starts fresh and reviews the documents on their own
+merits.
+
+Make sure the inquisition skill is installed (see preflight or unzip
+`assets/skills/inquisition.zip` and install it). Then type:
 
 ```text
-Use the inquisition skill. Review the v2 spec at plans/spec_v2.md and
-the v2 plan at plans/plan_v2.md against the project doctrine (AGENTS.md,
-TECH.md, and any rules files in this checkpoint). For each heresy you
-find, classify the severity (Mortal, Grave, Venial, Suspicion), cite the
-doctrine violated, and prescribe a fix. Write the report to
-implementation/inquisition-report.md. Don't modify the spec or plan —
-just report.
+Execute Torquemada to run an adversarial review of the repo.
 ```
 
-Read the report. If there are **Mortal** heresies, fix them before you
-continue. **Grave** heresies should also be fixed. **Venial** and
-**Suspicion** items are judgment calls.
+Read the report and fix **Mortal** and **Grave** findings as above.
 
-After fixing, re-run the inquisition to confirm the Mortal and Grave
-heresies are gone.
-
-### Option B — Rubber duck (general second opinion)
+### Option 3 — Rubber duck (general second opinion)
 
 The **rubber duck** is a built-in critic in the GitHub Copilot App that
 reviews your plan using a **different AI model** from the one driving
@@ -702,7 +688,7 @@ flaws, missing edge cases, weak reasoning. It categorizes feedback as
 > The **GitHub Copilot App** is the chat application (separate from the
 > editor extension). If you only have Copilot in VS Code, the `/rubber-duck`
 > and `/spar` commands may not be available — in that case use Option A
-> (the inquisition skill) instead, or ask Copilot in your editor to "review
+> (Option 1 or 2) instead, or ask Copilot in your editor to "review
 > this plan as a different model would, focusing on Blocking findings."
 
 Open the Copilot App, start a session in your project folder, and type:

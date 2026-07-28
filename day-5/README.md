@@ -86,6 +86,16 @@ Every exercise is the same seven steps:
      stop — never paste a real credential into a skill.)
    - **Stop conditions** — how do you know when it's done? How do you
      undo it?
+   - **Automated scan** — run [SkillSpector](https://github.com/nvidia/skillspector)
+     on the skill before installing. It's a free security scanner from
+     NVIDIA that detects 68 vulnerability patterns across 17 categories
+     (prompt injection, data exfiltration, privilege escalation, supply
+     chain, malicious code, and more). It gives a risk score (0-100)
+     and a recommendation: SAFE, CAUTION, or DO NOT INSTALL. Install it
+     with `uv tool install git+https://github.com/nvidia/skillspector.git`
+     and scan with `skillspector scan ./my-skill/ --no-llm` (static
+     analysis only, no API key needed). Research shows 26.1% of skills
+     contain vulnerabilities — scan before you install.
 4. **Install it.** Install the skill after inspecting the source.
 5. **Run it.** Invoke the skill on a small, fictional version of the
    task. No real internal systems, vendor names, or secrets.
@@ -133,23 +143,114 @@ course/day-5/phase 7/starter/   turn meeting notes into a decision doc (optional
 
 ## Outcome and two-hour route
 
-- **0–10 min — Phase 1: Browse skills.sh.** See the catalog, search, and
+- **0–15 min — Phase 0: Connect Jira and create a ticket.** Install the
+  Copilot-for-Jira app, log in, and create a ticket summarizing what you
+  built on Days 2, 3, and 4.
+- **15–25 min — Phase 1: Browse skills.sh.** See the catalog, search, and
   bookmark it.
-- **10–30 min — Phase 2: Draft an ADR.** Find an ADR skill, run it, read
+- **25–45 min — Phase 2: Draft an ADR.** Find an ADR skill, run it, read
   the output.
-- **30–50 min — Phase 3: Review an architecture.** Find a review skill,
+- **45–65 min — Phase 3: Review an architecture.** Find a review skill,
   run it, read the output.
-- **50–70 min — Phase 4: Generate an API spec.** Find an API spec skill,
+- **65–85 min — Phase 4: Generate an API spec.** Find an API spec skill,
   run it, validate against the source mapping.
-- **70–90 min — Phase 5: Review an existing codebase.** Clone a public
+- **85–105 min — Phase 5: Review an existing codebase.** Clone a public
   repo, find a codebase exploration skill, ask it questions.
-- **90–110 min — Phase 6: Build a dashboard from a spreadsheet.** Find a
+- **105–115 min — Phase 6: Build a dashboard from a spreadsheet.** Find a
   dashboard or charting skill, run it against a CSV, check the charts
   match the data.
-- **110–120 min — Hand off.** Show one skill, one artifact, one claim you
+- **115–120 min — Hand off.** Show one skill, one artifact, one claim you
   caught.
 - **If you have time left — Optional Phase 7: Turn meeting notes into a
   decision document.**
+
+---
+
+## Phase 0 — Connect Jira and create a ticket
+
+Before you start the skills lab, connect GitHub Copilot to Jira and
+create a ticket that captures everything you built this week. This is
+the same thing you'd do at work: log the work, link the repo, hand it
+off to a teammate.
+
+### Step 1 — Install the Copilot-for-Jira app
+
+1. Go to the [GitHub Copilot for Jira app](https://marketplace.atlassian.com/apps/1582455624)
+   on the Atlassian Marketplace.
+2. Click **Get it now** and select your Jira site.
+3. After installation, click **Configure** in the confirmation message.
+4. Authorize the app to access your GitHub organization and repositories.
+5. Choose the organization and repositories the app can access, then
+   click **Install**.
+
+If your facilitator has already installed the app for the workshop, skip
+to Step 2.
+
+### Step 2 — Connect your GitHub account
+
+1. In Jira, go to your personal account settings.
+2. Under **GitHub Copilot for Jira**, sign in to GitHub and authorize
+   the app.
+
+### Step 3 — Create a ticket summarizing the week
+
+Create a new Jira work item (a story or task) that captures what you
+built across Days 2, 3, and 4. Use this as a template — fill in the
+details from your own work:
+
+```text
+Title: Weather PoC with AI review — workshop summary
+
+Description:
+
+Built a disposable browser proof of concept over three sessions:
+
+1. Planning (Day 2):
+   - Sketched the UI in Excalidraw (three regions: controls, weather
+     evidence, review placeholder).
+   - Wrote a spec, ADR, implementation plan, and glossary using the
+     write-spec, architecture, writing-plans, and grill-with-docs skills.
+   - Ran an adversarial review (inquisition / rubber duck) on the v2
+     spec and plan.
+
+2. Weather app (Day 3):
+   - Built a plain HTML/CSS/JS app that searches Open-Meteo for public
+     locations, fetches current + hourly + daily weather, and maps it
+     into a bounded WeatherSignal contract.
+   - Added fictional fallback with visible labels and error/retry states.
+   - Reviewed the implementation against the spec using rubber duck and
+     spar.
+
+3. AI review (Day 4):
+   - Added a runtime settings area (Groq API endpoint, model name
+     `openai/gpt-oss-20b`, temporary credential — never persisted).
+   - Used Copilot's plan mode to plan the review, then built it.
+   - The app sends WeatherSignal + a fictional scenario to the model and
+     displays a five-field review (summary, risks, actions, questions,
+     evidence).
+
+4. Packaging (Day 5 — in progress):
+   - Writing a handoff README and a WHAT_NEXT doc.
+   - Zipping the PoC for a stakeholder.
+   - Trying skills from skills.sh for recurring architect tasks.
+
+Repo: [link to your repository]
+Status: PoC — advisory only, not approved architecture.
+```
+
+### Step 4 — Assign Copilot to the ticket (optional)
+
+If you want to see Copilot cloud agent in action from Jira:
+
+1. Assign **GitHub Copilot** to the work item.
+2. Copilot reads the ticket and starts a session in your repo.
+3. Watch the activity stream in the Jira chat panel.
+
+This is the same workflow you'd use at work: write a ticket, assign
+Copilot, and it opens a PR.
+
+**Checkpoint 0:** Jira is connected, you're logged in, and you've
+created a ticket summarizing the week's work.
 
 ---
 
@@ -169,8 +270,47 @@ familiar:
 
 Bookmark the site. You'll be searching it for every exercise.
 
-**Checkpoint 1:** you've browsed skills.sh and searched for at least
-three task words.
+### Install SkillSpector (security scanner)
+
+Before you install any skill from skills.sh, you need a way to check if
+it's safe. **SkillSpector** is a free, open-source security scanner from
+NVIDIA that analyzes skills for 68 vulnerability patterns across 17
+categories — prompt injection, data exfiltration, credential harvesting,
+malicious code, supply chain attacks, and more.
+
+Research from NVIDIA shows **26.1% of skills contain at least one
+vulnerability** and **5.2% show likely malicious intent**. You wouldn't
+install a npm package without checking it — treat skills the same way.
+
+Install SkillSpector (requires Python 3.12+):
+
+```bash
+uv tool install git+https://github.com/nvidia/skillspector.git
+```
+
+Or with pip:
+
+```bash
+pip install git+https://github.com/nvidia/skillspector.git
+```
+
+Test it works:
+
+```bash
+skillspector scan --help
+```
+
+You'll use `skillspector scan <path> --no-llm` on every skill you find
+today, before you install it. The `--no-llm` flag runs static analysis
+only (no API key needed). It gives you a risk score (0-100) and a
+recommendation:
+
+- **0-20 (LOW / SAFE):** go ahead
+- **21-50 (MEDIUM / CAUTION):** read the findings before installing
+- **51-100 (HIGH or CRITICAL / DO NOT INSTALL):** stop
+
+**Checkpoint 1:** you've browsed skills.sh, searched for at least
+three task words, and installed SkillSpector.
 
 ---
 

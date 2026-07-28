@@ -63,7 +63,7 @@ a.headerlink svg { vertical-align: middle; width: 1rem; height: 1rem; }
 </style>
 </head>
 <body>
-  <main data-source-sha256="63696e82677e760d649404b37d0e5cbc74721684811e0b3d8e14e466e77b3db1">
+  <main data-source-sha256="47e61536d5d50e1ef9039fed257fae364ac2974f70eafd91b9ec76f78fd59317">
 <h1>Day 2 — Define, draw, and plan</h1>
 <p>In two hours, you will turn the Integration Architecture Copilot scenario into
 a reviewed interface contract and a bounded Day 3 plan. You will draw the
@@ -91,7 +91,8 @@ glossary as it goes</li>
 <li><code>architecture</code> — creates an Architecture Decision Record</li>
 <li><code>writing-plans</code> — writes an ordered implementation plan</li>
 <li><code>inquisition</code> — adversarial review of specs, plans, or code against
-project doctrine; reports deviations as &quot;heresies&quot; with severity levels</li>
+project doctrine; reports deviations as &quot;heresies&quot; with severity levels.
+Installed as a custom agent (see Phase 6).</li>
 </ul>
 <p>Some of these skills come from <strong>superpowers</strong>, others you can find on
 <a href="https://skills.sh">skills.sh</a>.</p>
@@ -215,7 +216,7 @@ the known-good state for that phase. Keep your blocked work for comparison.</p>
 <li><strong>30–45 min — Phase 3: Specs without grill.</strong> Generate spec, ADR, plan from the raw brief.</li>
 <li><strong>45–60 min — Phase 4: Grill the brief.</strong> Run <code>grill-with-docs</code> on the brief.</li>
 <li><strong>60–80 min — Phase 5: Specs with grill.</strong> Generate spec, ADR, plan from the grilled brief.</li>
-<li><strong>80–95 min — Phase 6: Adversarial review.</strong> Run the inquisition skill and/or rubber-duck on the v2 docs. Fix Blocking / Mortal / Grave findings.</li>
+<li><strong>80–95 min — Phase 6: Adversarial review.</strong> Run the torquemada custom agent, the inquisition skill via #runSubagent, and/or rubber-duck on the v2 docs. Fix Blocking / Mortal / Grave findings.</li>
 <li><strong>95–110 min — Phase 7: Compare.</strong> Compare v1 vs v2. See the difference grilling makes.</li>
 <li><strong>110–120 min — Hand off.</strong> Use your Phase 7 result or open <code>course/day-3/starter/</code>.</li>
 </ul>
@@ -634,46 +635,35 @@ path has a handling strategy.</li>
 <p><strong>Checkpoint 5:</strong> v2 specs generated.</p>
 <hr>
 <h2 id="phase-6-adversarial-review">Phase 6 — Adversarial review</h2>
-<p>Now review the v2 spec and plan with <strong>two adversarial tools</strong>. They
-complement each other: one checks against project rules, the other gives
-a general second opinion from a different AI model. Use both if you have
-time; use at least one.</p>
-<h3>Option A — Inquisition skill (doctrine compliance)</h3>
-<p>The inquisition is an adversarial reviewer — it reads the project&#39;s
-doctrine (AGENTS.md, TECH.md, the spec, the plan) and reports every
-deviation, gap, and weak reasoning as a &quot;heresy&quot; with a severity level
-(Mortal, Grave, Venial, Suspicion). It&#39;s the same habit you built with
-the grill in Phase 4, but applied to the finished documents instead of
-the brief.</p>
-<p>The inquisition skill is bundled in this repo as a zip. If it wasn&#39;t
-installed during the preflight, ask Copilot to install it now:</p>
-<div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 8" aria-describedby="copy-status-8">Copy</button><span id="copy-status-8" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">Install the inquisition skill globally from the local zip at
-assets/skills/inquisition.zip. After installing, confirm it&#39;s available.
+<p>Now review the v2 spec and plan with <strong>three adversarial tools</strong>. They
+complement each other: one delegates a review to a subagent in your
+current session, one runs the inquisition skill in a brand new session,
+and rubber duck gives a general second opinion from a different AI
+model. Use all three if you have time; use at least one.</p>
+<h3>Option 1 — #runSubagent (review in a separate context)</h3>
+<p><strong>Subagents</strong> let you delegate a task to an isolated agent with its own
+context window — it runs without interrupting your main session and
+returns the result when done.</p>
+<p>First, make sure the inquisition skill is installed (see preflight or
+unzip <code>assets/skills/inquisition.zip</code> and install it). Then enable the
+<code>runSubagent</code> tool in your Copilot session (click the tools icon and
+enable <code>runSubagent</code>), and type:</p>
+<div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 8" aria-describedby="copy-status-8">Copy</button><span id="copy-status-8" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">#runSubagent Execute Torquemada to run an adversarial review of the repo.
 </code></pre></div>
-<p>If Copilot can&#39;t install from a zip directly, unzip it yourself and
-point Copilot at the folder:</p>
-<div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 9" aria-describedby="copy-status-9">Copy</button><span id="copy-status-9" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-bash">unzip assets/skills/inquisition.zip -d /tmp/inquisition-skill
+<p>The subagent runs independently and returns the report to your main
+session. Read it and fix <strong>Mortal</strong> and <strong>Grave</strong> findings before you
+continue. <strong>Venial</strong> and <strong>Suspicion</strong> items are judgment calls.</p>
+<h3>Option 2 — Inquisition skill in a new session</h3>
+<p>Open a <strong>brand new Copilot session</strong> in your project folder (not the
+session you used for Phases 3–5). The new session has no memory of your
+previous work — it starts fresh and reviews the documents on their own
+merits.</p>
+<p>Make sure the inquisition skill is installed (see preflight or unzip
+<code>assets/skills/inquisition.zip</code> and install it). Then type:</p>
+<div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 9" aria-describedby="copy-status-9">Copy</button><span id="copy-status-9" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">Execute Torquemada to run an adversarial review of the repo.
 </code></pre></div>
-<p>Then ask Copilot:</p>
-<div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 10" aria-describedby="copy-status-10">Copy</button><span id="copy-status-10" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">Install the inquisition skill globally from the local folder at
-/tmp/inquisition-skill/inquisition. After installing, confirm it&#39;s
-available.
-</code></pre></div>
-<p><strong>Ask Copilot:</strong></p>
-<div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 11" aria-describedby="copy-status-11">Copy</button><span id="copy-status-11" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">Use the inquisition skill. Review the v2 spec at plans/spec_v2.md and
-the v2 plan at plans/plan_v2.md against the project doctrine (AGENTS.md,
-TECH.md, and any rules files in this checkpoint). For each heresy you
-find, classify the severity (Mortal, Grave, Venial, Suspicion), cite the
-doctrine violated, and prescribe a fix. Write the report to
-implementation/inquisition-report.md. Don&#39;t modify the spec or plan —
-just report.
-</code></pre></div>
-<p>Read the report. If there are <strong>Mortal</strong> heresies, fix them before you
-continue. <strong>Grave</strong> heresies should also be fixed. <strong>Venial</strong> and
-<strong>Suspicion</strong> items are judgment calls.</p>
-<p>After fixing, re-run the inquisition to confirm the Mortal and Grave
-heresies are gone.</p>
-<h3>Option B — Rubber duck (general second opinion)</h3>
+<p>Read the report and fix <strong>Mortal</strong> and <strong>Grave</strong> findings as above.</p>
+<h3>Option 3 — Rubber duck (general second opinion)</h3>
 <p>The <strong>rubber duck</strong> is a built-in critic in the GitHub Copilot App that
 reviews your plan using a <strong>different AI model</strong> from the one driving
 your session. It catches blind spots the main model missed — design
@@ -684,9 +674,9 @@ flaws, missing edge cases, weak reasoning. It categorizes feedback as
 <p>The <strong>GitHub Copilot App</strong> is the chat application (separate from the
 editor extension). If you only have Copilot in VS Code, the <code>/rubber-duck</code>
 and <code>/spar</code> commands may not be available — in that case use Option A
-(the inquisition skill) instead, or ask Copilot in your editor to &quot;review
+(Option 1 or 2) instead, or ask Copilot in your editor to &quot;review
 this plan as a different model would, focusing on Blocking findings.&quot;</p></aside><p>Open the Copilot App, start a session in your project folder, and type:</p>
-<div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 12" aria-describedby="copy-status-12">Copy</button><span id="copy-status-12" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">/rubber-duck Review the v2 spec at plans/spec_v2.md and the v2 plan at
+<div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 10" aria-describedby="copy-status-10">Copy</button><span id="copy-status-10" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">/rubber-duck Review the v2 spec at plans/spec_v2.md and the v2 plan at
 plans/plan_v2.md. Find gaps, weak reasoning, missing edge cases, and
 anything that would break during implementation. Categorize each finding
 as Blocking, Non-blocking, or Suggestion.
