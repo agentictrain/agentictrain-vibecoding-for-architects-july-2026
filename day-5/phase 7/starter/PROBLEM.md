@@ -39,10 +39,15 @@ Bob: I'll check multi-region options for next week.
 
 ## Read the output critically
 
+Label each material claim as source evidence, model inference, assumption, or
+unsupported claim. Then check:
+
 - Did the model attribute opinions to people who didn't speak?
 - Did it invent a consensus that wasn't reached?
 - Did it fill gaps with plausible-sounding but unsupported reasoning?
 - Are the open questions captured accurately?
+- Did it distinguish explicit agreement from support inferred from a
+  participant's position?
 
 Fix the overclaims. Keep or remove the skill.
 

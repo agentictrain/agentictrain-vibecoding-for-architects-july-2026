@@ -5,15 +5,13 @@ exploration exercise. It's intentionally simple — three files, one feature,
 a couple of obvious smells — so a codebase-exploration skill has something
 real to read without you having to find a repo on GitHub.
 
-If you'd rather explore a real public repo, you can still run
-`git clone https://github.com/<a-small-public-repo> .` in an empty folder
-and point the skill at that instead. This bundled sample is the offline
-fallback.
+The main exercise uses the pinned `expressjs/cookie-parser` revision. This
+bundled sample is the offline fallback.
 
 ## What it does
 
 A single-page todo list. Add an item, mark it done, delete it. Items persist
-for the session only (in-memory). No backend, no database, no build step.
+in browser `localStorage`. No backend, no database, no build step.
 
 ## Files
 
@@ -24,6 +22,7 @@ for the session only (in-memory). No backend, no database, no build step.
 ## Known smells (for the critical-reading step)
 
 - No tests
-- No error handling around `JSON.parse` in `loadState`
 - `todos` is a global mutable array
-- The delete button has no keyboard-accessible name
+- Storage read/write errors are swallowed without visible recovery or feedback
+- Todo checkboxes have no accessible name
+- `Date.now()` can produce duplicate IDs for additions in the same millisecond

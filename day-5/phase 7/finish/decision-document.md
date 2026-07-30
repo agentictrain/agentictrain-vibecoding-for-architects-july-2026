@@ -18,13 +18,15 @@ if replay capability becomes a hard requirement.
 
 ## Who agreed
 
-- Alice (tech lead) — proposed SQS, confirmed the decision.
-- Bob (infra) — preferred not to run a Kafka cluster.
-- Carlos (backend) — agreed SQS is simpler, accepted the loss of
-  ordering guarantees.
-- Dana (data) — agreed to batch from DB for analytics.
+- Alice (tech lead) — confirmed the SQS decision.
+- Carlos (backend) — explicitly said, “Agreed. SQS for now.”
+- Dana (data) — explicitly accepted batching from the database for now.
+- Bob (infra) — preferred not to run Kafka for one service. This supports
+  the SQS direction, but he did not explicitly say that he agreed to SQS.
 
-No one objected. The decision was reached by consensus.
+No one objected, and every participant either agreed or expressed a
+compatible position. Treating that as consensus is a reasonable inference,
+not a direct statement from the transcript.
 
 ## Open questions
 
@@ -39,8 +41,9 @@ No one objected. The decision was reached by consensus.
 - "Running a Kafka cluster is operationally heavy" — source evidence
   (Bob said it).
 - "Analytics can batch from the DB" — source evidence (Dana said it).
-- "The decision was reached by consensus" — source evidence (no one
-  objected, Alice confirmed).
+- "No one objected" — source evidence.
+- "The decision was reached by consensus" — model inference from the recorded
+  positions, not a direct statement.
 
 ### Claims removed
 

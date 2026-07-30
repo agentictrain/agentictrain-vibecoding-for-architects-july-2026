@@ -4,33 +4,36 @@
 
 ### Performance
 
-- **No cache.** Source evidence — the description says "no cache." A
-  cache would reduce database load for repeated product lookups.
-- **No CDN.** Source evidence — the description says "no CDN." Static
-  assets are served from the single VM, which adds latency for distant
-  users.
-- **Single VM bottleneck.** Source evidence — "deployed on a single
-  VM." No horizontal scaling. A traffic spike or VM failure takes down
-  the whole service.
+- **No cache is described.** Source evidence — the description says "no
+  cache." Whether a cache is needed depends on workload and measured database
+  pressure. **Model inference.**
+- **No CDN is described.** Source evidence — the description says "no CDN."
+  If no other edge-delivery layer exists, distant users may see higher static
+  asset latency. **Conditional model inference.**
+- **The described deployment uses one VM.** Source evidence. This creates a
+  likely scaling limit and single point of failure unless an unmentioned
+  failover layer exists. **Model inference.**
 
 ### Availability
 
-- **No redundancy.** Source evidence — single VM, single backend, no
-  queue. If the VM fails, the service is down.
-- **No queue for async processing.** Source evidence — "no queue."
-  Payment and order creation are synchronous. A Stripe timeout blocks
-  the user.
-- **No backup strategy mentioned.** Model inference — the description
-  doesn't mention backups. PostgreSQL on a single VM with no backup is
-  a data-loss risk.
+- **No redundancy is described.** Source evidence — the description names
+  one backend deployment and no redundant components. A VM failure may take
+  down the service. **Model inference.**
+- **No queue is described.** Source evidence. Payment and order creation may
+  therefore be coupled to the request path, but the description does not
+  prove that they are synchronous. **Model inference.**
+- **No backup strategy is described.** Source evidence by omission. Missing
+  backup, restore, RTO, and RPO decisions create an unresolved data-loss and
+  recovery risk; the database's deployment location is unknown.
+  **Model inference.**
 
 ### Security
 
 - **No rate-limiting mentioned.** Model inference — not stated, but a
   checkout endpoint without rate-limiting is vulnerable to abuse.
-- **Stripe key management not described.** Model inference — the
-  description mentions Stripe but not how the API key is stored. On a
-  single VM, a key in environment variables is common but not ideal.
+- **Stripe key management is not described.** Source evidence by omission.
+  Secret storage, rotation, and access controls require confirmation.
+  **Model inference.**
 
 ### Findings removed (unsupported)
 
@@ -50,8 +53,11 @@
 
 ## Claims labeled
 
-- "No cache" / "No CDN" / "Single VM" — source evidence.
-- "No backup strategy" — model inference (reasonable).
-- "No rate-limiting" — model inference (reasonable).
+- "No cache" / "No CDN" / "Single VM" — source observations; their impact is
+  model inference.
+- "No backup strategy described" — source observation; data-loss impact is
+  model inference.
+- "No rate-limiting described" — source observation; abuse impact is model
+  inference.
 - "GDPR requires data residency" — unsupported claim (removed).
 - "PCI-DSS Level 1 required" — unsupported claim (removed).

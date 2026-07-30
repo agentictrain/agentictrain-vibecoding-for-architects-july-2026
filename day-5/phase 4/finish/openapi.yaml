@@ -1,6 +1,3 @@
-# WeatherSignal API — OpenAPI 3.0 spec
-
-```yaml
 openapi: 3.0.3
 info:
   title: WeatherSignal API
@@ -239,23 +236,3 @@ components:
           type: string
         message:
           type: string
-```
-
-## Validation notes
-
-- Every field in the spec traces back to the WeatherSignal mapping. No
-  invented fields.
-- The spec defines one endpoint (`GET /weather`) — no invented CRUD
-  endpoints. The mapping describes a read-only data shape, so a single
-  GET is appropriate.
-- No auth scheme added — the PoC has no auth. The spec does not declare
-  `securitySchemes`.
-- Error codes (400, 404, 502) are standard HTTP, not invented.
-- Array cardinalities (24 for hourly, 7 for daily) match the mapping.
-
-### Claims removed
-
-- ~~`POST /weather` for creating custom signals.~~ — Invented endpoint.
-  The mapping has no create operation.
-- ~~`securitySchemes: bearerAuth`~~ — Invented auth. The PoC has no
-  auth.
