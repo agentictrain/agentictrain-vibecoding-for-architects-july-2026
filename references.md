@@ -10,6 +10,32 @@ lists the 3–5 most relevant links for that day.
 
 ---
 
+## Prompt engineering (Day 1)
+
+Day 1 ships its own verified citation table — 29 sources plus surveys — at
+`day-1/exercise-hello-world/prompt-optimization-context.md`. That file is
+the full list. These are the ones worth reading first:
+
+- [Anthropic prompt engineering overview](https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview) —
+  the vendor-neutral fundamentals, including where to place long context.
+- [The Prompt Report](https://arxiv.org/abs/2406.06608) — a systematic
+  survey of prompting techniques. Start here if you want the map before the
+  territory.
+- [Lost in the Middle](https://arxiv.org/abs/2307.03172) (Liu et al., TACL) —
+  why what you put in the middle of a long prompt gets ignored.
+- [Chain-of-Thought](https://arxiv.org/abs/2201.11903) (Wei et al., 2022) and
+  [Self-Consistency](https://arxiv.org/abs/2203.11171) (Wang et al., 2023) —
+  the two results most of the "think step by step" advice rests on.
+- [Mind Your Step](https://arxiv.org/abs/2410.21333) (Liu et al., 2024) —
+  the counterweight: cases where chain-of-thought makes results *worse*.
+- [Chain-of-Verification](https://arxiv.org/abs/2309.11495),
+  [Self-Refine](https://arxiv.org/abs/2303.17651), and
+  [Reflexion](https://arxiv.org/abs/2303.11366) — the research behind the
+  course's review-then-fix habit.
+- [Personas don't improve performance](https://arxiv.org/abs/2311.10054)
+  (Zheng et al., 2023) — worth reading before you write "You are a senior
+  architect" at the top of a prompt.
+
 ## Open-Meteo (the only public data source)
 
 - [Open-Meteo API docs](https://open-meteo.com/en/docs) — the forecast
@@ -55,7 +81,7 @@ lists the 3–5 most relevant links for that day.
 - [OWASP threat modeling overview](https://owasp.org/www-community/Threat_Modeling) —
   a plain-language introduction to assets, trust boundaries, attacker
   capabilities, and abuse paths.
-- [STRIDE cheat sheet](https://owasp.org/www-community/controls/Threat_Modeling_Cheat_Sheet) —
+- [OWASP threat modeling cheat sheet](https://cheatsheetseries.owasp.org/cheatsheets/Threat_Modeling_Cheat_Sheet.html) —
   the six threat categories (Spoofing, Tampering, Repudiation, Information
   disclosure, Denial of service, Elevation of privilege) applied to a
   system boundary.
@@ -64,17 +90,42 @@ lists the 3–5 most relevant links for that day.
 
 - [GitHub Copilot docs](https://docs.github.com/en/copilot) — setup, chat,
   plan mode, and the `/rubber-duck` and `/spar` review commands.
-- [GitHub Copilot App](https://docs.github.com/en/copilot/github-copilot-in-the-github-copilot-app) —
-  the standalone chat application where rubber-duck and spar live (separate
-  from the editor extension).
+- [Using Copilot Chat](https://docs.github.com/en/copilot/how-tos/use-chat/use-chat-in-github) —
+  chat modes and where the review commands live. Note that `/rubber-duck`
+  and spar are in the standalone **Copilot App**, not the editor extension;
+  if you only have the extension, use the plain-prompt review instead
+  (Day 3, Phase 6, Option C).
+
+## VS Code agent surface (Day 5)
+
+- [Add and manage MCP servers](https://code.visualstudio.com/docs/agent-customization/mcp-servers) —
+  adding a server, user vs workspace configuration, and enabling or
+  disabling one globally or per workspace.
+- [Use tools in chat](https://code.visualstudio.com/docs/chat/chat-tools) —
+  the **Configure Tools** picker, tool sets, and the 128-tool-per-request
+  limit.
+- [Manage approvals and permissions](https://code.visualstudio.com/docs/agents/approvals) —
+  the four approval scopes, **Chat: Manage Tool Approval**, and the
+  auto-approve settings you should leave off.
+- [Planning with agents](https://code.visualstudio.com/docs/agents/planning) —
+  Plan mode and **Start Implementation**.
+- [Atlassian Rovo MCP: setting up IDEs](https://support.atlassian.com/atlassian-rovo-mcp-server/docs/setting-up-ides/) —
+  the OAuth sign-in and the permissions it grants. Remember that
+  uninstalling the server locally does not revoke the token.
 
 ## skills.sh (Day 5)
 
 - [skills.sh](https://skills.sh) — the public catalog. Browse, search, and
   inspect skill source files before installing.
-- [skills CLI](https://github.com/superpowers-extra/skills) — the `npx skills`
-  command reference: `add`, `remove`, `list`, and the `DISABLE_TELEMETRY`
-  flag.
+- [skills CLI](https://github.com/vercel-labs/skills) — the `npx skills`
+  command reference: `add`, `remove`, `list`, `find`, `update`, and the
+  `DISABLE_TELEMETRY` / `DO_NOT_TRACK` environment variables.
+- [nestle-it/nestle-skills-for-agents](https://github.com/nestle-it/nestle-skills-for-agents) —
+  the approved internal skills source. Check here before skills.sh; needs
+  Nestlé GitHub access.
+- [SkillSpector](https://github.com/nvidia/skillspector) — NVIDIA's static
+  scanner for agent skills. `skillspector scan <path> --no-llm` gives a risk
+  score without needing an API key.
 
 ## Excalidraw (Day 2 sketching)
 
@@ -92,7 +143,7 @@ canonical source — read it before you run the skill.
 - `architecture` — search "architecture" or "ADR"
 - `writing-plans` — search "writing-plans"
 - `grill-with-docs` — search "grill-with-docs"
-- `inquisition` — bundled in this repo at `assets/skills/inquisition.zip`
+- `inquisition` — bundled in this repo at `day-2/assets/skills/inquisition.zip`
 
 If a skill isn't found on skills.sh, it may be part of the **superpowers**
 collection — search for "superpowers" on skills.sh or ask Copilot to check

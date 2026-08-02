@@ -30,6 +30,20 @@ pre { overflow-x: auto; padding: 3.2rem 1rem 1rem; border-radius: .5rem; color: 
 .guide-observation { border-color: #0f766e; }
 .guide-recovery { border-color: #b45309; }
 
+/* Tables: wide ones scroll inside their own box, never the page */
+.table-scroll { overflow-x: auto; margin: 1.25rem 0; }
+table { border-collapse: collapse; width: 100%; font-size: .94rem; }
+th, td { padding: .5rem .7rem; border: 1px solid #cbd5e1; text-align: left; vertical-align: top; }
+thead th { background: #eef2f7; color: #0b2554; font-weight: 700; }
+tbody tr:nth-child(even) { background: #f8fafc; }
+
+/* Anchored headings clear the top edge when jumped to */
+h2, h3, h4 { scroll-margin-top: 1.5rem; }
+
+/* Keyboard users get past the guide body without tabbing every link */
+.skip-link { position: absolute; left: -9999px; top: 0; padding: .6rem 1rem; background: #0b2554; color: #fff; border-radius: 0 0 .4rem 0; z-index: 10; }
+.skip-link:focus { left: 0; }
+
 /* Heading anchor links (GitHub-style hover reveal) */
 h2 { position: relative; }
 a.headerlink { position: absolute; left: -1.6rem; top: 0; bottom: 0; width: 1.2rem; display: flex; align-items: center; color: #64748b; opacity: 0; text-decoration: none; }
@@ -42,28 +56,67 @@ a.headerlink svg { vertical-align: middle; width: 1rem; height: 1rem; }
 .section-nav a { display: block; padding: .22rem .5rem; color: #64748b; text-decoration: none; border-left: 2px solid transparent; border-radius: 0 4px 4px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .section-nav a:hover { color: #075bbb; background: #eef5fb; }
 .section-nav a.active { color: #075bbb; border-left-color: #075bbb; background: #eef5fb; font-weight: 600; }
-@media (max-width: 1439px) { .section-nav { display: none; } }
+/* Below 1200px the rail becomes a floating panel behind a toggle button */
+.nav-toggle { display: none; }
+.nav-backdrop { display: none; }
+@media (max-width: 1199px) {
+  .nav-toggle {
+    display: inline-flex; align-items: center; gap: .45rem;
+    position: fixed; right: 1rem; bottom: 1rem; z-index: 12;
+    padding: .6rem 1rem; border: 2px solid #0b2554; border-radius: 2rem;
+    background: #fff; color: #0b2554; font: inherit; font-size: .9rem; font-weight: 700;
+    box-shadow: 0 2px 10px rgba(0,0,0,.18); cursor: pointer;
+  }
+  .nav-toggle::before { content: "☰"; font-size: 1rem; line-height: 1; }
+  .nav-toggle[aria-expanded="true"] { background: #eef5fb; }
+  .section-nav {
+    position: fixed; z-index: 11;
+    top: auto; bottom: 4.6rem; left: auto; right: 1rem;
+    width: min(22rem, calc(100vw - 2rem));
+    max-height: min(62vh, 30rem);
+    padding: .8rem; background: #fff;
+    border: 1px solid #cbd5e1; border-radius: .6rem;
+    box-shadow: 0 8px 28px rgba(0,0,0,.22);
+    font-size: .9rem;
+  }
+  .section-nav a { white-space: normal; padding: .45rem .5rem; }
+  .nav-backdrop { display: block; position: fixed; inset: 0; z-index: 10; background: rgba(15,23,42,.35); }
+  .nav-toggle[hidden], .section-nav[hidden], .nav-backdrop[hidden] { display: none; }
+}
 
-/* Wide-screen floating callouts: tuck guide-alert asides into the right margin */
-@media (min-width: 1440px) {
-  main { margin-left: 15%; margin-right: auto; }
+/* From 1200px there is room for the left rail — reserve it so nothing overlaps */
+@media (min-width: 1200px) {
+  main { margin-left: 15%; margin-right: auto; width: min(85% - 3rem, 72rem); }
+}
+
+/* Floated callouts need a real right gutter; only very wide screens have one */
+@media (min-width: 1700px) {
   .guide-alert { float: right; clear: right; width: 290px; margin: 0 -310px 1rem 0; box-shadow: 0 1px 4px rgba(0,0,0,.10); font-size: .88rem; }
 }
 
 :focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }
-@media (max-width: 42rem) { main { width: 100%; margin: 0; border-radius: 0; } }
+@media (max-width: 42rem) {
+  main { width: 100%; margin: 0; border-radius: 0; }
+  a.headerlink { display: none; }
+}
 @media print {
   body { color: #000; background: #fff; }
   main { width: 100%; margin: 0; padding: 0; box-shadow: none; }
-  .copy-button, .copy-status, .section-nav, a.headerlink { display: none; }
+  .copy-button, .copy-status, .section-nav, a.headerlink, .skip-link,
+  .nav-toggle, .nav-backdrop { display: none; }
   .guide-alert { float: none; width: auto; margin: 1rem 0; box-shadow: none; }
+  .table-scroll { overflow-x: visible; }
+  th, td { border-color: #000; }
+  h2, h3 { break-after: avoid; }
+  pre, table, .guide-alert { break-inside: avoid; }
   pre { white-space: pre-wrap; overflow-wrap: anywhere; padding: .75rem; color: #000; background: #f3f4f6; border: 1px solid #94a3b8; }
   a { color: #000; text-decoration: underline; }
 }
 </style>
 </head>
 <body>
-  <main data-source-sha256="47e61536d5d50e1ef9039fed257fae364ac2974f70eafd91b9ec76f78fd59317">
+  <a class="skip-link" href="#guide-main">Skip to content</a>
+  <main id="guide-main" tabindex="-1" data-source-sha256="1923abf9e9550baaa03dacd535c101acddf7ac1598d18ef78a800afd04b53fa6">
 <h1>Day 2 — Define, draw, and plan</h1>
 <p>In two hours, you will turn the Integration Architecture Copilot scenario into
 a reviewed interface contract and a bounded Day 3 plan. You will draw the
@@ -114,7 +167,7 @@ confirm each is available.
 </code></pre></div>
 <p>Complete the rest of this preflight before the two-hour clock starts:</p>
 <ol>
-<li>Open <code>course/day-2/starter/app/index.html</code> in the browser. You should
+<li>Open <code>day-2/starter/app/index.html</code> in the browser. You should
 see three empty boxes with headings and disabled buttons.</li>
 <li>Open <a href="https://excalidraw.com">excalidraw.com</a> and confirm you can create,
 save (<code>.excalidraw</code>), and export a PNG.</li>
@@ -202,11 +255,32 @@ weather app (Region 1 + Region 2). The LLM and weather-grounded review
 describes the full app so the no-specs build gets the whole picture — but
 the specs you generate in Phases 3 and 5 bound Day 3 only.</p>
 <h2 id="how-checkpoints-work">How checkpoints work</h2>
-<p>This day has <strong>phases</strong> (progress markers in this guide) and no folder
-checkpoints you build yourself — Day 2 produces planning artifacts only. You
-mark your progress as you complete each phase. The Day 3 <code>starter/</code> folder
-shipped with the course contains the known-good Day 2 contract, so you can
-open it directly on Day 3.</p>
+<p>This day has <strong>phases</strong> (progress markers in this guide). Day 2 produces
+planning artifacts, not application code, so you&#39;re not building a working
+app into a folder — you&#39;re writing documents.</p>
+<p><strong>Set up your working folder first.</strong> Copy the starter once, so the shipped
+folders stay clean as references:</p>
+<div class="code-block"><button type="button" class="copy-button" aria-label="Copy working folder setup" aria-describedby="copy-status-d2-workfolder">Copy</button><span id="copy-status-d2-workfolder" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-bash">cp -R &quot;day-2/starter&quot; &quot;day-2/my-plans&quot;
+</code></pre></div>
+<p>Open <code>day-2/my-plans/</code> in your editor and start Copilot there. Every
+document you generate today goes into <code>day-2/my-plans/plans/</code>.</p>
+<p><strong>Every phase ships a worked example.</strong> They are not in this guide&#39;s
+instructions because you should try each phase yourself first — but when
+you&#39;re stuck, or want to see what &quot;good&quot; looks like, they&#39;re one folder
+away:</p>
+<div class="table-scroll"><table>
+<thead><tr><th>Folder</th><th>What&#39;s in it</th></tr></thead>
+<tbody>
+<tr><td><code>day-2/phase 1/</code></td><td>reference sketches at four fidelity levels, PNG and SVG</td></tr>
+<tr><td><code>day-2/phase 2/</code></td><td>the no-specs build, so you can see what it produced</td></tr>
+<tr><td><code>day-2/phase 3/</code></td><td><code>spec_v1.md</code>, <code>adr_v1.md</code>, <code>plan_v1.md</code> — the ungrilled set</td></tr>
+<tr><td><code>day-2/phase 4/</code></td><td><code>brief_v2.md</code>, <code>adr_v2.md</code>, <code>glossary_v2.md</code> — the grill&#39;s output</td></tr>
+<tr><td><code>day-2/phase 5/</code></td><td>the v2 set, plus a worked <code>TMP/inquisition-report.md</code></td></tr>
+<tr><td><code>day-2/phase 6/</code></td><td>the plans after the adversarial review</td></tr>
+</tbody>
+</table></div>
+<p>Compare, don&#39;t copy. Yours will differ — the skills are non-deterministic,
+and the whole point of Phase 7 is comparing your v1 against your v2.</p>
 <p>If you get stuck, the facilitator will share a recovery branch or folder with
 the known-good state for that phase. Keep your blocked work for comparison.</p>
 <h2 id="outcome-and-two-hour-route">Outcome and two-hour route</h2>
@@ -218,7 +292,7 @@ the known-good state for that phase. Keep your blocked work for comparison.</p>
 <li><strong>60–80 min — Phase 5: Specs with grill.</strong> Generate spec, ADR, plan from the grilled brief.</li>
 <li><strong>80–95 min — Phase 6: Adversarial review.</strong> Run the torquemada custom agent, the inquisition skill via #runSubagent, and/or rubber-duck on the v2 docs. Fix Blocking / Mortal / Grave findings.</li>
 <li><strong>95–110 min — Phase 7: Compare.</strong> Compare v1 vs v2. See the difference grilling makes.</li>
-<li><strong>110–120 min — Hand off.</strong> Use your Phase 7 result or open <code>course/day-3/starter/</code>.</li>
+<li><strong>110–120 min — Hand off.</strong> Use your Phase 7 result or open <code>day-3/starter/</code>.</li>
 </ul>
 <hr>
 <h2 id="phase-1-sketch-the-ui">Phase 1 — Sketch the UI</h2>
@@ -261,8 +335,9 @@ find them.</p>
 <h2 id="phase-2-build-with-no-specs">Phase 2 — Build with no specs</h2>
 <p>Now fire an agent with the architect brief below and no specs, no plan, no
 ADR. Just the brief. See what happens.</p>
-<p>Open Copilot in the <code>course/day-2/starter/</code> folder and paste this exact
-prompt:</p>
+<p>Open Copilot in your <code>day-2/my-plans/</code> folder and paste this exact
+prompt. This build is a throwaway — you&#39;ll compare it in Phase 7 and then
+abandon it, so don&#39;t worry about it polluting your working folder.</p>
 <p><strong>Ask Copilot:</strong></p>
 <div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 4" aria-describedby="copy-status-4">Copy</button><span id="copy-status-4" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">Read AGENTS.md and TECH.md in this folder. Build the Integration Architecture
 Copilot app described below into app/. Replace the placeholder content in
@@ -383,8 +458,8 @@ new session has no memory of Phase 2&#39;s prompt. Each prompt below includes
 the full app context inline so the agent has everything it needs without
 reading <code>plans/brief.md</code>.</p></aside><p><strong>Where the planning artifacts live.</strong> Every planning file you generate
 today goes into the <code>plans/</code> folder inside your current checkpoint folder
-(for example, <code>course/day-2/starter/plans/spec_v1.md</code>). The course ships a
-known-good set at <code>course/day-3/starter/plans/</code> — if your plans go off the
+(for example, <code>day-2/my-plans/plans/spec_v1.md</code>). The course ships a
+known-good set at <code>day-3/starter/plans/</code> — if your plans go off the
 rails, open that folder and compare.</p>
 <p><strong>Ask Copilot:</strong></p>
 <div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 5" aria-describedby="copy-status-5">Copy</button><span id="copy-status-5" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">Use the write-spec, architecture, and writing-plans skills.
@@ -477,6 +552,11 @@ Then produce three documents and save them:
    sections), evidence views, fallback, failure states, and tests.
    Include a Mermaid flowchart of the implementation steps. Save it as
    plans/plan_v1.md.
+
+All three must obey AGENTS.md and TECH.md in this folder — read both
+first. Nothing they forbid may appear in the plan: no npm, no
+package.json, no ES modules or imports, no bundlers or build steps, no
+frameworks, no third-party runtime code.
 </code></pre></div>
 <p><strong>What you should observe:</strong></p>
 <ul>
@@ -623,6 +703,23 @@ Then produce three documents and save them:
    plan must account for every failure path the grill surfaced. Include
    a Mermaid flowchart of the implementation steps. Save it as
    plans/plan_v2.md.
+
+Two constraints on all three documents.
+
+First, they must agree with each other. The spec, the ADR, and the plan
+are one contract in three parts — if the spec says a state appears
+automatically and the plan says a button triggers it, the contract is
+broken and whoever builds from it will pick one at random. When you have
+written all three, re-read them together and fix every place they
+disagree. Then list, at the end of your reply, each conflict you found
+and how you resolved it.
+
+Second, they must obey AGENTS.md and TECH.md in this folder. Read both
+before you write. Do not plan for anything they forbid — no npm, no
+package.json, no ES modules or imports, no bundlers or build steps, no
+frameworks, no browser test runner, no third-party runtime code. If you
+believe a requirement genuinely cannot be met inside those rules, say so
+explicitly rather than planning around them.
 </code></pre></div>
 <p><strong>What you should observe:</strong></p>
 <ul>
@@ -635,11 +732,25 @@ path has a handling strategy.</li>
 <p><strong>Checkpoint 5:</strong> v2 specs generated.</p>
 <hr>
 <h2 id="phase-6-adversarial-review">Phase 6 — Adversarial review</h2>
-<p>Now review the v2 spec and plan with <strong>three adversarial tools</strong>. They
-complement each other: one delegates a review to a subagent in your
+<p>Now review the v2 spec, ADR, and plan with <strong>three adversarial tools</strong>.
+They complement each other: one delegates a review to a subagent in your
 current session, one runs the inquisition skill in a brand new session,
 and rubber duck gives a general second opinion from a different AI
 model. Use all three if you have time; use at least one.</p>
+<aside class="guide-alert guide-alert-important" role="note" aria-label="Important">
+<p class="guide-alert-title">IMPORTANT</p>
+<p><strong>Two failure classes are easy to miss, so all three prompts below ask
+for them by name.</strong></p>
+<p>The first is <strong>documents contradicting each other</strong>. The spec, the ADR,
+and the plan were written in one pass but they are three documents, and
+nothing forced them to agree. A spec that says a state appears
+automatically and a plan that says a button triggers it will produce two
+different apps on Day 3, depending on which one the builder happens to
+follow.</p>
+<p>The second is <strong>planning for something the rules forbid</strong>. <code>TECH.md</code>
+rules out npm, ES modules, bundlers, build steps and frameworks. A
+planning skill that doesn&#39;t read it will cheerfully specify all four,
+and the plan will look excellent right up until Day 3 rejects it.</p></aside>
 <h3>Option 1 — #runSubagent (review in a separate context)</h3>
 <p><strong>Subagents</strong> let you delegate a task to an isolated agent with its own
 context window — it runs without interrupting your main session and
@@ -649,6 +760,9 @@ unzip <code>assets/skills/inquisition.zip</code> and install it). Then enable th
 <code>runSubagent</code> tool in your Copilot session (click the tools icon and
 enable <code>runSubagent</code>), and type:</p>
 <div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 8" aria-describedby="copy-status-8">Copy</button><span id="copy-status-8" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">#runSubagent Execute Torquemada to run an adversarial review of the repo.
+Check the v2 spec, ADR, and plan against each other and against AGENTS.md
+and TECH.md. Report any document that plans for something TECH.md forbids,
+and any place two documents contradict each other, as its own finding.
 </code></pre></div>
 <p>The subagent runs independently and returns the report to your main
 session. Read it and fix <strong>Mortal</strong> and <strong>Grave</strong> findings before you
@@ -661,6 +775,9 @@ merits.</p>
 <p>Make sure the inquisition skill is installed (see preflight or unzip
 <code>assets/skills/inquisition.zip</code> and install it). Then type:</p>
 <div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 9" aria-describedby="copy-status-9">Copy</button><span id="copy-status-9" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">Execute Torquemada to run an adversarial review of the repo.
+Check the v2 spec, ADR, and plan against each other and against AGENTS.md
+and TECH.md. Report any document that plans for something TECH.md forbids,
+and any place two documents contradict each other, as its own finding.
 </code></pre></div>
 <p>Read the report and fix <strong>Mortal</strong> and <strong>Grave</strong> findings as above.</p>
 <h3>Option 3 — Rubber duck (general second opinion)</h3>
@@ -676,15 +793,23 @@ editor extension). If you only have Copilot in VS Code, the <code>/rubber-duck</
 and <code>/spar</code> commands may not be available — in that case use Option A
 (Option 1 or 2) instead, or ask Copilot in your editor to &quot;review
 this plan as a different model would, focusing on Blocking findings.&quot;</p></aside><p>Open the Copilot App, start a session in your project folder, and type:</p>
-<div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 10" aria-describedby="copy-status-10">Copy</button><span id="copy-status-10" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">/rubber-duck Review the v2 spec at plans/spec_v2.md and the v2 plan at
-plans/plan_v2.md. Find gaps, weak reasoning, missing edge cases, and
-anything that would break during implementation. Categorize each finding
-as Blocking, Non-blocking, or Suggestion.
+<div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 10" aria-describedby="copy-status-10">Copy</button><span id="copy-status-10" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">/rubber-duck Review the v2 spec at plans/spec_v2.md, the v2 ADR at
+plans/adr_v2_final.md, and the v2 plan at plans/plan_v2.md, against each
+other and against AGENTS.md and TECH.md in this folder.
+
+Find gaps, weak reasoning, missing edge cases, and anything that would
+break during implementation. Two things especially: any place two of the
+documents contradict each other, and anything they plan for that TECH.md
+forbids — npm, package.json, ES modules or imports, bundlers, build
+steps, frameworks, third-party runtime code.
+
+Categorize each finding as Blocking, Non-blocking, or Suggestion, and
+quote the line you&#39;re objecting to.
 </code></pre></div>
 <p>Read the critique. Fix <strong>Blocking</strong> items before you continue.
 <strong>Non-blocking</strong> items should also be fixed. <strong>Suggestions</strong> are
 judgment calls.</p>
-<h3>After either review</h3>
+<h3>After any review</h3>
 <p><strong>What you should observe:</strong></p>
 <ul>
 <li>The review catches things the grill missed: silent assumptions,
@@ -695,8 +820,18 @@ documents are strong enough to be the contract.</li>
 <li>The fix-then-rerun loop is the same habit: the first draft is a claim,
 the review is the check, the fix is the repair.</li>
 </ul>
-<p><strong>Checkpoint 6:</strong> the review is clean. No Blocking / Mortal / Grave
-findings remain in the v2 spec or plan.</p>
+<aside class="guide-alert guide-alert-note" role="note" aria-label="Note">
+<p class="guide-alert-title">NOTE</p>
+<p><strong>A worked report ships with the course</strong> at
+<code>day-2/phase 5/TMP/inquisition-report.md</code>. Read it after you&#39;ve run your
+own — it&#39;s a good example of the format, and a useful lesson in itself.
+It found seven Blocking issues about the plan&#39;s internal coherence, and
+missed that the same plan specified npm, a <code>package.json</code>, ES modules
+and a browser test runner, all of which <code>TECH.md</code> forbids. A review is a
+claim too. Check what it <em>didn&#39;t</em> look at.</p></aside>
+<p><strong>Checkpoint 6:</strong> you ran at least one adversarial review, resolved every
+Blocking / Mortal / Grave finding, and checked the three v2 documents
+against each other and against <code>TECH.md</code> yourself.</p>
 <hr>
 <h2 id="phase-7-compare-v1-vs-v2">Phase 7 — Compare v1 vs v2</h2>
 <p>Read both versions side by side:</p>
@@ -752,7 +887,7 @@ time — a Mortal heresy is cheaper to fix today than on Day 3.</li>
 <p>You didn&#39;t build app code today, but the starter shell must stay accessible
 so Days 3 and 4 inherit a clean baseline. Before you hand off:</p>
 <ol>
-<li>Open <code>course/day-2/starter/app/index.html</code> in your browser.</li>
+<li>Open <code>day-2/starter/app/index.html</code> in your browser.</li>
 <li>Press Tab a few times. A visible focus outline must follow your keystroke.</li>
 <li>Open the browser&#39;s accessibility inspector (DevTools → Elements →
 Accessibility, or Lighthouse → Accessibility). Confirm:<ul>
@@ -768,9 +903,18 @@ The shell ships accessible — a failure means something changed it.</li>
 </ol>
 <hr>
 <h2 id="hand-off-to-day-3">Hand off to Day 3</h2>
-<p>Either use the result of Phase 7 (your grilled <code>spec_v2.md</code>, <code>adr_v2_final.md</code>,
-and <code>plan_v2.md</code>) or open the <code>course/day-3/starter/</code> folder, which already
-contains the known-good Day 2 contract. Day 3 starts from there.</p>
+<p>Either use the result of Phase 7 (your grilled <code>spec_v2.md</code>,
+<code>adr_v2_final.md</code>, and <code>plan_v2.md</code>) or open the <code>day-3/starter/</code> folder,
+which ships a known-good contract ready for Day 3.</p>
+<aside class="guide-alert guide-alert-important" role="note" aria-label="Important">
+<p class="guide-alert-title">IMPORTANT</p>
+<p><strong>If you carry your own plan forward, check it against Day 3&#39;s rules
+first.</strong> The plan the skills produce is shaped by whatever the model
+decided — it may reach for ES modules, npm, a bundler, or a browser test
+runner. Day 3&#39;s <code>TECH.md</code> forbids all of those. Open your <code>plan_v2.md</code>
+next to <code>day-3/starter/TECH.md</code> and reconcile them before you build.
+The shipped <code>day-3/starter/plans/</code> set has already been through that
+reconciliation, which is why it differs from the Day 2 example output.</p></aside>
 <hr>
 <h2 id="references">References</h2>
 <p>The full list lives at <a href="../references.md">course/references.md</a>. The most
@@ -809,6 +953,7 @@ async function copyText(value) {
 }
 
 document.querySelectorAll('.copy-button').forEach((button) => {
+  let resetTimer;
   button.addEventListener('click', async () => {
     const code = button.parentElement.querySelector('code').textContent;
     const status = button.parentElement.querySelector('.copy-status');
@@ -822,6 +967,15 @@ document.querySelectorAll('.copy-button').forEach((button) => {
       button.textContent = 'Copy failed';
       status.textContent = 'Copy failed. Select the code and copy it manually.';
     }
+    // Return to the resting label so the button always reflects the *next*
+    // action, not the last one. Without this every button a reader has ever
+    // clicked stays reading "Copied".
+    clearTimeout(resetTimer);
+    resetTimer = setTimeout(() => {
+      delete button.dataset.copyState;
+      button.textContent = 'Copy';
+      status.textContent = '';
+    }, 2000);
   });
 });
 </script>
@@ -876,6 +1030,68 @@ document.querySelectorAll('.copy-button').forEach((button) => {
   window.addEventListener('scroll', highlight, { passive: true });
   window.addEventListener('resize', highlight, { passive: true });
   highlight();
+
+  // Narrow screens have no room for a fixed rail, so the same nav becomes a
+  // floating panel behind a toggle. One nav element, two presentations.
+  var narrow = window.matchMedia('(max-width: 1199px)');
+  nav.id = 'section-nav';
+
+  var backdrop = document.createElement('div');
+  backdrop.className = 'nav-backdrop';
+  backdrop.hidden = true;
+
+  var toggle = document.createElement('button');
+  toggle.type = 'button';
+  toggle.className = 'nav-toggle';
+  toggle.id = 'section-nav-toggle';
+  toggle.textContent = 'Sections';
+  toggle.setAttribute('aria-controls', 'section-nav');
+  toggle.setAttribute('aria-expanded', 'false');
+
+  document.body.appendChild(backdrop);
+  document.body.appendChild(toggle);
+
+  function setOpen(open) {
+    nav.hidden = !open;
+    backdrop.hidden = !open;
+    toggle.setAttribute('aria-expanded', String(open));
+    if (open) {
+      var active = nav.querySelector('a.active') || nav.querySelector('a');
+      if (active) active.focus();
+    }
+  }
+
+  function close(returnFocus) {
+    setOpen(false);
+    if (returnFocus) toggle.focus();
+  }
+
+  // Desktop: the rail is always present and the toggle is irrelevant.
+  function applyMode() {
+    if (narrow.matches) {
+      setOpen(false);
+    } else {
+      nav.hidden = false;
+      backdrop.hidden = true;
+      toggle.setAttribute('aria-expanded', 'false');
+    }
+  }
+
+  toggle.addEventListener('click', function () { setOpen(nav.hidden); });
+  backdrop.addEventListener('click', function () { close(true); });
+  nav.addEventListener('click', function (event) {
+    if (narrow.matches && event.target.closest('a')) close(false);
+  });
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape' && narrow.matches && !nav.hidden) close(true);
+  });
+  if (typeof narrow.addEventListener === 'function') {
+    narrow.addEventListener('change', applyMode);
+  } else if (typeof narrow.addListener === 'function') {
+    narrow.addListener(applyMode);
+  }
+
+  applyMode();
 })();
 </script>
 </body>

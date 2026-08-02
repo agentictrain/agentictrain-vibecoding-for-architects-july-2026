@@ -61,7 +61,7 @@ confirm each is available.
 
 Complete the rest of this preflight before the two-hour clock starts:
 
-1. Open `course/day-2/starter/app/index.html` in the browser. You should
+1. Open `day-2/starter/app/index.html` in the browser. You should
    see three empty boxes with headings and disabled buttons.
 2. Open [excalidraw.com](https://excalidraw.com) and confirm you can create,
    save (`.excalidraw`), and export a PNG.
@@ -153,11 +153,36 @@ the specs you generate in Phases 3 and 5 bound Day 3 only.
 
 ## How checkpoints work
 
-This day has **phases** (progress markers in this guide) and no folder
-checkpoints you build yourself — Day 2 produces planning artifacts only. You
-mark your progress as you complete each phase. The Day 3 `starter/` folder
-shipped with the course contains the known-good Day 2 contract, so you can
-open it directly on Day 3.
+This day has **phases** (progress markers in this guide). Day 2 produces
+planning artifacts, not application code, so you're not building a working
+app into a folder — you're writing documents.
+
+**Set up your working folder first.** Copy the starter once, so the shipped
+folders stay clean as references:
+
+```bash
+cp -R "day-2/starter" "day-2/my-plans"
+```
+
+Open `day-2/my-plans/` in your editor and start Copilot there. Every
+document you generate today goes into `day-2/my-plans/plans/`.
+
+**Every phase ships a worked example.** They are not in this guide's
+instructions because you should try each phase yourself first — but when
+you're stuck, or want to see what "good" looks like, they're one folder
+away:
+
+| Folder | What's in it |
+|---|---|
+| `day-2/phase 1/` | reference sketches at four fidelity levels, PNG and SVG |
+| `day-2/phase 2/` | the no-specs build, so you can see what it produced |
+| `day-2/phase 3/` | `spec_v1.md`, `adr_v1.md`, `plan_v1.md` — the ungrilled set |
+| `day-2/phase 4/` | `brief_v2.md`, `adr_v2.md`, `glossary_v2.md` — the grill's output |
+| `day-2/phase 5/` | the v2 set, plus a worked `TMP/inquisition-report.md` |
+| `day-2/phase 6/` | the plans after the adversarial review |
+
+Compare, don't copy. Yours will differ — the skills are non-deterministic,
+and the whole point of Phase 7 is comparing your v1 against your v2.
 
 If you get stuck, the facilitator will share a recovery branch or folder with
 the known-good state for that phase. Keep your blocked work for comparison.
@@ -171,7 +196,7 @@ the known-good state for that phase. Keep your blocked work for comparison.
 - **60–80 min — Phase 5: Specs with grill.** Generate spec, ADR, plan from the grilled brief.
 - **80–95 min — Phase 6: Adversarial review.** Run the torquemada custom agent, the inquisition skill via #runSubagent, and/or rubber-duck on the v2 docs. Fix Blocking / Mortal / Grave findings.
 - **95–110 min — Phase 7: Compare.** Compare v1 vs v2. See the difference grilling makes.
-- **110–120 min — Hand off.** Use your Phase 7 result or open `course/day-3/starter/`.
+- **110–120 min — Hand off.** Use your Phase 7 result or open `day-3/starter/`.
 
 ---
 
@@ -227,8 +252,9 @@ find them.
 Now fire an agent with the architect brief below and no specs, no plan, no
 ADR. Just the brief. See what happens.
 
-Open Copilot in the `course/day-2/starter/` folder and paste this exact
-prompt:
+Open Copilot in your `day-2/my-plans/` folder and paste this exact
+prompt. This build is a throwaway — you'll compare it in Phase 7 and then
+abandon it, so don't worry about it polluting your working folder.
 
 **Ask Copilot:**
 
@@ -361,8 +387,8 @@ Copilot's plan mode. Don't spec them here.
 
 **Where the planning artifacts live.** Every planning file you generate
 today goes into the `plans/` folder inside your current checkpoint folder
-(for example, `course/day-2/starter/plans/spec_v1.md`). The course ships a
-known-good set at `course/day-3/starter/plans/` — if your plans go off the
+(for example, `day-2/my-plans/plans/spec_v1.md`). The course ships a
+known-good set at `day-3/starter/plans/` — if your plans go off the
 rails, open that folder and compare.
 
 **Ask Copilot:**
@@ -458,6 +484,11 @@ Then produce three documents and save them:
    sections), evidence views, fallback, failure states, and tests.
    Include a Mermaid flowchart of the implementation steps. Save it as
    plans/plan_v1.md.
+
+All three must obey AGENTS.md and TECH.md in this folder — read both
+first. Nothing they forbid may appear in the plan: no npm, no
+package.json, no ES modules or imports, no bundlers or build steps, no
+frameworks, no third-party runtime code.
 ```
 
 **What you should observe:**
@@ -619,6 +650,23 @@ Then produce three documents and save them:
    plan must account for every failure path the grill surfaced. Include
    a Mermaid flowchart of the implementation steps. Save it as
    plans/plan_v2.md.
+
+Two constraints on all three documents.
+
+First, they must agree with each other. The spec, the ADR, and the plan
+are one contract in three parts — if the spec says a state appears
+automatically and the plan says a button triggers it, the contract is
+broken and whoever builds from it will pick one at random. When you have
+written all three, re-read them together and fix every place they
+disagree. Then list, at the end of your reply, each conflict you found
+and how you resolved it.
+
+Second, they must obey AGENTS.md and TECH.md in this folder. Read both
+before you write. Do not plan for anything they forbid — no npm, no
+package.json, no ES modules or imports, no bundlers or build steps, no
+frameworks, no browser test runner, no third-party runtime code. If you
+believe a requirement genuinely cannot be met inside those rules, say so
+explicitly rather than planning around them.
 ```
 
 **What you should observe:**
@@ -635,11 +683,27 @@ Then produce three documents and save them:
 
 ## Phase 6 — Adversarial review
 
-Now review the v2 spec and plan with **three adversarial tools**. They
-complement each other: one delegates a review to a subagent in your
+Now review the v2 spec, ADR, and plan with **three adversarial tools**.
+They complement each other: one delegates a review to a subagent in your
 current session, one runs the inquisition skill in a brand new session,
 and rubber duck gives a general second opinion from a different AI
 model. Use all three if you have time; use at least one.
+
+> [!IMPORTANT]
+> **Two failure classes are easy to miss, so all three prompts below ask
+> for them by name.**
+>
+> The first is **documents contradicting each other**. The spec, the ADR,
+> and the plan were written in one pass but they are three documents, and
+> nothing forced them to agree. A spec that says a state appears
+> automatically and a plan that says a button triggers it will produce two
+> different apps on Day 3, depending on which one the builder happens to
+> follow.
+>
+> The second is **planning for something the rules forbid**. `TECH.md`
+> rules out npm, ES modules, bundlers, build steps and frameworks. A
+> planning skill that doesn't read it will cheerfully specify all four,
+> and the plan will look excellent right up until Day 3 rejects it.
 
 ### Option 1 — #runSubagent (review in a separate context)
 
@@ -654,6 +718,9 @@ enable `runSubagent`), and type:
 
 ```text
 #runSubagent Execute Torquemada to run an adversarial review of the repo.
+Check the v2 spec, ADR, and plan against each other and against AGENTS.md
+and TECH.md. Report any document that plans for something TECH.md forbids,
+and any place two documents contradict each other, as its own finding.
 ```
 
 The subagent runs independently and returns the report to your main
@@ -672,6 +739,9 @@ Make sure the inquisition skill is installed (see preflight or unzip
 
 ```text
 Execute Torquemada to run an adversarial review of the repo.
+Check the v2 spec, ADR, and plan against each other and against AGENTS.md
+and TECH.md. Report any document that plans for something TECH.md forbids,
+and any place two documents contradict each other, as its own finding.
 ```
 
 Read the report and fix **Mortal** and **Grave** findings as above.
@@ -694,17 +764,25 @@ flaws, missing edge cases, weak reasoning. It categorizes feedback as
 Open the Copilot App, start a session in your project folder, and type:
 
 ```text
-/rubber-duck Review the v2 spec at plans/spec_v2.md and the v2 plan at
-plans/plan_v2.md. Find gaps, weak reasoning, missing edge cases, and
-anything that would break during implementation. Categorize each finding
-as Blocking, Non-blocking, or Suggestion.
+/rubber-duck Review the v2 spec at plans/spec_v2.md, the v2 ADR at
+plans/adr_v2_final.md, and the v2 plan at plans/plan_v2.md, against each
+other and against AGENTS.md and TECH.md in this folder.
+
+Find gaps, weak reasoning, missing edge cases, and anything that would
+break during implementation. Two things especially: any place two of the
+documents contradict each other, and anything they plan for that TECH.md
+forbids — npm, package.json, ES modules or imports, bundlers, build
+steps, frameworks, third-party runtime code.
+
+Categorize each finding as Blocking, Non-blocking, or Suggestion, and
+quote the line you're objecting to.
 ```
 
 Read the critique. Fix **Blocking** items before you continue.
 **Non-blocking** items should also be fixed. **Suggestions** are
 judgment calls.
 
-### After either review
+### After any review
 
 **What you should observe:**
 
@@ -716,8 +794,18 @@ judgment calls.
 - The fix-then-rerun loop is the same habit: the first draft is a claim,
   the review is the check, the fix is the repair.
 
-**Checkpoint 6:** the review is clean. No Blocking / Mortal / Grave
-findings remain in the v2 spec or plan.
+> [!NOTE]
+> **A worked report ships with the course** at
+> `day-2/phase 5/TMP/inquisition-report.md`. Read it after you've run your
+> own — it's a good example of the format, and a useful lesson in itself.
+> It found seven Blocking issues about the plan's internal coherence, and
+> missed that the same plan specified npm, a `package.json`, ES modules
+> and a browser test runner, all of which `TECH.md` forbids. A review is a
+> claim too. Check what it *didn't* look at.
+
+**Checkpoint 6:** you ran at least one adversarial review, resolved every
+Blocking / Mortal / Grave finding, and checked the three v2 documents
+against each other and against `TECH.md` yourself.
 
 ---
 
@@ -782,7 +870,7 @@ moment), but the specs bound the weather app only.
 You didn't build app code today, but the starter shell must stay accessible
 so Days 3 and 4 inherit a clean baseline. Before you hand off:
 
-1. Open `course/day-2/starter/app/index.html` in your browser.
+1. Open `day-2/starter/app/index.html` in your browser.
 2. Press Tab a few times. A visible focus outline must follow your keystroke.
 3. Open the browser's accessibility inspector (DevTools → Elements →
    Accessibility, or Lighthouse → Accessibility). Confirm:
@@ -798,9 +886,18 @@ so Days 3 and 4 inherit a clean baseline. Before you hand off:
 
 ## Hand off to Day 3
 
-Either use the result of Phase 7 (your grilled `spec_v2.md`, `adr_v2_final.md`,
-and `plan_v2.md`) or open the `course/day-3/starter/` folder, which already
-contains the known-good Day 2 contract. Day 3 starts from there.
+Either use the result of Phase 7 (your grilled `spec_v2.md`,
+`adr_v2_final.md`, and `plan_v2.md`) or open the `day-3/starter/` folder,
+which ships a known-good contract ready for Day 3.
+
+> [!IMPORTANT]
+> **If you carry your own plan forward, check it against Day 3's rules
+> first.** The plan the skills produce is shaped by whatever the model
+> decided — it may reach for ES modules, npm, a bundler, or a browser test
+> runner. Day 3's `TECH.md` forbids all of those. Open your `plan_v2.md`
+> next to `day-3/starter/TECH.md` and reconcile them before you build.
+> The shipped `day-3/starter/plans/` set has already been through that
+> reconciliation, which is why it differs from the Day 2 example output.
 
 ---
 

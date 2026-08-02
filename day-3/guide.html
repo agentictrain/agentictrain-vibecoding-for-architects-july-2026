@@ -30,6 +30,20 @@ pre { overflow-x: auto; padding: 3.2rem 1rem 1rem; border-radius: .5rem; color: 
 .guide-observation { border-color: #0f766e; }
 .guide-recovery { border-color: #b45309; }
 
+/* Tables: wide ones scroll inside their own box, never the page */
+.table-scroll { overflow-x: auto; margin: 1.25rem 0; }
+table { border-collapse: collapse; width: 100%; font-size: .94rem; }
+th, td { padding: .5rem .7rem; border: 1px solid #cbd5e1; text-align: left; vertical-align: top; }
+thead th { background: #eef2f7; color: #0b2554; font-weight: 700; }
+tbody tr:nth-child(even) { background: #f8fafc; }
+
+/* Anchored headings clear the top edge when jumped to */
+h2, h3, h4 { scroll-margin-top: 1.5rem; }
+
+/* Keyboard users get past the guide body without tabbing every link */
+.skip-link { position: absolute; left: -9999px; top: 0; padding: .6rem 1rem; background: #0b2554; color: #fff; border-radius: 0 0 .4rem 0; z-index: 10; }
+.skip-link:focus { left: 0; }
+
 /* Heading anchor links (GitHub-style hover reveal) */
 h2 { position: relative; }
 a.headerlink { position: absolute; left: -1.6rem; top: 0; bottom: 0; width: 1.2rem; display: flex; align-items: center; color: #64748b; opacity: 0; text-decoration: none; }
@@ -42,28 +56,67 @@ a.headerlink svg { vertical-align: middle; width: 1rem; height: 1rem; }
 .section-nav a { display: block; padding: .22rem .5rem; color: #64748b; text-decoration: none; border-left: 2px solid transparent; border-radius: 0 4px 4px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .section-nav a:hover { color: #075bbb; background: #eef5fb; }
 .section-nav a.active { color: #075bbb; border-left-color: #075bbb; background: #eef5fb; font-weight: 600; }
-@media (max-width: 1439px) { .section-nav { display: none; } }
+/* Below 1200px the rail becomes a floating panel behind a toggle button */
+.nav-toggle { display: none; }
+.nav-backdrop { display: none; }
+@media (max-width: 1199px) {
+  .nav-toggle {
+    display: inline-flex; align-items: center; gap: .45rem;
+    position: fixed; right: 1rem; bottom: 1rem; z-index: 12;
+    padding: .6rem 1rem; border: 2px solid #0b2554; border-radius: 2rem;
+    background: #fff; color: #0b2554; font: inherit; font-size: .9rem; font-weight: 700;
+    box-shadow: 0 2px 10px rgba(0,0,0,.18); cursor: pointer;
+  }
+  .nav-toggle::before { content: "☰"; font-size: 1rem; line-height: 1; }
+  .nav-toggle[aria-expanded="true"] { background: #eef5fb; }
+  .section-nav {
+    position: fixed; z-index: 11;
+    top: auto; bottom: 4.6rem; left: auto; right: 1rem;
+    width: min(22rem, calc(100vw - 2rem));
+    max-height: min(62vh, 30rem);
+    padding: .8rem; background: #fff;
+    border: 1px solid #cbd5e1; border-radius: .6rem;
+    box-shadow: 0 8px 28px rgba(0,0,0,.22);
+    font-size: .9rem;
+  }
+  .section-nav a { white-space: normal; padding: .45rem .5rem; }
+  .nav-backdrop { display: block; position: fixed; inset: 0; z-index: 10; background: rgba(15,23,42,.35); }
+  .nav-toggle[hidden], .section-nav[hidden], .nav-backdrop[hidden] { display: none; }
+}
 
-/* Wide-screen floating callouts: tuck guide-alert asides into the right margin */
-@media (min-width: 1440px) {
-  main { margin-left: 15%; margin-right: auto; }
+/* From 1200px there is room for the left rail — reserve it so nothing overlaps */
+@media (min-width: 1200px) {
+  main { margin-left: 15%; margin-right: auto; width: min(85% - 3rem, 72rem); }
+}
+
+/* Floated callouts need a real right gutter; only very wide screens have one */
+@media (min-width: 1700px) {
   .guide-alert { float: right; clear: right; width: 290px; margin: 0 -310px 1rem 0; box-shadow: 0 1px 4px rgba(0,0,0,.10); font-size: .88rem; }
 }
 
 :focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }
-@media (max-width: 42rem) { main { width: 100%; margin: 0; border-radius: 0; } }
+@media (max-width: 42rem) {
+  main { width: 100%; margin: 0; border-radius: 0; }
+  a.headerlink { display: none; }
+}
 @media print {
   body { color: #000; background: #fff; }
   main { width: 100%; margin: 0; padding: 0; box-shadow: none; }
-  .copy-button, .copy-status, .section-nav, a.headerlink { display: none; }
+  .copy-button, .copy-status, .section-nav, a.headerlink, .skip-link,
+  .nav-toggle, .nav-backdrop { display: none; }
   .guide-alert { float: none; width: auto; margin: 1rem 0; box-shadow: none; }
+  .table-scroll { overflow-x: visible; }
+  th, td { border-color: #000; }
+  h2, h3 { break-after: avoid; }
+  pre, table, .guide-alert { break-inside: avoid; }
   pre { white-space: pre-wrap; overflow-wrap: anywhere; padding: .75rem; color: #000; background: #f3f4f6; border: 1px solid #94a3b8; }
   a { color: #000; text-decoration: underline; }
 }
 </style>
 </head>
 <body>
-  <main data-source-sha256="2851b66e043964bb58ec63fdec750617b7b59929515644882925798dfbe860fa">
+  <a class="skip-link" href="#guide-main">Skip to content</a>
+  <main id="guide-main" tabindex="-1" data-source-sha256="aef291b9c572160fe339f41955707a8a9ef221e0e2374f77f39afb8225c40b2d">
 <h1>Day 3 — Build the weather app</h1>
 <p>Today you build a small weather app. The app lets a person type a city name,
 pick a city from the list, and see the current weather, the next 24 hours,
@@ -72,8 +125,8 @@ Open-Meteo. You will not write the code yourself. You will tell GitHub
 Copilot what to build, check the result in the browser, and fix what&#39;s
 wrong.</p>
 <p>The whole thing takes two hours. You work in small steps called
-<strong>checkpoints</strong>. If a step breaks, you open the next checkpoint folder,
-which already has the correct code for that step, and keep going.</p>
+<strong>checkpoints</strong>. If a step breaks, you open the shipped checkpoint folder
+for that step, which already has the correct code, and keep going.</p>
 <aside class="guide-alert guide-alert-note" role="note" aria-label="Note">
 <p class="guide-alert-title">NOTE</p>
 <p>A shared <a href="../glossary.md">course glossary</a> defines every technical term
@@ -85,11 +138,11 @@ unfamiliar.</p></aside><h2 id="prerequisites-and-preflight">Prerequisites and pr
 <li>The repository open on your computer.</li>
 <li>GitHub Copilot working in your editor.</li>
 </ul>
-<p>Open <code>course/day-2/starter/app/index.html</code> in your browser. You should see
+<p>Open <code>day-3/starter/app/index.html</code> in your browser. You should see
 three empty boxes with headings and disabled buttons — the shell you&#39;ll
-build on today. If the page doesn&#39;t open or looks broken, check that you
-opened the file directly in a current browser; if it still looks wrong,
-open the shipped <code>course/day-3/starter/app/index.html</code> instead and compare.</p>
+build on today. It&#39;s the same shell Day 2 finished with, shipped here so
+you can start clean. If the page doesn&#39;t open or looks broken, check that
+you opened the file directly in a current browser.</p>
 <aside class="guide-alert guide-alert-warning" role="note" aria-label="Warning">
 <p class="guide-alert-title">WARNING</p>
 <p>If your network blocks Open-Meteo, you can still finish the exercise
@@ -105,8 +158,20 @@ plans/adr_v2_final.md   the architecture decision
 plans/glossary_v2.md    the pinned terms
 </code></pre></div>
 <p>If you skipped Day 2 or your plans are incomplete, open the known-good set
-shipped with the course at <code>course/day-3/starter/plans/</code> and use those
+shipped with the course at <code>day-3/starter/plans/</code> and use those
 instead. You don&#39;t need a facilitator.</p>
+<aside class="guide-alert guide-alert-important" role="note" aria-label="Important">
+<p class="guide-alert-title">IMPORTANT</p>
+<p><strong>Your plans are yours, and they will not match anyone else&#39;s.</strong> You
+generated them with an AI on Day 2, so exact numbers, field names,
+section order, and wording differ from person to person and from the
+shipped example. Where this guide names a specific value, it is quoting
+the <strong>shipped example</strong> so you have something concrete to compare
+against — your plan is the authority for your build.</p>
+<p>If your plan and this guide disagree, that&#39;s not a mistake to paper
+over. Decide which is right, say so out loud, and — if it&#39;s your plan
+that&#39;s wrong — fix the plan before you fix the code. A contract you
+silently ignore is not a contract.</p></aside>
 <p>Here&#39;s the plain-language summary of what those plans describe. The full
 app has three boxes on one page. Today you build the first two. The third
 box is a placeholder today.</p>
@@ -160,13 +225,34 @@ sideways scrolling.</p>
 <p><strong>Out of scope today:</strong> no production, no saving data, no real internal
 systems, no real customer or supplier data.</p>
 <h2 id="how-checkpoints-work">How checkpoints work</h2>
-<p>Today has five <strong>phases</strong> (progress markers in this guide) and four
-<strong>checkpoint folders</strong> Copilot builds into. You paste a prompt; Copilot
-creates the folder and the files.</p>
-<p>If you get stuck on a checkpoint, open the <strong>next</strong> checkpoint folder the
-course ships and point Copilot at it. That folder already has the correct
-code for that step. Keep your blocked work so you can compare. Never edit
-an earlier checkpoint folder to make later work pass.</p>
+<p>Today has seven <strong>phases</strong> (progress markers in this guide) and a set of
+shipped <strong>checkpoint folders</strong> holding a known-good snapshot of the app at
+each stage.</p>
+<p><strong>Set up your working folder before Phase 2.</strong> You build in one folder all
+day and the shipped checkpoints stay untouched as references. Copy the
+starter once:</p>
+<div class="code-block"><button type="button" class="copy-button" aria-label="Copy working folder setup" aria-describedby="copy-status-workfolder">Copy</button><span id="copy-status-workfolder" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-bash">cp -R &quot;day-3/starter&quot; &quot;day-3/my-app&quot;
+</code></pre></div>
+<p>Then open <code>day-3/my-app/</code> in your editor and start Copilot <strong>there</strong>, so
+that &quot;read AGENTS.md and TECH.md in this checkpoint&quot; resolves to your copy.
+Everything you build today goes in <code>my-app/</code>.</p>
+<aside class="guide-alert guide-alert-warning" role="note" aria-label="Warning">
+<p class="guide-alert-title">WARNING</p>
+<p>Don&#39;t point Copilot at a shipped <code>phase N/</code> folder and ask it to build.
+Those folders already contain the finished answer for their step, so
+Copilot would be &quot;building&quot; code that&#39;s already there. Open them to read
+and compare, never to work in.</p></aside>
+<p>If you get stuck, open the shipped folder for the phase you&#39;re on — named
+below — and point Copilot at it. That folder already has the correct code
+for that step. Keep your blocked work so you can compare. Never edit an
+earlier checkpoint folder to make later work pass.</p>
+<aside class="guide-alert guide-alert-important" role="note" aria-label="Important">
+<p class="guide-alert-title">IMPORTANT</p>
+<p><strong>Folder numbers are not phase numbers.</strong> A checkpoint folder holds the
+state at the <em>end</em> of a build step, and Phase 1 builds nothing — it&#39;s
+reading, not writing. So the folders run one behind the guide&#39;s phases
+until they catch up at Phase 4. The table below is the mapping that
+matters; use it rather than assuming <code>phase 3/</code> belongs to Phase 3.</p></aside>
 <aside class="guide-alert guide-alert-note" role="note" aria-label="Note">
 <p class="guide-alert-title">NOTE</p>
 <p>Each checkpoint folder has an <code>implementation/</code> subfolder. When Copilot
@@ -175,30 +261,40 @@ makes a decision without asking you, it records it in
 first — it explains why the code is the way it is. The shipped <code>final/</code>
 folder&#39;s <code>implementation/</code> is a complete worked example you can compare
 against your own.</p></aside><p>The checkpoint path for Day 3:</p>
-<div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 2" aria-describedby="copy-status-2">Copy</button><span id="copy-status-2" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">course/day-3/starter/   the starting shell; no weather yet
-course/day-3/phase 2/   city search works; pick a city
-course/day-3/phase 3/   live weather + clean WeatherSignal
-course/day-3/phase 4/   raw view, fake fallback, errors, retry
-course/day-3/phase 6/   review the code against the spec
-course/day-3/phase 7 - optional/   build the whole app in one shot
-course/day-3/final/     your final weather app
-</code></pre></div>
+<div class="table-scroll"><table>
+<thead><tr><th>Folder</th><th>What&#39;s in it</th><th>Finishes</th></tr></thead>
+<tbody>
+<tr><td><code>day-3/starter/</code></td><td>the starting shell; no weather yet</td><td>—</td></tr>
+<tr><td><code>day-3/phase 1/</code></td><td>city search works; pick a city</td><td><strong>Phase 2</strong></td></tr>
+<tr><td><code>day-3/phase 2/</code></td><td>live weather, WeatherSignal, both viewers</td><td>Phase 3 (first pass)</td></tr>
+<tr><td><code>day-3/phase 3/</code></td><td>the same, plus strict unit validation</td><td><strong>Phase 3</strong></td></tr>
+<tr><td><code>day-3/phase 4/</code></td><td>fictional fallback, error and retry states</td><td><strong>Phase 4</strong></td></tr>
+<tr><td><code>day-3/phase 6/</code></td><td>review the code against the spec</td><td>Phase 6</td></tr>
+<tr><td><code>day-3/phase 7 - optional/</code></td><td>the whole plan built in one pass — the only checkpoint with tests</td><td>Phase 7</td></tr>
+<tr><td><code>day-3/final/</code></td><td>your final weather app</td><td>—</td></tr>
+</tbody>
+</table></div>
+<p><code>phase 2/</code> and <code>phase 3/</code> differ only in <code>weather-signal.js</code>: <code>phase 3/</code>
+adds a table of allowed units and rejects anything unexpected. If you&#39;re
+comparing against your own work at the end of Phase 3, use <code>phase 3/</code>.</p>
 <h2 id="outcome-and-two-hour-route">Outcome and two-hour route</h2>
 <ul>
 <li><strong>0–15 min — Phase 1: Look before you build.</strong> Open the starter, run two
 commands in the terminal, read the raw weather reply.</li>
 <li><strong>15–40 min — Phase 2: Build city search.</strong> Tell Copilot to build the
-search box in <code>phase 2/</code>. Test it.</li>
+search box. Test it. <em>(Shipped reference: <code>phase 1/</code>.)</em></li>
 <li><strong>40–55 min — Phase 3: Add the weather.</strong> Tell Copilot to fetch and map
-weather in <code>phase 3/</code>. Run the contract test.</li>
+weather. Check the WeatherSignal shape in the browser.
+<em>(Shipped reference: <code>phase 3/</code>.)</em></li>
 <li><strong>55–80 min — Phase 4: Add the fallback.</strong> Tell Copilot to add fake
-fallback and error states in <code>phase 4/</code>. Test them.</li>
-<li><strong>80–100 min — Phase 5: Break and change.</strong> Break the app on purpose, or
-change something that works but you don&#39;t like.</li>
+fallback and error states. Test them. <em>(Shipped reference: <code>phase 4/</code>.)</em></li>
+<li><strong>80–100 min — Phase 5: Fix the UI.</strong> Collect every UI issue in a
+read-only session, turn them into three independent milestones, and
+close them one at a time.</li>
 <li><strong>100–115 min — Phase 6: Review against spec.</strong> Run rubber-duck and/or
 spar to find discrepancies between the code and the spec.</li>
 <li><strong>115–120 min — Hand off.</strong> Use your final result or open
-<code>course/day-4/starter/</code>.</li>
+<code>day-4/starter/</code>.</li>
 </ul>
 <hr>
 <h2 id="phase-1-look-before-you-build">Phase 1 — Look before you build</h2>
@@ -211,11 +307,15 @@ swap in fake data.</p>
 <div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 3" aria-describedby="copy-status-3">Copy</button><span id="copy-status-3" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">type a city -&gt; ask Open-Meteo -&gt; read the reply -&gt; check it -&gt; copy to WeatherSignal -&gt; show it
 </code></pre></div>
 <h3>Open the starter</h3>
-<p>Open <code>course/day-3/starter/app/index.html</code> in your browser. You should see
+<p>Open <code>day-3/starter/app/index.html</code> in your browser. You should see
 three empty boxes with headings, all buttons disabled, and no network
 activity. This is the shell you&#39;ll build on. If it doesn&#39;t open or looks
-broken, run <code>npm run verify</code> from the repository root — it will report any
-missing or malformed file. Fix what it reports before you continue.</p>
+broken, check the file is intact before you continue:</p>
+<div class="code-block"><button type="button" class="copy-button" aria-label="Copy starter syntax check" aria-describedby="copy-status-starter-check">Copy</button><span id="copy-status-starter-check" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-bash">node --check &quot;day-3/starter/app/app.js&quot;
+</code></pre></div>
+<p>That reports a syntax error if the file is damaged. If it&#39;s clean and the
+page still looks wrong, you opened it through something other than a
+browser — open the file directly.</p>
 <h3>Look at the raw weather reply</h3>
 <p>Open-Meteo gives you two free web addresses (endpoints):</p>
 <ul>
@@ -244,7 +344,7 @@ longitude -77.10428).</p>
 <div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 6" aria-describedby="copy-status-6">Copy</button><span id="copy-status-6" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-bash">curl --get &#39;https://api.open-meteo.com/v1/forecast&#39; \
   --data &#39;latitude=38.88101&#39; \
   --data &#39;longitude=-77.10428&#39; \
-  --data &#39;current=temperature_2m,apparent_temperature,relative_humidity_2m,precipitation,weather_code,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,pressure_msl,is_day&#39; \
+  --data &#39;current=temperature_2m,apparent_temperature,relative_humidity_2m,precipitation,weather_code,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,surface_pressure,is_day&#39; \
   --data &#39;hourly=temperature_2m,precipitation_probability,precipitation,weather_code,wind_speed_10m&#39; \
   --data &#39;daily=temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,weather_code,wind_speed_10m_max,sunrise,sunset&#39; \
   --data &#39;forecast_days=7&#39; \
@@ -252,7 +352,7 @@ longitude -77.10428).</p>
 </code></pre></div>
 <p>Or ask Copilot:</p>
 <div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 7" aria-describedby="copy-status-7">Copy</button><span id="copy-status-7" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">Use curl (or a tool you have) to call this URL and show me the full reply:
-https://api.open-meteo.com/v1/forecast?latitude=38.88101&amp;longitude=-77.10428&amp;current=temperature_2m,apparent_temperature,relative_humidity_2m,precipitation,weather_code,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,pressure_msl,is_day&amp;hourly=temperature_2m,precipitation_probability,precipitation,weather_code,wind_speed_10m&amp;daily=temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,weather_code,wind_speed_10m_max,sunrise,sunset&amp;forecast_days=7&amp;timezone=auto
+https://api.open-meteo.com/v1/forecast?latitude=38.88101&amp;longitude=-77.10428&amp;current=temperature_2m,apparent_temperature,relative_humidity_2m,precipitation,weather_code,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,surface_pressure,is_day&amp;hourly=temperature_2m,precipitation_probability,precipitation,weather_code,wind_speed_10m&amp;daily=temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,weather_code,wind_speed_10m_max,sunrise,sunset&amp;forecast_days=7&amp;timezone=auto
 Paste the JSON reply back to me so I can read it.
 </code></pre></div>
 <p>You&#39;ll see a big JSON reply with three blocks: <code>current</code>, <code>hourly</code>, and
@@ -268,8 +368,9 @@ fields you&#39;ll copy.</p>
 <h2 id="phase-2-build-city-search">Phase 2 — Build city search</h2>
 <p>The city search must do this:</p>
 <ul>
-<li>Wait 350 milliseconds after the person stops typing, then search (this
-is &quot;debounce&quot; — it stops the app from searching on every keystroke).</li>
+<li>Wait a short moment after the person stops typing, then search (this
+is &quot;debounce&quot; — it stops the app from searching on every keystroke).
+Your plan names the exact delay; the shipped example uses 300 ms.</li>
 <li>Trim spaces off the typed text and require at least two characters.</li>
 <li>If the person types again before the reply comes back, ignore the old
 reply (it&#39;s for a different city now).</li>
@@ -301,15 +402,21 @@ Then read the plan I wrote. It&#39;s in these files:
 - plans/adr_v2_final.md   (the big decisions and why)
 - plans/glossary_v2.md    (words we agreed on)
 
-Now build only the first step from my plan — the city search. Don&#39;t build
-anything past that step, even if the plan lists more — we&#39;ll do those
-later. Don&#39;t fetch weather yet and don&#39;t build the WeatherSignal.
+Now build only the city search — the search box, the results list, and
+selecting a city. Follow my plan for the details (debounce delay, minimum
+query length, how results are announced); don&#39;t substitute your own
+defaults where the plan states a value. Don&#39;t build anything past the
+city search, even if the plan lists more — we&#39;ll do those later. Don&#39;t
+fetch weather yet and don&#39;t build the WeatherSignal.
+
+If anything in my plan is missing or contradicts itself, stop and tell me
+which part rather than guessing.
 
 When you&#39;re done, open the page you built in a browser and tell me what
 works and what doesn&#39;t.
 </code></pre></div>
-<p>After Copilot finishes, open <code>course/day-3/phase 2/app/index.html</code> in the
-browser. Type &quot;Arlington&quot; and pick Arlington, Virginia. Then type a nonsense word like
+<p>After Copilot finishes, open the page it built in the browser. Type
+&quot;Arlington&quot; and pick Arlington, Virginia. Then type a nonsense word like
 &quot;zzzz&quot; and confirm you see &quot;no results&quot;. Open the browser&#39;s Network panel
 (Developer Tools → Network) and confirm only the geocoding address was
 contacted — not the weather address.</p>
@@ -320,27 +427,29 @@ contacted — not the weather address.</p>
 <li>A nonsense query shows &quot;no results&quot;.</li>
 <li>The weather endpoint was <strong>not</strong> contacted.</li>
 </ul>
-<p>If you&#39;re stuck, open <code>phase 2/</code> directly — it already has the correct code.
-Keep your blocked work so you can compare.</p>
+<p>If you&#39;re stuck, open <code>day-3/phase 1/</code> directly — that&#39;s the shipped
+folder holding the finished city search, and its <strong>Fetch weather</strong> button
+is still disabled, so it passes the Network check above. Keep your blocked
+work so you can compare.</p>
 <p><strong>Checkpoint 2:</strong> city search works. A selected city is ready for the
 weather step.</p>
 <hr>
 <h2 id="phase-3-add-the-weather">Phase 3 — Add the weather</h2>
-<p>In this phase Copilot adds three functions to <code>app/weather-signal.js</code>:</p>
+<p>In this phase Copilot adds three capabilities:</p>
 <ul>
-<li><code>buildForecastUrl(location)</code> — builds the Open-Meteo weather address for
-a selected city.</li>
-<li><code>fetchWeather(location)</code> — sends the request and returns the raw reply.</li>
-<li><code>mapWeatherSignal(location, response, sourceUrl)</code> — copies the raw reply
-into the clean WeatherSignal shape.</li>
+<li><strong>build the forecast URL</strong> for a selected city;</li>
+<li><strong>send the request</strong> and return the raw reply;</li>
+<li><strong>map the raw reply</strong> into the clean WeatherSignal shape.</li>
 </ul>
 <aside class="guide-alert guide-alert-note" role="note" aria-label="Note">
 <p class="guide-alert-title">NOTE</p>
-<p>The shipped starter calls the file <code>app/weather-signal.js</code> (not
-<code>weather.js</code>). If Copilot splits the functions across <code>app.js</code> and
-<code>weather-signal.js</code>, that&#39;s fine — the contract is the function names and
-the WeatherSignal shape, not the filename. Open the <code>final/</code> folder to
-see how the shipped version organizes them.</p></aside><p>The WeatherSignal shape has three sections — <code>current</code>, <code>hourly</code>, and
+<p><strong>The contract is the WeatherSignal shape, not the function names.</strong>
+Copilot will pick its own names and its own file split, and that&#39;s fine.
+For reference, the shipped version puts <code>buildForecastUrl()</code> and the
+fetch in <code>app/app.js</code>, and exports <code>mapWeatherSignal()</code> and
+<code>createFallbackSignal()</code> from <code>app/weather-signal.js</code>. Yours may differ.
+What must match is the shape below and the rules under it. Open the
+<code>final/</code> folder to see how the shipped version organizes them.</p></aside><p>The WeatherSignal shape has three sections — <code>current</code>, <code>hourly</code>, and
 <code>daily</code> — plus a few shared fields at the top. Here is the exact shape. The
 zeros are placeholders — they show the type of each field, not real
 weather:</p>
@@ -348,7 +457,7 @@ weather:</p>
   &quot;location&quot;: &quot;Arlington, Virginia, United States&quot;,
   &quot;latitude&quot;: 38.88101,
   &quot;longitude&quot;: -77.10428,
-  &quot;timezone&quot;: &quot;auto&quot;,
+  &quot;timezone&quot;: &quot;source timezone&quot;,
   &quot;sourceUrl&quot;: &quot;public forecast URL&quot;,
   &quot;isFallback&quot;: false,
   &quot;current&quot;: {
@@ -424,6 +533,8 @@ hour in the city&#39;s timezone.</li>
 <li>Keep the real numbers from Open-Meteo, including a real zero. If a field
 is missing or not a number, show an error — don&#39;t make one up.</li>
 <li>If an array is shorter than expected, that&#39;s an error — don&#39;t pad it.</li>
+<li>You send <code>timezone=auto</code>, but Open-Meteo answers with the real zone name
+(<code>America/New_York</code>). Store what it sent back, not the string <code>auto</code>.</li>
 </ul>
 <p>Before you paste the prompt, <strong>attach a mock</strong> to help Copilot
 understand the general shape — a sketch showing the current conditions
@@ -453,11 +564,15 @@ Now build only this step from my plan. Keep everything that&#39;s already
 working from the city search. Don&#39;t build anything past this step —
 we&#39;ll do the next one later.
 
+Follow my plan for the field names and the mapping rules. If anything in
+it is missing or contradicts itself, stop and tell me which part rather
+than guessing.
+
 When you&#39;re done, open the page you built in a browser and tell me what
 works and what doesn&#39;t.
 </code></pre></div>
 <p>After Copilot finishes, check the WeatherSignal shape in the browser:</p>
-<p>Open <code>course/day-3/phase 3/app/index.html</code>. Search &quot;Arlington&quot;, select Arlington
+<p>Open the page Copilot built. Search &quot;Arlington&quot;, select Arlington
 Virginia, click <strong>Fetch weather</strong>. You should see the current weather, the
 next 24 hours, and the next 7 days. Open the mapped WeatherSignal view and
 confirm it has the three nested sections (<code>current</code>, <code>hourly</code>, <code>daily</code>),
@@ -465,8 +580,8 @@ each with its own units block, and the shared fields (<code>location</code>,
 <code>latitude</code>, <code>longitude</code>, <code>timezone</code>, <code>sourceUrl</code>, <code>isFallback</code>). The page
 should label the result as live evidence and link to the exact Open-Meteo
 address it used (no key, no login).</p>
-<p>If you&#39;re stuck, open <code>phase 3/</code> directly. Keep your blocked work for
-comparison.</p>
+<p>If you&#39;re stuck, open <code>day-3/phase 3/</code> directly. Keep your blocked work
+for comparison.</p>
 <p><strong>Checkpoint 3:</strong> the weather works. Current, hourly, and daily data flow
 from raw reply to clean WeatherSignal to readable cards.</p>
 <hr>
@@ -483,16 +598,26 @@ change the WeatherSignal data. The current, hourly, and daily sections
 stay separate in all three views.</p>
 <p>In this phase Copilot adds:</p>
 <ul>
-<li>A <strong>FALLBACK_SIGNAL</strong> — a fake, always-the-same WeatherSignal for a
-fictional place called &quot;Workshop Harbor, Fictional Coast&quot;. It has the
-same current/hourly/daily shape, with <code>isFallback</code> set to <code>true</code>.</li>
-<li>A <strong>raw response viewer</strong> you can open and close.</li>
-<li>Visibly distinct <strong>live</strong>, <strong>fallback</strong>, and <strong>error</strong> states.</li>
-<li>A rule: <strong>never load fallback automatically after a live failure.</strong> The
-person must click &quot;Load fictional fallback&quot; themselves.</li>
+<li>A <strong>fallback signal</strong> — a fake, always-the-same WeatherSignal for a
+fictional place. It has the same current/hourly/daily shape, with
+<code>isFallback</code> set to <code>true</code>. Your plan names the place; the shipped
+example uses &quot;Workshop Harbor, Fictional Coast&quot;.</li>
+<li>Visibly distinct <strong>live</strong>, <strong>fallback</strong>, and <strong>error</strong> states, plus a
+way to <strong>retry</strong> the live request.</li>
+<li>Whatever rule your plan states for <strong>when fallback appears</strong> — on
+demand from a button, or automatically after a live failure. The two
+are very different provenance stances, so check what your plan actually
+says before you build.</li>
 <li>A rule: if the person picks a new city or loads fallback while a weather
 request is pending, the old reply is ignored.</li>
 </ul>
+<aside class="guide-alert guide-alert-important" role="note" aria-label="Important">
+<p class="guide-alert-title">IMPORTANT</p>
+<p><strong>The one rule that is not negotiable:</strong> fallback must never be
+presentable as a live result. Whatever triggers it, the banner, the
+<code>isFallback</code> flag, and the source must make it unmistakable — no
+success styling, no real city name, no Open-Meteo URL. Everything else
+here is your plan&#39;s call; this part is the course&#39;s.</p></aside>
 <p>Before you paste the prompt, <strong>attach a mock</strong> to help Copilot
 understand the general shape — a sketch showing the &quot;Fictional
 fallback&quot; banner, the retry button, the error message, and the &quot;Load
@@ -501,7 +626,7 @@ copy it.</p>
 <p><strong>Ask Copilot</strong> (copy this whole block):</p>
 <div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 11" aria-describedby="copy-status-11">Copy</button><span id="copy-status-11" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">On a previous step I wrote a plan for a small weather app. I&#39;ve already
 built the city search and the weather fetch. Now I want you to build the
-last step from my plan — the fake fallback and the error/retry states.
+next step — the fake fallback and the error/retry states.
 
 I&#39;ve attached a mock to help you understand the general shape and feel
 of the UI for this step. Don&#39;t copy it literally — use it as
@@ -522,171 +647,264 @@ Now build only this step from my plan. Keep everything that&#39;s already
 working from the city search and the weather fetch. Don&#39;t build anything
 past this step.
 
+Follow my plan for the fallback&#39;s fictional location, its labels, and
+exactly when it appears. If my spec and my plan disagree about whether
+fallback loads automatically after a live failure, stop and tell me —
+don&#39;t pick one and carry on.
+
 When you&#39;re done, open the page you built in a browser and tell me what
 works and what doesn&#39;t.
 </code></pre></div>
-<p>After Copilot finishes, open <code>course/day-3/phase 4/app/index.html</code>. Click
-<strong>Load fictional fallback</strong> (you don&#39;t need network for this). Confirm:</p>
+<p>After Copilot finishes, open the page it built and trigger the fallback
+the way your plan says — either by clicking the load control, or by
+blocking the network (Developer Tools → Offline) and letting a live fetch
+fail. You don&#39;t need a working network for either. Confirm:</p>
 <ul>
-<li>The banner says <strong>FICTIONAL FALLBACK</strong>.</li>
+<li>A banner marks the data as fictional (the shipped example says
+<strong>FICTIONAL FALLBACK</strong>).</li>
 <li><code>isFallback</code> is <code>true</code> (you can see this in the mapped object view).</li>
-<li>The source says the data is a bundled fictional fixture.</li>
-<li>The location is &quot;Workshop Harbor, Fictional Coast&quot;.</li>
+<li>The source says the data is a bundled fictional fixture, not a URL.</li>
+<li>The location is the fictional one your plan names.</li>
 <li>The current, hourly, and daily sections all show the fake values.</li>
 <li>No text anywhere claims a live request succeeded.</li>
 </ul>
-<p>The fallback is always the same so everyone in the workshop sees the same
-thing. It never replaces a failed live call on its own.</p>
-<p>If you&#39;re stuck, open <code>phase 4/</code> directly. Keep your blocked work for
-comparison.</p>
+<p>The fallback is deterministic, so it looks the same every time you load
+it. Load it twice and confirm the numbers don&#39;t move.</p>
+<p>If you&#39;re stuck, open <code>day-3/phase 4/</code> directly. Keep your blocked work
+for comparison.</p>
 <p><strong>Checkpoint 4:</strong> fallback works. Live, fallback, and error states look
 visibly different.</p>
 <hr>
-<h2 id="phase-5-break-everything-and-change-what-you-don39t-like">Phase 5 — Break everything and change what you don&#39;t like</h2>
-<p>Now you try to break the app on purpose <strong>and</strong> you fix anything that works
-but isn&#39;t what you wanted. Pick <strong>one</strong> of the approaches below (or do more
-than one if you have time). Each one stresses a different part of the app.</p>
-<h3>Approach A — Block the network</h3>
-<p>Open <code>course/day-3/phase 4/app/index.html</code>. Open Developer Tools → Network.
-Select &quot;Offline&quot; (Chrome) or &quot;Work Offline&quot; (Firefox). Search a city,
-select it, and click <strong>Fetch weather</strong>.</p>
-<p>You should see:</p>
-<ul>
-<li>An error message (not a crash).</li>
-<li>A <strong>Retry live request</strong> button still available.</li>
-<li><strong>No automatic fallback.</strong> The fake data does not load by itself.</li>
-</ul>
-<p>Turn the network back on and click <strong>Retry live request</strong>. The live weather
-should load.</p>
-<h3>Approach B — Switch cities mid-request</h3>
-<p>Type a city, pick it, and click <strong>Fetch weather</strong>. While the request is
-still pending (watch the loading state), type a different city and pick it.
-The first reply must be ignored — the app must show weather for the second
-city, not the first. If the old city ever appears, that&#39;s a bug: tell
-Copilot to fix the &quot;stale request&quot; handling.</p>
-<h3>Approach C — Try weird inputs</h3>
-<p>Type each of these and see what happens:</p>
-<ul>
-<li>A city name with leading spaces (&quot;  Arlington&quot;).</li>
-<li>A city name with a special character (&quot;São Paulo&quot;).</li>
-<li>A nonsense word (&quot;zzzz&quot;) — you should see &quot;no results&quot;.</li>
-<li>A single letter (&quot;A&quot;) — the search must wait for two characters.</li>
-<li>An empty search box — nothing should happen.</li>
-</ul>
-<p>The app should handle each one without crashing or showing wrong data.</p>
-<h3>Approach D — Use only the keyboard</h3>
-<p>Unplug your mouse (or don&#39;t touch it). Using only Tab, Shift+Tab, Enter,
-and the arrow keys: search a city, pick a result, click <strong>Fetch weather</strong>,
-open the raw response view, click <strong>Load fictional fallback</strong>, and click
-<strong>Retry live request</strong>. You should see a visible outline around whatever
-has focus at every step. If focus disappears, that&#39;s an accessibility bug.</p>
-<h3>Approach E — Check the fake data can&#39;t lie</h3>
-<p>Click <strong>Load fictional fallback</strong>. Read every label and banner on the page.
-No text anywhere should say &quot;live&quot;, &quot;Open-Meteo&quot;, &quot;success&quot;, or show a
-real city name. The banner must say <strong>FICTIONAL FALLBACK</strong>. The source must
-say it&#39;s a bundled fictional fixture. If any text makes the fake data look
-live, stop and fix it before you continue.</p>
-<h3>Approach F — Change something you don&#39;t like</h3>
-<p>The app works, but something is off — a label is confusing, a number
-shows too many decimals, the hourly list is too long, the cards look
-cramped on a phone, the wrong city shows up first, a button is disabled
-for no reason. This is the most common real-world case.</p>
-<p>Pick one thing you don&#39;t like and ask Copilot to change it. Be specific
-and plain:</p>
-<div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 12" aria-describedby="copy-status-12">Copy</button><span id="copy-status-12" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">Open the app you just built. One thing I want to change: [describe what
-you see and what you&#39;d rather see instead]. Read the plan and the local
-AGENTS.md and TECH.md before editing. Make only that change. Don&#39;t
-rewrite anything else. Open the page in a browser and confirm the one
-thing I asked for is now the way I want. Show me what changed.
+<h2 id="phase-5-fix-the-ui-milestone-by-milestone">Phase 5 — Fix the UI, milestone by milestone</h2>
+<p>Your app works. It probably doesn&#39;t look right.</p>
+<p>This phase has <strong>no shipped answer and nothing to compare against</strong>, and
+that&#39;s deliberate. Your agent made hundreds of small choices your plan
+never specified — spacing, label wording, card order, how much of the
+hourly list to show — and it may well have added inputs, regions, or
+features nobody asked for. Everyone in the room is looking at a different
+app with a different set of problems. There is no <code>finish/</code> folder for
+this, because there is nothing to match.</p>
+<p>So instead of a checklist, you get a <strong>method</strong>: collect the issues before
+you fix any of them, turn them into a plan with independent milestones,
+and take the milestones one at a time.</p>
+<aside class="guide-alert guide-alert-note" role="note" aria-label="Note">
+<p class="guide-alert-title">NOTE</p>
+<p>This is the milestone approach Phase 7 argues for, applied for real. You
+ask for the increments <strong>before</strong> any code is written, so each one has
+its own acceptance criteria and can be checked on its own. Compare how
+this feels against Phases 2–4, where the splits were imposed on a plan
+that never had them.</p></aside>
+<h3>Step 1 — Open a read-only session and collect the issues</h3>
+<p>Don&#39;t let the agent start fixing things while you&#39;re still finding them.
+The first fix changes the layout, and half your remaining notes stop
+matching what&#39;s on screen.</p>
+<p>Start a new chat in your working folder and paste:</p>
+<div class="code-block"><button type="button" class="copy-button" aria-label="Copy UI issue intake prompt" aria-describedby="copy-status-ui-intake">Copy</button><span id="copy-status-ui-intake" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">We&#39;re going to fix the UI of the app in app/. Before any code changes, I
+want to collect the issues.
+
+For this conversation you are in read-only mode:
+- Do not edit, create, or delete anything under app/.
+- Do not run commands that change files.
+- The only file you may write is implementation/ui-issues.md.
+
+Open the app and look at it, then wait. I&#39;m going to describe problems one
+at a time, and some of them I&#39;ll show you as screenshots. After each one,
+add it to implementation/ui-issues.md as a numbered entry with: what I
+said, which part of the UI it affects, and how you&#39;d know it was fixed.
+Ask me a clarifying question only if you genuinely cannot place the issue.
+
+Don&#39;t propose solutions yet and don&#39;t start planning. Just capture.
 </code></pre></div>
-<p>Examples of small, valid changes:</p>
-<ul>
-<li>&quot;The temperature shows 31.23456 — I want one decimal place, like 31.2.&quot;</li>
-<li>&quot;The hourly list shows all 24 hours at once — I want to scroll, or see
-only the next 6.&quot;</li>
-<li>&quot;On a phone, the current card and the hourly card overlap — fix the
-layout so they stack.&quot;</li>
-<li>&quot;The &#39;Fetch weather&#39; button says &#39;Submit&#39; — change it to &#39;Fetch
-weather&#39;.&quot;</li>
-<li>&quot;After I pick a city, the search box keeps the old text — clear it.&quot;</li>
-</ul>
-<p>Keep the change small. One thing at a time. After Copilot finishes, open
-the page and confirm the one thing you asked for is now the way you want,
-and nothing else broke. If something else broke, tell Copilot exactly
-what and ask it to revert that part.</p>
-<h3>Check the result</h3>
-<p>Whichever approach you picked, finish with these final checks:</p>
-<ul>
-<li><strong>Every state you can reach</strong> works: loading, empty, error, retry, live
-success, fictional fallback.</li>
-<li>Open your final app at a wide size (1280×900) and a phone size
-(390×844). The page never scrolls sideways.</li>
-<li>The browser console (Developer Tools → Console) shows no red errors.</li>
-<li>Current, hourly, and daily cards all render.</li>
-<li>The source link points at the exact Open-Meteo address.</li>
-</ul>
-<h3>If something is wrong</h3>
-<ul>
-<li><strong>No search results:</strong> check the city name is spelled right. Try a
-broader name like &quot;Arlington&quot; instead of a district.</li>
-<li><strong>Search or weather fails:</strong> keep the Network panel open, read the
-error, and use the retry button. Don&#39;t reload the page yet.</li>
-<li><strong>Old city appears after picking a new one:</strong> tell Copilot to fix the
-&quot;stale request&quot; handling — the old reply must be ignored.</li>
-<li><strong>Hourly has no data or is short:</strong> the request must include the
-<code>hourly</code> parameter and <code>forecast_days=7</code>. The slice starts at the
-current hour in the city&#39;s timezone.</li>
-<li><strong>Daily has fewer than 7 days:</strong> confirm <code>forecast_days=7</code>. The mapper
-must reject a short <code>daily</code> array, not pad it with zeros.</li>
-<li><strong>Mapping fails:</strong> compare the <code>current</code>, <code>hourly</code>, <code>daily</code> blocks and
-their <code>*_units</code> with the shape above. Don&#39;t add defaults.</li>
-<li><strong>Page opens but live fetch is blocked:</strong> some browsers block live
-fetch from a <code>file://</code> page. If that happens, skip the live fetch and
-use <strong>Load fictional fallback</strong> to finish the exercise. If you want to
-try live fetch, run a local static server from the checkpoint folder:<div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 13" aria-describedby="copy-status-13">Copy</button><span id="copy-status-13" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-bash">npx --yes http-server &quot;course/day-3/phase 4/app&quot; -p 8080
+<p>Now walk through your app and talk. One issue at a time, in plain words:
+&quot;the hourly list is too long&quot;, &quot;these two cards collide on a phone&quot;, &quot;this
+label says Submit&quot;, &quot;there&#39;s a search box here I never asked for&quot;.</p>
+<h3>Step 2 — Show, don&#39;t describe</h3>
+<p>When an issue is visual, <strong>take a screenshot and attach it</strong>. Circle or
+crop if you can.</p>
+<p>This is not just convenience. Describing a layout problem in words usually
+takes several rounds — you describe, the agent guesses wrong, you correct
+it — and every round re-sends the conversation. One image pins the problem
+in a single turn. It is faster, it is cheaper, and it removes the
+misunderstanding rather than negotiating it away.</p>
+<p>Screenshot the states too, not just the default view: narrow width, the
+error state, the fallback state, a long city name.</p>
+<h3>Step 3 — Ask the agent what it doesn&#39;t understand</h3>
+<p>When you&#39;ve run out of issues, hand the questioning back:</p>
+<div class="code-block"><button type="button" class="copy-button" aria-label="Copy agent questions prompt" aria-describedby="copy-status-ui-questions">Copy</button><span id="copy-status-ui-questions" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">That&#39;s all the issues. Re-read implementation/ui-issues.md end to end.
+
+Now ask me your questions — anything ambiguous, anything where two of my
+issues conflict, anything where you&#39;d have to guess a value, a label, or a
+layout. Number them and stop. Don&#39;t answer them yourself.
 </code></pre></div>
-Then open <code>http://localhost:8080</code> in your browser.</li>
-<li><strong>Fallback looks live:</strong> stop. Fix the label, the source text, and the
-<code>isFallback</code> value before you continue.</li>
+<p>Answer them properly. A guess you let through here becomes a fix you
+reject in Step 5.</p>
+<h3>Step 4 — Ask for three independent milestones</h3>
+<div class="code-block"><button type="button" class="copy-button" aria-label="Copy milestone plan prompt" aria-describedby="copy-status-ui-plan">Copy</button><span id="copy-status-ui-plan" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">Here are my answers: [paste them]
+
+Update implementation/ui-issues.md with them, then write
+implementation/ui-plan.md: a plan that fixes every issue in the list,
+organised into exactly three milestones.
+
+Each milestone must be independent — demonstrable on its own, with its own
+acceptance criteria and its own check, and it must not require the later
+milestones to exist. Say which issue numbers each milestone closes, and
+make sure every issue is covered by exactly one of them.
+
+Still no code changes.
+</code></pre></div>
+<p>Read the plan before you approve it. Every issue accounted for? Is
+milestone 1 really checkable without milestone 2? If not, send it back.</p>
+<h3>Step 5 — Run one milestone, then stop</h3>
+<div class="code-block"><button type="button" class="copy-button" aria-label="Copy milestone execution prompt" aria-describedby="copy-status-ui-exec">Copy</button><span id="copy-status-ui-exec" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">Implement milestone 1 from implementation/ui-plan.md, and only milestone 1.
+Don&#39;t start milestone 2. Don&#39;t change anything that isn&#39;t in the issue
+list. When you&#39;re done, tell me which issue numbers you closed and how to
+check each one in the browser.
+</code></pre></div>
+<p>Open the app and check each issue it claims to have closed. When something
+is off — and it will be — <strong>reject it and be specific</strong>:</p>
+<div class="code-block"><button type="button" class="copy-button" aria-label="Copy milestone rejection prompt" aria-describedby="copy-status-ui-reject">Copy</button><span id="copy-status-ui-reject" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">Milestone 1 isn&#39;t done. Specifically:
+- issue 3: [what I see] — I expected [what should happen]
+- issue 7: you changed [X], which I didn&#39;t ask for — revert that
+
+Fix only these. Don&#39;t move on to milestone 2 and don&#39;t rewrite anything
+that&#39;s already right.
+</code></pre></div>
+<p>Repeat until milestone 1 is genuinely done. <strong>Then</strong> start milestone 2.</p>
+<p>Resist the urge to let a small miss slide &quot;for now&quot;. The whole reason the
+milestones are independent is so you can close them completely; a milestone
+you half-accept turns into a bug you rediscover in milestone 3.</p>
+<h3>Step 6 — Done when the list is empty</h3>
+<p>The phase is finished when every issue in <code>implementation/ui-issues.md</code> is
+closed and all three milestones are accepted. Finish with a quick pass:</p>
+<ul>
+<li>Open your app at a wide size (1280×900) and a phone size (390×844). The
+page never scrolls sideways.</li>
+<li>The browser console shows no red errors.</li>
+<li>Every state you can still reach renders: loading, empty, error, retry,
+live success, fallback.</li>
+<li>Nothing you didn&#39;t ask for got changed along the way.</li>
 </ul>
-<p><strong>Checkpoint 5:</strong> you broke the app on purpose and it failed honestly.
-The weather app is complete.</p>
+<aside class="guide-alert guide-alert-note" role="note" aria-label="Note">
+<p class="guide-alert-title">NOTE</p>
+<p>If your app only works when opened through a local server rather than
+straight from the file, run one from your working folder:</p>
+<div class="code-block"><button type="button" class="copy-button" aria-label="Copy local server command" aria-describedby="copy-status-ui-server">Copy</button><span id="copy-status-ui-server" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-bash">npx --yes http-server &quot;day-3/my-app/app&quot; -p 8080
+</code></pre></div>
+<p>Then open <code>http://localhost:8080</code>.</p></aside>
+<p><strong>Checkpoint 5:</strong> you collected the issues before fixing any of them,
+turned them into three independent milestones, and closed each one
+completely before starting the next. Your app looks the way you wanted —
+and it looks different from everyone else&#39;s.</p>
 <hr>
 <h2 id="phase-6-review-the-implementation-against-the-spec">Phase 6 — Review the implementation against the spec</h2>
 <p>You built the weather app from a plan. But did you build what the plan
 said? Now you review the <strong>code against the spec</strong> — the same thing you
 do at work when you review an implementation against an ADR.</p>
-<p>You have two tools for this. Use both if you have time; use at least one.</p>
-<h3>Option A — Rubber duck (general second opinion)</h3>
-<p>The <strong>rubber duck</strong> is a built-in critic in the GitHub Copilot App that
-reviews your code using a <strong>different AI model</strong> from the one driving
-your session. It catches blind spots the main model missed — bugs,
-logic errors, missing edge cases. It categorizes feedback as
-<strong>Blocking</strong>, <strong>Non-blocking</strong>, or <strong>Suggestions</strong>.</p>
-<p>Open the Copilot App, start a session in your project folder, and type:</p>
-<div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 14" aria-describedby="copy-status-14">Copy</button><span id="copy-status-14" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">/rubber-duck Review the weather app code in app/ against the spec at
-plans/spec_v2.md and the plan at plans/plan_v2.md. Find discrepancies:
-fields in the code that don&#39;t match the WeatherSignal contract, states
-the spec requires but the code doesn&#39;t handle, fallback behavior that
-doesn&#39;t match the spec, anything the plan said to build that&#39;s missing.
-Categorize each finding as Blocking, Non-blocking, or Suggestion.
+<p>You have three ways to do it. Use at least one; use more if you have time.
+They differ in what they remove from the reviewer — Option A and B change
+the <em>tool</em>, Option C changes the <em>context and the model</em>.</p>
+<p>All three run from your working folder (<code>day-3/my-app/</code>), so the paths in
+the prompts — <code>app/</code>, <code>plans/spec_v2.md</code> — resolve correctly.</p>
+<aside class="guide-alert guide-alert-note" role="note" aria-label="Note">
+<p class="guide-alert-title">NOTE</p>
+<p>Options A and B need the <strong>GitHub Copilot App</strong>, the chat application
+that&#39;s separate from the editor extension. If you only have Copilot in
+VS Code, <code>/rubber-duck</code> and spar mode may not be available to you — use
+<strong>Option C</strong>, which needs nothing beyond the editor you already have.</p></aside>
+<h3>Option A — Rubber duck (built-in critic)</h3>
+<p>The <strong>rubber duck</strong> is a built-in critic in the GitHub Copilot App. It&#39;s
+designed to review your work with a <strong>different model</strong> from the one
+driving your session, so it catches blind spots the main model shares
+with itself. It categorizes feedback as <strong>Blocking</strong>, <strong>Non-blocking</strong>,
+or <strong>Suggestions</strong>.</p>
+<p>Open the Copilot App, start a session in your working folder, and type:</p>
+<div class="code-block"><button type="button" class="copy-button" aria-label="Copy rubber duck review prompt" aria-describedby="copy-status-review-a">Copy</button><span id="copy-status-review-a" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">/rubber-duck Review the weather app code in app/ against my contract:
+plans/spec_v2.md, plans/plan_v2.md, and the AGENTS.md and TECH.md rules
+in this folder.
+
+Find discrepancies: fields in the code that don&#39;t match the
+WeatherSignal contract, states the spec requires but the code doesn&#39;t
+handle, fallback behaviour that doesn&#39;t match, anything the plan said to
+build that&#39;s missing, and anything the code does that no document asked
+for.
+
+For each finding, quote the requirement and give the file and line range
+in the code. Categorize it Blocking, Non-blocking, or Suggestion. If the
+spec and the plan contradict each other, report that as its own finding
+instead of picking a side. If you can&#39;t find evidence for something, say
+UNKNOWN — don&#39;t invent a file, a line, or a requirement.
 </code></pre></div>
 <p>Read the critique. Fix <strong>Blocking</strong> items before you continue.
 <strong>Non-blocking</strong> items should also be fixed. <strong>Suggestions</strong> are
 judgment calls.</p>
 <h3>Option B — Spar (Copilot App)</h3>
-<p><strong>Spar</strong> is a review mode in the GitHub Copilot App. It spars with your
-implementation — challenging the code the way a human reviewer would.
-Open the Copilot App, start a session in your project folder, and ask
-it to review the implementation against the spec:</p>
-<div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 15" aria-describedby="copy-status-15">Copy</button><span id="copy-status-15" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">Spar with me. Review the weather app code in app/ against the spec at
-plans/spec_v2.md. Find anything the code does that the spec doesn&#39;t
-describe, and anything the spec requires that the code doesn&#39;t do. Be
-specific — cite the spec section and the code location for each finding.
+<p><strong>Spar</strong> is a review mode in the GitHub Copilot App. It argues with your
+implementation the way a human reviewer would — pushing back rather than
+listing. Open the Copilot App, start a session in your working folder,
+select spar mode, and ask:</p>
+<div class="code-block"><button type="button" class="copy-button" aria-label="Copy spar review prompt" aria-describedby="copy-status-review-b">Copy</button><span id="copy-status-review-b" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">Spar with me about the weather app in app/. My contract is
+plans/spec_v2.md, plans/plan_v2.md, and the AGENTS.md and TECH.md rules
+in this folder.
+
+Find anything the code does that no document asked for, and anything the
+documents require that the code doesn&#39;t do. Push back on my reasoning,
+don&#39;t just list findings.
+
+Cite the document section and the code location for each point, and
+label it Blocking, Non-blocking, or Suggestion. If my spec and my plan
+disagree, say so rather than choosing. Say UNKNOWN rather than guessing.
 </code></pre></div>
-<p>Read the findings. Fix the ones you agree with before you continue.</p>
-<h3>After either review</h3>
+<p>Read the findings. Fix the ones you agree with before you continue — and
+where you disagree, be able to say why.</p>
+<h3>Option C — A plain prompt in a fresh session</h3>
+<p>No special app and no special command. This option works in whatever
+editor you already have, and it removes the two things most likely to
+make a review agreeable: <strong>the conversation</strong> and <strong>the model</strong>.</p>
+<ol>
+<li>Open a <strong>brand-new chat session</strong> — not the one you built in. A new
+session has no memory of your build, so it can&#39;t be steered by the
+reasoning that produced the bug.</li>
+<li><strong>Switch the model</strong> in the model picker to a different one from the
+one that wrote the code. Different training, different blind spots.</li>
+<li>Point it at your working folder and paste this:</li>
+</ol>
+<div class="code-block"><button type="button" class="copy-button" aria-label="Copy fresh session review prompt" aria-describedby="copy-status-review-c">Copy</button><span id="copy-status-review-c" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">Review an implementation against its own written contract. You did not
+write this code and you were not part of the conversation that produced
+it. Treat both as unfamiliar.
+
+Read, in this order:
+1. plans/spec_v2.md          what the app is supposed to do
+2. plans/plan_v2.md          the ordered build steps
+3. AGENTS.md and TECH.md     the rules the build had to follow
+4. app/                      the implementation
+
+Then report every place the code and the contract disagree. For each
+finding give:
+- the requirement, quoted, and which document and section it came from
+- the code location, file and line range
+- what the code actually does instead
+- severity: Blocking, Non-blocking, or Suggestion
+
+Cover at least: the WeatherSignal field names and nesting; every visible
+state the spec requires; what happens when a field is missing or not a
+number; what happens when an array is shorter than expected; when
+fallback may appear and how it is labelled; stale-response handling; and
+the accessibility requirements.
+
+Two rules. If the spec and the plan contradict each other, report that as
+a finding in its own right rather than picking a side. If you cannot find
+evidence for a claim, write UNKNOWN — do not invent a file, a line
+number, or a requirement.
+</code></pre></div>
+<p>Because this reviewer has no context, it will occasionally flag something
+that&#39;s fine. That&#39;s the cost of the fresh eyes, and it&#39;s cheap: you can
+answer a wrong finding in one sentence. A finding you <em>can&#39;t</em> answer is
+the one worth fixing.</p>
+<h3>After any review</h3>
 <p>Re-run the review after fixing to confirm the Blocking findings are gone.</p>
+<p>Whichever option you used, spot-check one finding yourself before you act
+on it. Open the file and line it cites and confirm the code really says
+what the review claims. A review is a claim too.</p>
 <p><strong>What you should observe:</strong></p>
 <ul>
 <li>The review finds discrepancies the build phases missed: a field name
@@ -696,22 +914,43 @@ code doesn&#39;t handle, a fallback label that&#39;s slightly wrong.</li>
 what you said you&#39;d build.</li>
 <li>The same habit from the planning review: the code is a claim, the
 review is the check, the fix is the repair.</li>
+<li>If you ran more than one option, they won&#39;t agree. Where they overlap,
+you&#39;ve found something real; where only one flags it, you have a
+judgment call rather than a defect.</li>
 </ul>
-<p><strong>Checkpoint 6:</strong> the review is clean. The implementation matches the
-spec. The weather app is complete and verified.</p>
+<p>If you&#39;re stuck or want to compare, open <code>day-3/phase 6/</code> — the shipped
+folder for this step.</p>
+<p><strong>Checkpoint 6:</strong> you&#39;ve reviewed the implementation against the
+contract, resolved every Blocking finding, and verified at least one
+finding against the code yourself.</p>
 <hr>
-<h2 id="optional-phase-7-build-the-whole-app-in-one-shot">Optional Phase 7 — Build the whole app in one shot</h2>
-<p>If you have time left and want to see what it&#39;s like to give Copilot the
-whole plan at once instead of step by step, try this. It&#39;s the same plan
-— just one prompt instead of three.</p>
+<h2 id="optional-phase-7-build-the-whole-plan-in-one-pass">Optional Phase 7 — Build the whole plan in one pass</h2>
+<p>Now run the plan the way it was written: top to bottom, every task, no
+splits.</p>
+<p>This is not a novelty. Phases 2–4 chopped your plan into three pieces,
+and that split came from <strong>this guide</strong>, not from your plan. Open
+<code>plans/plan_v2.md</code> and look at its shape: it&#39;s an ordered list of tasks,
+each with its own verification step, ending in a final self-review pass.
+Nothing in it says &quot;stop after the search box.&quot; When you tell an agent to
+&quot;build only this step and nothing past it,&quot; you cut the plan off before
+the parts that check the work.</p>
+<p>You can see the damage in the shipped folders. The plan asks for a
+contract test file, written in one task and extended in the next. Every
+phase-split checkpoint — <code>phase 1/</code> through <code>phase 6/</code> — has <strong>no tests
+at all</strong>. The one-shot build has them, because it was the only build
+allowed to reach that task.</p>
 <p><strong>Attach a mock</strong> of the full app to help Copilot understand the
 general shape — the three regions, the search box, the weather cards,
 the fallback banner, and the retry button. Copilot should use it as
 inspiration, not copy it. Then:</p>
+<p>Start this in a <strong>fresh working folder</strong> — copy the starter again, so you
+end up with a clean one-pass build you can compare against your
+step-by-step one:</p>
+<div class="code-block"><button type="button" class="copy-button" aria-label="Copy one-pass working folder setup" aria-describedby="copy-status-onepass-folder">Copy</button><span id="copy-status-onepass-folder" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-bash">cp -R &quot;day-3/starter&quot; &quot;day-3/my-app-onepass&quot;
+</code></pre></div>
 <p><strong>Ask Copilot</strong> (copy this whole block):</p>
-<div class="code-block"><button type="button" class="copy-button" aria-label="Copy code block 16" aria-describedby="copy-status-16">Copy</button><span id="copy-status-16" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">On a previous step I wrote a plan for a small weather app. I want you
-to build the whole thing in one go — city search, weather fetch,
-WeatherSignal mapping, fictional fallback, and error/retry states.
+<div class="code-block"><button type="button" class="copy-button" aria-label="Copy one-pass build prompt" aria-describedby="copy-status-onepass-prompt">Copy</button><span id="copy-status-onepass-prompt" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">On a previous step I wrote a plan for a small weather app. I want you to
+execute that plan end to end, in order, without stopping partway.
 
 I&#39;ve attached a mock to help you understand the general shape and feel
 of the full UI. Don&#39;t copy it literally — use it as inspiration for the
@@ -719,50 +958,77 @@ layout, the labels, the card positions, the fallback banner, the retry
 button, and the visual structure, but build your own clean, accessible
 implementation.
 
-First, read the rule files in this checkpoint: AGENTS.md and TECH.md.
-These tell you what you may write and what safety rules apply.
+First, read the rule files in this folder: AGENTS.md and TECH.md. These
+tell you what you may write and what safety rules apply.
 
-Then read the plan I wrote. It&#39;s in these files:
+Then read my plan:
 - plans/spec_v2.md        (what the app should do)
-- plans/plan_v2.md        (the step-by-step build plan)
+- plans/plan_v2.md        (the ordered build plan)
 - plans/adr_v2_final.md   (the big decisions and why)
 - plans/glossary_v2.md    (words we agreed on)
 
-Build the complete weather app: location search via Open-Meteo geocoding,
-current + hourly + daily forecast fetch, WeatherSignal mapping (current,
-hourly, daily sections), evidence views (readable card, raw response,
-mapped object), fictional fallback with visible labels, and error/retry
-states. Never load fallback automatically after a live failure.
+Work through every task in plans/plan_v2.md from the first to the last,
+in the order written. Do not stop early and do not skip a task because it
+looks like polish — that includes any tests the plan asks for, any
+accessibility or responsive work, and any final verification or
+self-review checklist at the end. Run the plan&#39;s own verification step
+for each task as you reach it.
 
-When you&#39;re done, open the page you built in a browser and tell me what
-works and what doesn&#39;t.
+Follow my plan for the details. Where it states a value, a name, or a
+rule, use it rather than your own default. If the plan is missing
+something you need, or the spec and the plan contradict each other, stop
+and tell me which part — don&#39;t pick a side and carry on.
+
+When you&#39;re finished, report: which tasks you completed, which
+verification steps you ran and their results, anything the plan asked for
+that you could not do, and any place the documents disagreed.
 </code></pre></div>
 <p><strong>What you should observe:</strong></p>
 <ul>
-<li>Copilot builds the whole app — but it probably makes more mistakes
-than when you built it step by step. That&#39;s the teaching: a big prompt
-is harder to get right than three small ones.</li>
-<li>Compare this build to your step-by-step build. Which one has fewer
-bugs? Which one matches the spec better? Which one was faster?</li>
-<li>The step-by-step approach (Phases 2–4) is the same habit as the grill
-and the adversarial review: break big things into small things, check
-each one, fix before moving on.</li>
+<li><strong>This build is usually better than the step-by-step one.</strong> More of the
+plan gets executed — the tests, the accessibility pass, the final
+self-review — because nothing cut it short.</li>
+<li>The agent&#39;s own checks work better here. A self-review over a finished
+app can catch a missing state or an untested branch; the same review
+over one-third of an app has almost nothing to check against.</li>
+<li>Compare the two builds side by side. Which has tests? Which handles
+every visible state the spec lists? Which one would you hand to someone
+else?</li>
 </ul>
-<p><strong>Checkpoint 7 (optional):</strong> you built the whole app in one shot and
-compared it to the step-by-step build.</p>
+<p><strong>The lesson is about the plan, not the prompt.</strong> On Day 2 nobody asked
+the planning skill for milestones, so it produced one continuous sequence
+— correctly, because that&#39;s what was requested. A plan shaped like that
+is meant to be executed like that. Splitting it afterwards is something
+<em>you</em> imposed, and the cost lands on the parts that come last: tests,
+accessibility, verification.</p>
+<p>So if you want to build incrementally — and there are good reasons to,
+like reviewing smaller diffs — that has to be a <strong>planning</strong> decision, not
+a prompting one. Next time, ask for it up front:</p>
+<div class="code-block"><button type="button" class="copy-button" aria-label="Copy milestone planning prompt" aria-describedby="copy-status-milestones">Copy</button><span id="copy-status-milestones" role="status" aria-live="polite" class="copy-status"></span><pre><code class="language-text">Break the plan into milestones. Each milestone must be independently
+demonstrable and carry its own acceptance criteria and verification
+steps, so it can be built and checked without the later milestones
+existing.
+</code></pre></div>
+<p>Then each phase has something real to verify against, and stopping early
+costs you nothing.</p>
+<p><strong>Checkpoint 7 (optional):</strong> you executed the plan end to end, compared
+the result against your step-by-step build, and can say which parts of
+the plan the split was costing you.</p>
 <hr>
 <h2 id="common-mistakes">Common mistakes</h2>
 <ul>
-<li><strong>Forgetting debounce.</strong> Without the 350 ms wait, the app fires a geocoding
+<li><strong>Forgetting debounce.</strong> Without the wait your plan specifies, the app fires a geocoding
 request on every keystroke. The Network panel will show a flood of requests
 and Open-Meteo may rate-limit you.</li>
 <li><strong>Padding a short array.</strong> If the hourly source has fewer than 24 entries,
 the mapper must reject it — not fill with zeros. A padded array is a lie
 that looks like live data.</li>
-<li><strong>Auto-loading fallback after a live failure.</strong> The spec is explicit: the
-person must click &quot;Load fictional fallback&quot; themselves. If the app swaps in
-fallback silently, a reviewer can&#39;t tell a live failure from a live
-success — provenance is lost.</li>
+<li><strong>Letting fallback pass for live data.</strong> Whatever your plan says triggers
+the fallback, the moment it appears the page must say so — banner,
+<code>isFallback</code>, and a source that isn&#39;t a live URL. If a reviewer can&#39;t tell
+a live failure from a live success at a glance, provenance is lost. Check
+what your spec and your plan each say about <em>when</em> fallback appears; if
+they disagree, that&#39;s a finding, not a detail.</li>
 <li><strong>Mixing the three views.</strong> The readable card, the mapped <code>WeatherSignal</code>,
 and the raw response are three separate things. If a label change mutates
 the mapped object, the contract is broken.</li>
@@ -779,11 +1045,11 @@ Check the Network panel, not just the page.</li>
 live region. Verify it before you hand off — don&#39;t leave it to Day 4.</p>
 <ol>
 <li>Unplug your mouse (or don&#39;t touch it). Using only Tab, Shift+Tab, Enter,
-and the arrow keys: search a city, pick a result, click <strong>Fetch weather</strong>,
-open the raw response view, click <strong>Load fictional fallback</strong>, and click
-<strong>Retry live request</strong>. You should see a visible outline around whatever
-has focus at every step. If focus disappears, that&#39;s a bug — tell Copilot
-to fix it.</li>
+and the arrow keys: search a city, pick a result, activate <strong>Fetch
+weather</strong>, open the raw response view, reach the retry control, and reach
+whatever control your plan gives for loading the fictional fallback (if
+it has one). You should see a visible outline around whatever has focus at
+every step. If focus disappears, that&#39;s a bug — tell Copilot to fix it.</li>
 <li>Turn on your screen reader (VoiceOver on macOS, NVDA on Windows, Orca on
 Linux) and navigate the page. Confirm the live region announces:<ul>
 <li>&quot;loading&quot; while the search runs</li>
@@ -801,8 +1067,13 @@ element. Re-run until it&#39;s clean.</li>
 a11y regressions in under a minute.</p>
 <hr>
 <h2 id="reference-states">Reference states</h2>
-<p>Compare your app to these plain-text descriptions before you hand off. If
-a state looks different, that&#39;s the thing to fix.</p>
+<p>These describe what each state has to <strong>communicate</strong>, not what it has to
+look like. Your layout, wording, and control names are yours — Phase 5 made
+sure of that. What isn&#39;t yours is the meaning: a live result must be
+traceable, a fictional one must be unmistakable, and a failure must not read
+as either. Walk your app through the states below and check the meaning
+survives.</p>
+<p>Values in quotes are from the shipped example. Yours will differ.</p>
 <p><strong>Empty (starter, no action yet):</strong></p>
 <ul>
 <li>Three regions visible: <code>controls</code>, <code>evidence</code>, <code>review</code> (Region 3 is a
@@ -817,7 +1088,8 @@ placeholder).</li>
 </ul>
 <p><strong>Search results:</strong></p>
 <ul>
-<li>Up to five result buttons, each showing &quot;city, admin1, country&quot;.</li>
+<li>A short list of result buttons, each identifying the place unambiguously
+(the shipped example shows five, as &quot;city, admin1, country&quot;).</li>
 <li>Tab and Enter work. The live region announces &quot;N results found&quot;.</li>
 </ul>
 <p><strong>No results:</strong></p>
@@ -839,32 +1111,35 @@ cloud cover, pressure, is day/night).</li>
 <li>Hourly list of 24 entries. Daily list of 7 entries.</li>
 <li>A source link to the exact Open-Meteo URL (no key, no login).</li>
 <li>The mapped <code>WeatherSignal</code> view shows <code>isFallback: false</code>.</li>
-<li>No &quot;FICTIONAL FALLBACK&quot; banner anywhere.</li>
+<li>Nothing anywhere marks the data as fictional.</li>
 </ul>
 <p><strong>Fictional fallback:</strong></p>
 <ul>
-<li>A visible <strong>FICTIONAL FALLBACK</strong> banner.</li>
-<li>Location reads &quot;Workshop Harbor, Fictional Coast&quot;.</li>
-<li>Source says &quot;bundled fictional fixture&quot; (or similar), not a live URL.</li>
+<li>A banner that is impossible to miss, marking the data as fictional (the
+shipped example says <strong>FICTIONAL FALLBACK</strong>).</li>
+<li>The location is the fictional one your plan names (the shipped example
+uses &quot;Workshop Harbor, Fictional Coast&quot;).</li>
+<li>Source says it&#39;s a bundled fictional fixture, not a live URL.</li>
 <li>The mapped <code>WeatherSignal</code> view shows <code>isFallback: true</code>.</li>
 <li>No text anywhere says &quot;live&quot;, &quot;Open-Meteo&quot;, &quot;success&quot;, or a real city.</li>
 </ul>
 <p><strong>Error with retry:</strong></p>
 <ul>
-<li>An error message (not a crash).</li>
-<li>A <strong>Retry live request</strong> button, still enabled.</li>
-<li>No automatic fallback.</li>
+<li>An error message (not a crash), naming what failed.</li>
+<li>A retry control, still enabled.</li>
+<li>Whatever your plan says should happen to fallback here — and if fallback
+did appear, the page says so rather than implying the live call worked.</li>
 <li>The live region announces the error.</li>
 </ul>
 <hr>
 <h2 id="hand-off">Hand off</h2>
-<p>Either keep your final result (your <code>phase 4/</code> or <code>final/</code> folder with live
-weather, fallback, and retry all working) or open the
-<code>course/day-4/starter/</code> folder, which already has the correct weather
-app. The weather app must keep working unchanged.</p>
+<p>Either keep your own build — <code>day-3/my-app/</code>, with live weather, fallback,
+and retry all working — or open <code>day-4/starter/</code>, which already has a
+correct weather app. Day 4 builds the third region on top of whichever you
+choose; the weather app must keep working unchanged.</p>
 <hr>
 <h2 id="references">References</h2>
-<p>The full list lives at <a href="../references.md">course/references.md</a>. The most
+<p>The full list lives at <a href="../references.md">references.md</a>. The most
 relevant for today:</p>
 <ul>
 <li><a href="https://open-meteo.com/en/docs">Open-Meteo API docs</a> — the forecast
@@ -902,6 +1177,7 @@ async function copyText(value) {
 }
 
 document.querySelectorAll('.copy-button').forEach((button) => {
+  let resetTimer;
   button.addEventListener('click', async () => {
     const code = button.parentElement.querySelector('code').textContent;
     const status = button.parentElement.querySelector('.copy-status');
@@ -915,6 +1191,15 @@ document.querySelectorAll('.copy-button').forEach((button) => {
       button.textContent = 'Copy failed';
       status.textContent = 'Copy failed. Select the code and copy it manually.';
     }
+    // Return to the resting label so the button always reflects the *next*
+    // action, not the last one. Without this every button a reader has ever
+    // clicked stays reading "Copied".
+    clearTimeout(resetTimer);
+    resetTimer = setTimeout(() => {
+      delete button.dataset.copyState;
+      button.textContent = 'Copy';
+      status.textContent = '';
+    }, 2000);
   });
 });
 </script>
@@ -969,6 +1254,68 @@ document.querySelectorAll('.copy-button').forEach((button) => {
   window.addEventListener('scroll', highlight, { passive: true });
   window.addEventListener('resize', highlight, { passive: true });
   highlight();
+
+  // Narrow screens have no room for a fixed rail, so the same nav becomes a
+  // floating panel behind a toggle. One nav element, two presentations.
+  var narrow = window.matchMedia('(max-width: 1199px)');
+  nav.id = 'section-nav';
+
+  var backdrop = document.createElement('div');
+  backdrop.className = 'nav-backdrop';
+  backdrop.hidden = true;
+
+  var toggle = document.createElement('button');
+  toggle.type = 'button';
+  toggle.className = 'nav-toggle';
+  toggle.id = 'section-nav-toggle';
+  toggle.textContent = 'Sections';
+  toggle.setAttribute('aria-controls', 'section-nav');
+  toggle.setAttribute('aria-expanded', 'false');
+
+  document.body.appendChild(backdrop);
+  document.body.appendChild(toggle);
+
+  function setOpen(open) {
+    nav.hidden = !open;
+    backdrop.hidden = !open;
+    toggle.setAttribute('aria-expanded', String(open));
+    if (open) {
+      var active = nav.querySelector('a.active') || nav.querySelector('a');
+      if (active) active.focus();
+    }
+  }
+
+  function close(returnFocus) {
+    setOpen(false);
+    if (returnFocus) toggle.focus();
+  }
+
+  // Desktop: the rail is always present and the toggle is irrelevant.
+  function applyMode() {
+    if (narrow.matches) {
+      setOpen(false);
+    } else {
+      nav.hidden = false;
+      backdrop.hidden = true;
+      toggle.setAttribute('aria-expanded', 'false');
+    }
+  }
+
+  toggle.addEventListener('click', function () { setOpen(nav.hidden); });
+  backdrop.addEventListener('click', function () { close(true); });
+  nav.addEventListener('click', function (event) {
+    if (narrow.matches && event.target.closest('a')) close(false);
+  });
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape' && narrow.matches && !nav.hidden) close(true);
+  });
+  if (typeof narrow.addEventListener === 'function') {
+    narrow.addEventListener('change', applyMode);
+  } else if (typeof narrow.addListener === 'function') {
+    narrow.addListener(applyMode);
+  }
+
+  applyMode();
 })();
 </script>
 </body>

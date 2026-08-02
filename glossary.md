@@ -45,7 +45,8 @@ workshop-only advisory, not approved architecture."
 
 ## Browser and accessibility terms
 
-**Debounce** — wait a short time (350 ms in this app) after the user stops
+**Debounce** — wait a short time (the shipped example uses 300 ms; your
+Day 2 plan pins the value for your build) after the user stops
 typing before acting, so the app doesn't search on every keystroke.
 
 **Focus trap** — when a modal dialog is open, Tab and Shift+Tab cycle only

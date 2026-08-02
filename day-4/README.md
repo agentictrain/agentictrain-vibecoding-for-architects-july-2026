@@ -35,12 +35,26 @@ Before the clock starts, make sure you have:
   API key that lets the app call the model). These are workshop-only,
   entered at runtime, and never saved.
 
-Open `course/day-4/starter/app/index.html` in your browser. Search a
+Open `day-4/starter/app/index.html` in your browser. Search a
 city, pick it, click **Fetch weather**, and confirm the current, hourly,
 and daily cards all show real data. Then click **Load fictional fallback**
-and confirm the fake data appears. If anything is broken, run
-`npm run verify` from the repository root and fix what it reports before
-you continue.
+and confirm the fake data appears. If anything looks broken, check the
+files are intact:
+
+```bash
+node --check "day-4/starter/app/app.js"
+node --test "day-4/starter/tests/weather-signal.test.mjs"
+```
+
+> [!IMPORTANT]
+> **This starter is the one-pass build from Day 3**, not the step-by-step
+> one. If you carry your own Day 3 app forward instead, it may differ —
+> most visibly, yours may load the fictional fallback automatically after
+> a live failure rather than waiting for a button. Neither is wrong; they
+> came from the same contract read two different ways. Just know which one
+> you have, because a few checks below name the button.
+>
+> If you'd rather not deal with the difference, use `day-4/starter/`.
 
 > [!WARNING]
 > Use only the temporary credential supplied for the workshop. Never
@@ -117,14 +131,35 @@ an earlier checkpoint folder to make later work pass.
 > and `implementation/debug-notes.md` first — they explain why the code is
 > the way it is.
 
+**Set up your working folder before Phase 2.** Build in one folder all day
+and leave the shipped checkpoints untouched as references:
+
+```bash
+cp -R "day-4/starter" "day-4/my-app"
+```
+
+Open `day-4/my-app/` in your editor and start Copilot there, so "read
+AGENTS.md, TECH.md and GroqAPI.md in this checkpoint" resolves to your
+copy. Don't build inside a shipped `phase N/` folder — each already
+contains the finished answer for its step.
+
 The checkpoint path for Day 4:
 
-```text
-course/day-4/starter/   the weather app; no model controls yet
-course/day-4/phase 2/   settings area added; no model call yet
-course/day-4/phase 3/   model call + validated review
-course/day-4/phase 5/   adversarial review clean; your final app with the AI review
-course/day-4/phase 7/   build the whole review in one shot (optional)
+| Folder | What's in it | Finishes |
+|---|---|---|
+| `day-4/starter/` | the weather app; no model controls yet | — |
+| `day-4/phase 1/` | the same app, plus reference mocks of the review UI | Phase 1 |
+| `day-4/phase 2/` | settings modal added; no model call yet | Phase 2 |
+| `day-4/phase 3/` | model call + validated review | Phase 3 |
+| `day-4/phase 5/` | adversarial review clean; the full app with the AI review | Phase 5 |
+| `day-4/phase 7/` | the whole review built in one pass (optional) | Phase 7 |
+
+Every checkpoint from `phase 3/` onward ships tests. Run them against your
+own build as you go — the guide won't remind you again:
+
+```bash
+node --test "day-4/my-app/tests/weather-signal.test.mjs"
+node --test "day-4/my-app/tests/review.test.mjs"
 ```
 
 ## Outcome and two-hour route
@@ -137,14 +172,16 @@ course/day-4/phase 7/   build the whole review in one shot (optional)
   read the plan, then build `phase 3/`. Generate a review, check the five fields.
 - **70–90 min — Phase 4: Read the review critically.** Discuss which
   claims trace to evidence and which are guesses.
-- **90–100 min — Phase 5: Adversarial review.** Run a second-opinion code
-  review and a credential-boundary threat model against the `phase 3/` code.
-- **100–115 min — Phase 6: Break everything.** Block the model, send bad
-  JSON, change settings mid-request. Confirm the weather stays visible.
-- **115–120 min — Hand off.** Use your final result or open
-  `course/day-5/starter/`.
+- **90–105 min — Phase 5: Adversarial review.** Run a second-opinion code
+  review, a credential-boundary threat model, and the four failure tests
+  against your own build.
+- **105–117 min — Phase 6: Fix the review UI.** Collect every issue in a
+  read-only session, turn them into three independent milestones, close
+  them one at a time.
+- **117–120 min — Hand off.** Use your final result or open
+  `day-5/starter/`.
 - **If you have time left — Optional Phase 7: Build the whole review in
-  one shot.** Give Copilot the whole review in one prompt instead of
+  one pass.** Give Copilot the whole review in one prompt instead of
   plan-mode, and compare.
 
 ---
@@ -158,7 +195,7 @@ them visibly separate so a reviewer can tell which is which.
 
 ### Open the starter
 
-Open `course/day-4/starter/app/index.html`. Search a city, pick it,
+Open `day-4/starter/app/index.html`. Search a city, pick it,
 click **Fetch weather**, and confirm the current, hourly, and daily cards
 all show real data. Then click **Load fictional fallback** and confirm the
 fake data appears. No model setting or model request exists yet — that's
@@ -351,6 +388,21 @@ scenario to Groq (OpenAI-compatible chat completions) and asks for
 strict JSON with five fields: summary, risks, actions, questions,
 evidence. Validate every field. Keep the weather evidence visible on
 every failure.
+
+Make the review pleasant to read, not just correct. Ask the model for a
+leading emoji on each risk, action and question, and for short scannable
+phrasing rather than paragraphs. Put that wording requirement in the
+system prompt you send to the model — not in the rendering code, and not
+by relaxing the validation.
+
+Structure it as milestones I can accept one at a time. Each milestone
+must be independently demonstrable, with its own acceptance criteria and
+its own check, and must not need the later milestones to exist. Say what
+I should see in the browser to accept each one.
+
+If anything I've asked for conflicts with AGENTS.md, TECH.md, GroqAPI.md,
+or plans/plan_v2.md, stop and tell me which two things disagree rather
+than picking one.
 ```
 
 ### Step 2 — Read the plan critically
@@ -378,7 +430,8 @@ or click **Build**, or just say "go ahead and build it"):
 ```text
 Go ahead and build the review from your plan. Re-read AGENTS.md,
 TECH.md, and GroqAPI.md in this checkpoint before you start writing
-code. GroqAPI.md has the exact endpoint URL, auth header, request
+code. Keep the emoji and scannable-phrasing requirement in the system
+prompt, and keep rendering every field as plain text. GroqAPI.md has the exact endpoint URL, auth header, request
 body, response shape, and JSON-mode field — follow it. Keep everything
 that's already working (the weather app and the settings area). When
 you're done, open the page you built in a browser, load fallback, enter
@@ -400,22 +453,33 @@ reply — don't invent a replacement.
 | `questions` | array of 1–6 strings | Things we don't know yet. |
 | `evidence` | array of 1–6 strings | Each item names a `WeatherSignal` field that backs a claim above. |
 
+> [!IMPORTANT]
+> **Emojis yes, Markdown and HTML no.** An emoji is just text, so it
+> passes validation and renders safely. A Markdown heading, a code fence
+> or an HTML tag does not: the validator rejects them, and it rejects them
+> on purpose. The review is rendered with text nodes, so model output can
+> never execute — the moment you render it as HTML, a `<script>` tag in a
+> model reply becomes a script-injection hole. If your review looks plain
+> and you're tempted to "fix" it by allowing HTML through, you've traded a
+> prettier page for a real vulnerability. Style the *container* with CSS;
+> ask the *model* for emojis and shorter sentences.
+
 Example valid reply:
 
 ```json
 {
-  "summary": "Current temperature of 31°C with no precipitation and moderate wind suggests favorable conditions for warehouse operations, but heat stress is a concern for outdoor loading.",
+  "summary": "☀️ 31°C, dry, moderate wind — good conditions for warehouse operations, but heat stress is a real concern for outdoor loading.",
   "risks": [
-    "Heat stress for outdoor workers at 31°C",
-    "Low precipitation may indicate dry conditions increasing fire risk"
+    "🥵 Heat stress for outdoor workers at 31°C",
+    "🔥 Low precipitation may mean dry conditions and raised fire risk"
   ],
   "actions": [
-    "Schedule outdoor loading for early morning hours",
-    "Ensure hydration stations are stocked"
+    "🌅 Schedule outdoor loading for early morning",
+    "💧 Keep hydration stations stocked"
   ],
   "questions": [
-    "What is the forecast for the next 24 hours?",
-    "Is there a heat wave warning in effect?"
+    "❓ What is the forecast for the next 24 hours?",
+    "❓ Is a heat-wave warning in effect?"
   ],
   "evidence": [
     "WeatherSignal.current.temperature",
@@ -427,7 +491,7 @@ Example valid reply:
 
 ### Check the result
 
-After Copilot finishes, open `course/day-4/phase 3/app/index.html`. Load
+After Copilot finishes, open the page it built. Load
 fallback, enter the three runtime settings (your Groq endpoint, model name,
 and API key), pick a scenario, and click **Generate review**. You should see
 all five fields
@@ -485,9 +549,17 @@ claim.
 Phase 4 was your read. Now you get a **second opinion from a different
 tool** — the same habit as Day 3's rubber-duck, but aimed at the new
 risks Day 4 introduces: the in-browser credential, the model-call
-boundary, and the JSON validation. You run two passes against the `phase 3/`
-code, categorize the findings, and fix the Blocking ones before you
-break things on purpose in Phase 6.
+boundary, and the JSON validation. You run three passes against your own
+build — a code review, a threat model, and four hands-on failure tests —
+then fix the Blocking findings before you polish anything in Phase 6.
+
+> [!IMPORTANT]
+> **Run passes A and B in a brand-new session, on a different model.** Not
+> the chat you built in. A reviewer that watched you build inherits your
+> framing and tends to confirm the reasoning rather than check the result
+> — and the model that wrote the credential handling shares every blind
+> spot with itself. New session empties the context; the model picker
+> changes the blind spots. It costs one click each.
 
 ### Pass A — Code review
 
@@ -508,7 +580,12 @@ never invent a replacement), stale-response handling (changing settings
 or scenario mid-request must ignore the old reply), credential boundary
 (never in URL, body, prompt, logs, or review text), and
 weather-evidence visibility (stays visible on every model failure).
-Categorize each finding as Blocking, Non-blocking, or Suggestion.
+
+For each finding, quote the requirement you're applying and give the
+file and line range in the code, then categorize it Blocking,
+Non-blocking, or Suggestion. If two rule files disagree, report that as
+its own finding rather than picking one. If you can't find evidence for
+something, say UNKNOWN — don't invent a file, a line, or a requirement.
 ```
 
 Read the critique. Fix **Blocking** items before you continue.
@@ -547,9 +624,17 @@ observer, script injection in the review, a stale-response race). For
 each abuse path, name the mitigation the code already has and any gap.
 Output a short Markdown threat model. Do not propose new features — only
 boundary gaps.
+
+Cite the file and line range for every mitigation you claim exists. If
+you cannot find one in the code, say UNKNOWN rather than assuming it is
+handled somewhere.
 ```
 
-Read the threat model. The gaps to care about:
+Read the threat model, then verify one claimed mitigation yourself — open
+the file and line it cites and check the code really does what the model
+says. A threat model is a claim too.
+
+The gaps to care about:
 
 - Can the credential reach the URL, the request body, the prompt, a
   log, or the review text?
@@ -561,36 +646,17 @@ Read the threat model. The gaps to care about:
 Fix any gap that lets the credential leak or the review lie about being
 live. Other gaps are Non-blocking — note them and move on.
 
-### After both passes
+### Pass C — Break it on purpose
 
-Re-run Pass A after fixing to confirm the Blocking findings are gone.
+Passes A and B were analysis. This one is empirical: make the review fail
+four different ways and check it fails honestly each time. **Do all four**
+— they're a few minutes each and they test different things: the model
+unreachable, the model lying about its output shape, a race between two
+requests, and the credential escaping.
 
-**What you should observe:**
+#### Block the model
 
-- The second-opinion review finds discrepancies the build phases
-  missed: a validation gap, a stale-response race, a credential leak
-  path, a place where the weather evidence could disappear.
-- A clean review means the implementation matches the contract and the
-  credential boundary holds — you built what you said you'd build, and
-  the secret stays secret.
-- The same habit from Day 3's rubber-duck: the code is a claim, the
-  review is the check, the fix is the repair — but today the lens is
-  security and the credential boundary, not just spec conformance.
-
-**Checkpoint 5:** the adversarial review is clean. Blocking findings are
-fixed. The credential boundary holds.
-
----
-
-## Phase 6 — Break everything
-
-Now you try to break the review on purpose and check it fails honestly.
-Pick **one** of the approaches below (or do more than one if you have
-time).
-
-### Approach A — Block the model
-
-Open `course/day-4/phase 3/app/index.html`. Open Developer Tools → Network.
+Open the app you built. Open Developer Tools → Network.
 Select "Offline". Load fallback, enter settings, click **Generate
 review**.
 
@@ -602,7 +668,7 @@ You should see:
 
 Turn the network back on and retry. The review should load.
 
-### Approach B — Send bad JSON
+#### Send bad JSON
 
 Ask Copilot to intercept the model response and replace it with invalid
 JSON (for example, a plain-text string instead of the five-field reply).
@@ -612,7 +678,7 @@ URL, then remove it after the test. Click **Generate review**. The app
 must reject the reply and show an error — it must not display a
 half-formed review. The weather evidence must stay visible.
 
-### Approach C — Change settings mid-request
+#### Change settings mid-request
 
 Click **Generate review**. While the request is still pending, change
 the model name in the settings area. The old reply must be ignored — the
@@ -620,7 +686,7 @@ review area should clear or show "settings changed", not the old review.
 If the old review appears, that's a bug: tell Copilot to fix the
 "stale response" handling.
 
-### Approach D — Check the credential can't leak
+#### Check the credential can't leak
 
 Load fallback, enter the runtime settings, generate a review. Then:
 
@@ -637,36 +703,6 @@ Load fallback, enter the runtime settings, generate a review. Then:
 
 If the credential shows up anywhere it shouldn't, stop. Tell Copilot to
 fix the leak before you continue.
-
-### Approach E — Change something you don't like
-
-The review works, but something is off — the summary is too long, the
-risks list has 20 items, the evidence references use the wrong field
-names, the review appears above the weather evidence, the label says
-"Approved architecture". Pick one thing and ask Copilot to change it:
-
-```text
-Open the app you just built. One thing I want to change: [describe what
-you see and what you'd rather see instead]. Read the local AGENTS.md and
-TECH.md before editing. Make only that change. Don't rewrite anything
-else. Open the page in a browser and confirm the one thing I asked for is
-now the way I want. Show me what changed.
-```
-
-Keep the change small. One thing at a time.
-
-### Check the result
-
-Whichever approach you picked, finish with these final checks:
-
-- Open your final app at a wide size (1280×900) and a phone size
-  (390×844). The page never scrolls sideways.
-- The browser console (Developer Tools → Console) shows no red errors.
-- The weather evidence stays visible after every model failure.
-- The review is labeled "Model inference — workshop-only advisory, not
-  approved architecture."
-- The runtime settings clear on reload and never enter browser storage,
-  the URL, or the review text.
 
 ### If something is wrong
 
@@ -690,12 +726,155 @@ Whichever approach you picked, finish with these final checks:
 - **The credential appears in the URL, body, prompt, or review:** stop.
   Tell Copilot to fix the leak before you continue.
 
-**Checkpoint 6:** you broke the review on purpose and it failed honestly.
-The weather app and the review both work.
+### After all three passes
+
+Re-run Pass A after fixing to confirm the Blocking findings are gone.
+
+**What you should observe:**
+
+- The second-opinion review finds discrepancies the build phases
+  missed: a validation gap, a stale-response race, a credential leak
+  path, a place where the weather evidence could disappear.
+- A clean review means the implementation matches the contract and the
+  credential boundary holds — you built what you said you'd build, and
+  the secret stays secret.
+- The same habit from Day 3's rubber-duck: the code is a claim, the
+  review is the check, the fix is the repair — but today the lens is
+  security and the credential boundary, not just spec conformance.
+
+**Checkpoint 5:** the adversarial review is clean, Blocking findings are
+fixed, and you ran all four failure tests — model unreachable, invalid
+JSON, mid-request settings change, credential leak. The app failed
+honestly in each, the weather evidence stayed visible, and the credential
+never left the `Authorization` header.
 
 ---
 
-## Optional Phase 7 — Build the whole review in one shot
+## Phase 6 — Fix the review UI, milestone by milestone
+
+The review works and it fails honestly. Now make it *look* right.
+
+Like Day 3, this phase has **no shipped answer**. Your agent chose the
+heading wording, the order of the five fields, how the evidence list
+renders, how much of the summary shows before it wraps. It may have added
+controls nobody asked for. Everyone's review region looks different, so
+there is nothing to match against.
+
+You already know the method — it's the one from **Day 3, Phase 5**. Same
+six steps, new subject: this time the issue list is about the review
+region, not the weather cards.
+
+### Step 1 — Read-only session, collect the issues
+
+```text
+We're going to fix the UI of the review region in app/. Before any code
+changes, I want to collect the issues.
+
+For this conversation you are in read-only mode:
+- Do not edit, create, or delete anything under app/.
+- Do not run commands that change files.
+- The only file you may write is implementation/ui-issues.md.
+
+Open the app, generate a review so you can see the real output, then
+wait. I'll describe problems one at a time, some as screenshots. After
+each one, add it to implementation/ui-issues.md as a numbered entry with:
+what I said, which part of the UI it affects, and how you'd know it was
+fixed.
+
+Don't propose solutions yet and don't start planning. Just capture.
+```
+
+Walk the review region and talk. Look at the five fields, the advisory
+label, the loading state, the error state, and what the region looks like
+before you've generated anything.
+
+### Step 2 — Screenshot the states
+
+Attach images rather than describing layouts. It's faster, it's cheaper
+than several rounds of guessing, and it removes the misunderstanding
+instead of negotiating it away.
+
+Capture the states you can't see at rest: review loading, review error,
+settings-changed-mid-request, a review with six risks and six actions, and
+narrow width. The error and loading states are the ones people forget, and
+they're the ones a stakeholder sees when something goes wrong.
+
+### Step 3 — Ask the agent what it doesn't understand
+
+```text
+That's all the issues. Re-read implementation/ui-issues.md end to end.
+
+Now ask me your questions — anything ambiguous, anything where two of my
+issues conflict, anything where you'd have to guess a value, a label, or a
+layout. Number them and stop. Don't answer them yourself.
+```
+
+### Step 4 — Ask for three independent milestones
+
+```text
+Here are my answers: [paste them]
+
+Update implementation/ui-issues.md with them, then write
+implementation/ui-plan.md: a plan that fixes every issue in the list,
+organised into exactly three milestones.
+
+Each milestone must be independent — demonstrable on its own, with its own
+acceptance criteria and its own check, and it must not require the later
+milestones to exist. Say which issue numbers each milestone closes.
+
+Two things must not change: the five-field contract, and the fact that the
+weather evidence stays visible on every model failure. If any issue I gave
+you would break either, say so instead of implementing it.
+
+Still no code changes.
+```
+
+### Step 5 — Run one milestone, then stop
+
+```text
+Implement milestone 1 from implementation/ui-plan.md, and only milestone 1.
+Don't start milestone 2. Don't change anything that isn't in the issue
+list, and don't touch the model call or the validation. When you're done,
+tell me which issue numbers you closed and how to check each one.
+```
+
+Check each closure yourself, then reject what's wrong — specifically:
+
+```text
+Milestone 1 isn't done. Specifically:
+- issue 3: [what I see] — I expected [what should happen]
+- issue 7: you changed [X], which I didn't ask for — revert that
+
+Fix only these. Don't move on to milestone 2 and don't rewrite anything
+that's already right.
+```
+
+Repeat until milestone 1 is genuinely closed, then start milestone 2.
+
+### Step 6 — Done when the list is empty
+
+Every issue closed, all three milestones accepted. Then:
+
+- Open your final app at a wide size (1280×900) and a phone size
+  (390×844). The page never scrolls sideways.
+- The browser console (Developer Tools → Console) shows no red errors.
+- The weather evidence stays visible after every model failure.
+- The review is labeled "Model inference — workshop-only advisory, not
+  approved architecture."
+- The runtime settings clear on reload and never enter browser storage,
+  the URL, or the review text.
+
+Re-run the Phase 5 failure tests once more at the end. UI work touches
+rendering, and rendering is where the weather evidence gets hidden and
+where model text stops being escaped.
+
+**Checkpoint 6:** you collected the review-region issues before fixing any
+of them, closed three independent milestones, and confirmed the five-field
+contract and the weather evidence survived the polish.
+
+---
+
+## Optional Phase 7 — Build the whole review in one pass
 
 If you have time left and want to see what it's like to give Copilot the
 whole review in one prompt instead of plan-mode, try this. It's the same
@@ -746,18 +925,35 @@ works and what doesn't.
 
 **What you should observe:**
 
-- Copilot builds the whole review — but it probably makes more mistakes
-  than when you used plan mode. That's the teaching: a big prompt is
-  harder to get right than plan-then-build.
-- Compare this build to your plan-mode build. Which one has fewer bugs?
-  Which one validates the JSON more strictly? Which one keeps the
-  credential boundary cleaner? Which one was faster?
-- The plan-mode approach (Phase 3) is the same habit as the grill and
-  the adversarial review: break big things into small things, check each
-  one, fix before moving on.
+- Both builds probably work. Today's scope is small and it was already
+  split along a natural seam — the settings modal in Phase 2, the review
+  region and the model call in Phase 3. Each half is demonstrable on its
+  own, so nothing was cut off mid-thought.
+- The difference isn't completeness. It's **when you got to object.** Plan
+  mode put a document in front of you while changing it was free. The
+  one-pass build handed you finished code and asked you to find the
+  problems afterwards.
+- Compare them on the things you would have caught in a plan: does it
+  reject invalid JSON instead of rendering a half-review? Does it ignore
+  a stale reply? Does the weather evidence survive a model failure? Does
+  the credential stay in the `Authorization` header? Then ask which build
+  needed correcting *after* the code existed.
 
-**Checkpoint 7 (optional):** you built the whole review in one shot and
-compared it to the plan-mode build.
+> [!NOTE]
+> **This is not the same comparison as Day 3's Phase 7.** There, a single
+> long plan was chopped into three by the guide, and the split cost you
+> the tasks that came last — the tests and the final verification. Here
+> the split came from the work itself: settings, then review. Splitting
+> along a seam the work already has is free. Splitting a plan that doesn't
+> have one is what costs you.
+>
+> That's the distinction worth taking away. Increments are cheap when the
+> plan is shaped for them and expensive when it isn't — and you decide
+> which you have at planning time, not at build time.
+
+**Checkpoint 7 (optional):** you built the whole review in one pass,
+compared it against your plan-mode build, and can say what reviewing the
+plan first actually bought you.
 
 ---
 
@@ -857,7 +1053,7 @@ The Day 3 states still apply. These are the new states today adds.
 
 Either keep your final result (your `phase 3/` or `phase 5/` folder with the
 review working and the weather still visible) or open the
-`course/day-5/starter/` folder, which already has the correct app with
+`day-5/starter/` folder, which already has the correct app with
 the AI review.
 Day 5 is the architect skills lab — find, inspect, install, run, and judge
 reusable skills on real architect tasks. The weather app and the review
